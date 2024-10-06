@@ -1,0 +1,37 @@
+<?php
+
+use App\Http\Controllers\GradoController;
+use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\PagoController;
+use App\Http\Controllers\SeccionController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+Auth::routes();
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+//ruta para inscripciones
+Route::resource('inscripcions', InscripcionController::class);
+
+
+//ruta para grados
+Route::resource('grados', GradoController::class);
+
+//ruta para secciones
+Route::resource('seccions', SeccionController::class);
+
+//ruta para pagos
+Route::resource('pagos', PagoController::class);
