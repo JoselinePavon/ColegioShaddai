@@ -14,9 +14,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property $edad
  * @property $fecha_nacimiento
  * @property $grados_id
+ * @property $seccions_id
  * @property $created_at
  * @property $updated_at
  * @property GRADO $grado
+ * @property SECCION $seccion
  *
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
@@ -30,6 +32,7 @@ class Inscripcion extends Model
         'edad' => 'required|integer',
         'fecha_nacimiento' => 'required|date',
         'grados_id' => 'required|exists:grados,id',
+        'seccions_id' => 'required|exists:seccions,id',
     ];
 
 
@@ -40,14 +43,21 @@ class Inscripcion extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombres', 'apellidos', 'genero', 'edad', 'fecha_nacimiento', 'grados_id'];
+    protected $fillable = ['nombres', 'apellidos', 'genero', 'edad', 'fecha_nacimiento', 'grados_id','seccions_id'];
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function grado(){
 
         return $this->hasOne('App\Models\Grado', 'id', 'grados_id');
-    }
 
+
+    }
+    public function seccion(){
+
+        return $this->hasOne('App\Models\Seccion', 'id', 'seccions_id');
+
+
+    }
 
 }

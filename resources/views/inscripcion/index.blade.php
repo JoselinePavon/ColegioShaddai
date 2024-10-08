@@ -48,6 +48,7 @@
                                     <th>Edad</th>
                                     <th>Fecha Nacimiento</th>
                                     <th>Grado</th>
+                                    <th>Seccion</th>
                                     <th class="text-center">Acciones</th>
                                 </tr>
                                 </thead>
@@ -61,6 +62,7 @@
                                         <td>{{ $inscripcion->edad }}</td>
                                         <td>{{ $inscripcion->fecha_nacimiento }}</td>
                                         <td>{{ $inscripcion->grado->nombre_grado }}</td>
+                                        <td>{{ $inscripcion->seccion->seccion }}</td>
                                         <td class="text-center">
                                             <form action="{{ route('inscripcions.destroy', $inscripcion->id) }}" method="POST" class="delete-form">
                                                 <a class="btn btn-sm btn-primary" href="{{ route('inscripcions.show', $inscripcion->id) }}">

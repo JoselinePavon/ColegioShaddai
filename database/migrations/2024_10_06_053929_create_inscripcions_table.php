@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Grado;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,6 +19,8 @@ return new class extends Migration
             $table->string('genero');
             $table->Integer('edad');
             $table->date('fecha_nacimiento');
+            $table->unsignedBigInteger('grados_id');
+            $table->foreign('grados_id')->references('id')->on('grados');
             $table->timestamps();
         });
     }
@@ -25,8 +28,11 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+
+        public function grado()
     {
-        Schema::dropIfExists('inscripcions');
+        return $this->belongsTo(Grado::class, 'grados_id');
     }
+
 };
+

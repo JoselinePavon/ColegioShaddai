@@ -9,7 +9,9 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card shadow-lg">
+
                     <div class="card-header bg-warning text-dark">
+
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span id="card_title" class="h4 font-weight-bold">
                                 {{ __('Pagos') }}

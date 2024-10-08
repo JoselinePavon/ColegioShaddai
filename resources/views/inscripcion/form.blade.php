@@ -47,15 +47,22 @@
                             </div>
 
                             <div class="form-group mb-3">
-                                <select name="grados_id" class="form-control @error('grados_id') is-invalid @enderror" id="grados_id">
-                                    <option value="" disabled selected>Seleccione</option>
-                                    @foreach($grado as $id => $nombre_grado)
-                                        <option value="{{ $id }}" {{ old('grados_id', $inscripcion?->grados_id) == $id ? 'selected' : '' }}>
-                                            {{ $nombre_grado }}
-                                        </option>
+                                <label for="nombre_grado" class="form-label">{{ __('Grado') }}</label>
+                                <select name="grados_id" id="grados_id" class="form-control @error('grados_id') is-invalid @enderror">
+                                    <option value="">Seleccione un grado</option>
+                                    @foreach($grados as $id => $nombre)
+                                        <option value="{{ $id }}" {{ old('grados_id') == $id ? 'selected' : '' }}>{{ $nombre }}</option>
                                     @endforeach
                                 </select>
-
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="seccion" class="form-label">{{ __('Sección') }}</label>
+                                <select name="seccions_id" id="seccions_id" class="form-control @error('seccions_id') is-invalid @enderror">
+                                    <option value="">Seleccione una seccion</option>
+                                    @foreach($seccions as $id => $seccion)
+                                        <option value="{{ $id }}" {{ old('seccions_id') == $id ? 'selected' : '' }}>{{ $seccion }}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
 

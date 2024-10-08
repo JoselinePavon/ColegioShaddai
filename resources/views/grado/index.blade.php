@@ -12,7 +12,7 @@
                     <div class="card-header bg-warning text-dark">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span id="card_title" class="h4 font-weight-bold">
-                                {{ __('Grados') }}>
+                                {{ __('Grados y Carreras') }}
                             </span>
 
                             <div class="float-right">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Grado;
 use App\Models\Inscripcion;
 use App\Http\Requests\InscripcionRequest;
+use App\Models\Seccion;
 
 
 /**
@@ -20,8 +21,9 @@ class InscripcionController extends Controller
     {
         $inscripcions = Inscripcion::paginate();
         $grado = Grado::pluck('nombre_grado', 'id');
+        $seccion = Seccion::pluck('seccion', 'id');
 
-        return view('inscripcion.index', compact('inscripcions', 'grado'))
+        return view('inscripcion.index', compact('inscripcions', 'grado','seccion'))
             ->with('i', (request()->input('page', 1) - 1) * $inscripcions->perPage());
     }
 
@@ -31,8 +33,9 @@ class InscripcionController extends Controller
     public function create()
     {
         $inscripcion = new Inscripcion();
-        $grado = Grado::pluck('nombre_grado', 'id');
-        return view('inscripcion.create', compact('inscripcion', 'grado'));
+        $grados = Grado::pluck('nombre_grado', 'id');
+        $seccions = Seccion::pluck('seccion', 'id');
+        return view('inscripcion.create', compact('inscripcion', 'grados','seccions'));
     }
 
     /**
@@ -40,12 +43,20 @@ class InscripcionController extends Controller
      */
     public function store(InscripcionRequest $request)
     {
-        $validatedData = $request->validated();
-        Inscripcion::create($validatedData);
+        $inscripcion = Inscripcion::create([
+            'nombres' => $request->nombres,
+            'apellidos' => $request->apellidos,
+            'genero' => $request->genero,
+            'edad' => $request->edad,
+            'fecha_nacimiento' => $request->fecha_nacimiento,
+            'grados_id' => $request->grados_id,
+            'seccions_id' => $request->seccions_id,
+        ]);
 
         return redirect()->route('inscripcions.index')
-            ->with('success', 'Inscripcion created successfully.');
+            ->with('success', 'Inscripción creada exitosamente.');
     }
+
 
 
     /**

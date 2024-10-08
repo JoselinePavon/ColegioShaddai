@@ -1,33 +1,34 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {{ $grado->name ?? __('Show') . " " . __('Grado') }}
+    {{ $grado->name ?? __('Mostrar') . " " . __('Grado') }}
 @endsection
 
 @section('content')
     <section class="content container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                        <div class="float-left">
-                            <span class="card-title">{{ __('Show') }} Grado</span>
-                        </div>
-                        <div class="float-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('grados.index') }}"> {{ __('Back') }}</a>
-                        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">{{ __('Detalle del Grado') }}</h4>
+                        <a class="btn btn-warning btn-sm" href="{{ route('grados.index') }}">
+                            {{ __('Regresar') }}
+                        </a>
                     </div>
 
-                    <div class="card-body bg-white">
-                        
-                        <div class="form-group mb-2 mb20">
-                            <strong>Nombre Grado:</strong>
-                            {{ $grado->nombre_grado }}
-                        </div>
-
+                    <div class="card-body bg-light">
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <th>{{ __('Nombre Grado') }}</th>
+                                <td>{{ $grado->nombre_grado }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 @endsection
+
