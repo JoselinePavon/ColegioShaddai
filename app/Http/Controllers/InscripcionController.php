@@ -67,9 +67,13 @@ class InscripcionController extends Controller
      */
     public function edit($id)
     {
+        $inscripcion = new Inscripcion();
+        $registro_alumno = RegistroAlumno::pluck('nombres', 'id');
+        $grado = Grado::pluck('nombre_grado', 'id');
+        $seccion = Seccion::pluck('seccion', 'id');
         $inscripcion = Inscripcion::find($id);
 
-        return view('inscripcion.edit', compact('inscripcion'));
+        return view('inscripcion.edit', compact('inscripcion', 'registro_alumno','grado','seccion'));
     }
 
     /**
