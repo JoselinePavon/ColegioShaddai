@@ -123,7 +123,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/registro-alumnos">
                 <i class="fas fa-user"></i>
                 <span>Alumnos</span>
             </a>

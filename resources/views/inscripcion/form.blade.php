@@ -17,54 +17,45 @@
                         <form method="POST" action="{{ route('inscripcions.store') }}">
                             @csrf
                             <div class="form-group mb-3">
-                                <label for="nombres" class="form-label">{{ __('Nombres') }}</label>
-                                <input type="text" name="nombres" class="form-control @error('nombres') is-invalid @enderror" value="{{ old('nombres', $inscripcion?->nombres) }}" id="nombres" placeholder="Nombres">
-                                {!! $errors->first('nombres', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                <label for="registro_alumnos_id" class="form-label">{{ __('Nombres') }}</label>
+                                <select name="registro_alumnos_id" id="registro_alumnos_id" class="form-control @error('registro_alumnos_id') is-invalid @enderror">
+                                    <option value="">Seleccione un nombre</option>
+                                    @foreach($registro_alumno as $id => $nombres)
+                                        <option value="{{ $id }}" {{ old('registro_alumnos_id', $inscripcion->registro_alumnos_id ?? '') == $id ? 'selected' : '' }}>
+                                            {{ $nombres }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('registro_alumnos_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="form-group mb-3">
-                                <label for="apellidos" class="form-label">{{ __('Apellidos') }}</label>
-                                <input type="text" name="apellidos" class="form-control @error('apellidos') is-invalid @enderror" value="{{ old('apellidos', $inscripcion?->apellidos) }}" id="apellidos" placeholder="Apellidos">
-                                {!! $errors->first('apellidos', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="genero" class="form-label">{{ __('Género') }}</label>
-                                <input type="text" name="genero" class="form-control @error('genero') is-invalid @enderror" value="{{ old('genero', $inscripcion?->genero) }}" id="genero" placeholder="Género">
-                                {!! $errors->first('genero', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="edad" class="form-label">{{ __('Edad') }}</label>
-                                <input type="text" name="edad" class="form-control @error('edad') is-invalid @enderror" value="{{ old('edad', $inscripcion?->edad) }}" id="edad" placeholder="Edad">
-                                {!! $errors->first('edad', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="fecha_nacimiento" class="form-label">{{ __('Fecha de Nacimiento') }}</label>
-                                <input type="date" name="fecha_nacimiento" class="form-control @error('fecha_nacimiento') is-invalid @enderror" value="{{ old('fecha_nacimiento', $inscripcion?->fecha_nacimiento) }}" id="fecha_nacimiento" placeholder="Fecha de Nacimiento">
-                                {!! $errors->first('fecha_nacimiento', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="nombre_grado" class="form-label">{{ __('Grado') }}</label>
+                                <label for="grados_id" class="form-label">{{ __('Grado') }}</label>
                                 <select name="grados_id" id="grados_id" class="form-control @error('grados_id') is-invalid @enderror">
                                     <option value="">Seleccione un grado</option>
                                     @foreach($grados as $id => $nombre)
                                         <option value="{{ $id }}" {{ old('grados_id') == $id ? 'selected' : '' }}>{{ $nombre }}</option>
                                     @endforeach
                                 </select>
+                                @error('grados_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
+
                             <div class="form-group mb-3">
-                                <label for="seccion" class="form-label">{{ __('Sección') }}</label>
+                                <label for="seccions_id" class="form-label">{{ __('Sección') }}</label>
                                 <select name="seccions_id" id="seccions_id" class="form-control @error('seccions_id') is-invalid @enderror">
                                     <option value="">Seleccione una seccion</option>
                                     @foreach($seccions as $id => $seccion)
                                         <option value="{{ $id }}" {{ old('seccions_id') == $id ? 'selected' : '' }}>{{ $seccion }}</option>
                                     @endforeach
                                 </select>
+                                @error('seccions_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-
 
                             <div class="row">
                                 <div class="col text-center">
@@ -79,4 +70,3 @@
         </div>
     </div>
 @endsection
-

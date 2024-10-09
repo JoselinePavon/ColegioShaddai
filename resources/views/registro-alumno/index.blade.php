@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    Inscripcion
+    Registro Alumno
 @endsection
 
 @section('content')
@@ -12,18 +12,18 @@
                     <div class="card-header bg-warning text-dark">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span id="card_title" class="h4 font-weight-bold">
-                                {{ __('Inscripciones') }}
+                                {{ __('Registro Alumno') }}
                             </span>
 
                             <div class="float-right">
-                                <a href="{{ route('inscripcions.create') }}" class="btn btn-dark btn-sm" data-placement="left">
+                                <a href="{{ route('registro-alumnos.create') }}" class="btn btn-dark btn-sm" data-placement="left">
                                     {{ __('Registrar') }}
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    {{-- SweetAlert for success messages --}}
+                    {{-- SweetAlert para mensajes de éxito --}}
                     @if ($message = Session::get('success'))
                         <script>
                             Swal.fire({
@@ -44,27 +44,28 @@
                                     <th>No.</th>
                                     <th>Nombres</th>
                                     <th>Apellidos</th>
-                                    <th>Grado</th>
-                                    <th>Seccion</th>
+                                    <th>Género</th>
+                                    <th>Edad</th>
+                                    <th>Fecha Nacimiento</th>
                                     <th class="text-center">Acciones</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach ($inscripcions as $inscripcion)
+                                @foreach ($registroAlumnos as $registroAlumno)
                                     <tr>
-
                                         <td>{{ ++$i }}</td>
-                                        <td>{{ $inscripcion->RegistroAlumno->nombres ?? 'N/A' }}</td>
-                                        <td>{{ $inscripcion->RegistroAlumno->apellidos ?? 'N/A' }}</td>
-                                        <td>{{ $inscripcion->grado->nombre_grado ?? 'N/A' }}</td>
-                                        <td>{{ $inscripcion->seccion->seccion ?? 'N/A' }}</td>
+                                        <td>{{ $registroAlumno->nombres }}</td>
+                                        <td>{{ $registroAlumno->apellidos }}</td>
+                                        <td>{{ $registroAlumno->genero }}</td>
+                                        <td>{{ $registroAlumno->edad }}</td>
+                                        <td>{{ $registroAlumno->fecha_nacimiento }}</td>
 
                                         <td class="text-center">
-                                            <form action="{{ route('inscripcions.destroy', $inscripcion->id) }}" method="POST" class="delete-form">
-                                                <a class="btn btn-sm btn-primary" href="{{ route('inscripcions.show', $inscripcion->id) }}">
+                                            <form action="{{ route('registro-alumnos.destroy', $registroAlumno->id) }}" method="POST" class="delete-form">
+                                                <a class="btn btn-sm btn-primary" href="{{ route('registro-alumnos.show', $registroAlumno->id) }}">
                                                     <i class="fa fa-fw fa-eye"></i> {{ __('') }}
                                                 </a>
-                                                <a class="btn btn-sm btn-warning" href="{{ route('inscripcions.edit', $inscripcion->id) }}">
+                                                <a class="btn btn-sm btn-warning" href="{{ route('registro-alumnos.edit', $registroAlumno->id) }}">
                                                     <i class="fa fa-fw fa-edit"></i> {{ __('') }}
                                                 </a>
                                                 @csrf
@@ -81,12 +82,12 @@
                         </div>
                     </div>
                 </div>
-                {!! $inscripcions->links() !!}
+                {!! $registroAlumnos->links() !!}
             </div>
         </div>
     </div>
 
-    {{-- SweetAlert for delete confirmation --}}
+    {{-- SweetAlert para confirmación de eliminación --}}
     <script>
         document.querySelectorAll('.delete-button').forEach(button => {
             button.addEventListener('click', function(e) {
@@ -112,3 +113,4 @@
     </script>
 
 @endsection
+
