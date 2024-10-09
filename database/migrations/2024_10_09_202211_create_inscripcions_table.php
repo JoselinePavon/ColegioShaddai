@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('inscripcions', function (Blueprint $table) {
             $table->id();
 
-            // Definir las columnas de llaves foráneas
+
             $table->unsignedBigInteger('registro_alumnos_id');
             $table->unsignedBigInteger('grados_id');
             $table->unsignedBigInteger('seccions_id');
 
-            // Definir las llaves foráneas
+
             $table->foreign('registro_alumnos_id')->references('id')->on('registro_alumnos')->onDelete('cascade');
             $table->foreign('grados_id')->references('id')->on('grados')->onDelete('cascade');
             $table->foreign('seccions_id')->references('id')->on('seccions')->onDelete('cascade');
