@@ -22,7 +22,9 @@ class InscripcionRequest extends FormRequest
     public function rules(): array
     {
         return [
+			'registro_alumnos_id' => 'required',
 			'grados_id' => 'required',
+			'seccions_id' => 'required',
         ];
     }
 }

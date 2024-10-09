@@ -1,44 +1,38 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {{ $inscripcion->name ?? __('Mostrar') . " " . __('Inscripción') }}
+    {{ $inscripcion->name ?? __('Show') . " " . __('Inscripcion') }}
 @endsection
 
 @section('content')
     <section class="content container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">{{ __('Detalle del Alumno Inscrito') }}</h4>
-                        <a class="btn btn-warning btn-sm" href="{{ route('inscripcions.index') }}">
-                            {{ __('Regresar') }}
-                        </a>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="float-left">
+                            <span class="card-title">{{ __('Show') }} Inscripcion</span>
+                        </div>
+                        <div class="float-right">
+                            <a class="btn btn-primary btn-sm" href="{{ route('inscripcions.index') }}"> {{ __('Back') }}</a>
+                        </div>
                     </div>
 
-                    <div class="card-body bg-light">
-                        <table class="table table-bordered">
-                            <tbody>
-                            <tr>
-                                <th>{{ __('Nombres') }}</th>
-                                <td>{{ $inscripcion->RegistroAlumno->nombres }}</td>
-                            </tr>
-                            <tr>
-                                <th>{{ __('Apellidos') }}</th>
-                                <td>{{ $inscripcion->RegistroAlumno->apellidos}}</td>
-                            </tr>
+                    <div class="card-body bg-white">
+                        
+                        <div class="form-group mb-2 mb20">
+                            <strong>Registro Alumnos Id:</strong>
+                            {{ $inscripcion->registro_alumnos_id }}
+                        </div>
+                        <div class="form-group mb-2 mb20">
+                            <strong>Grados Id:</strong>
+                            {{ $inscripcion->grados_id }}
+                        </div>
+                        <div class="form-group mb-2 mb20">
+                            <strong>Seccions Id:</strong>
+                            {{ $inscripcion->seccions_id }}
+                        </div>
 
-                            <tr>
-                                <th>{{ __('Grado') }}</th>
-                                <td>{{ $inscripcion->grado->nombre_grado }}</td>
-                            </tr>
-                            <tr>
-                                <th>{{ __('Seccion') }}</th>
-                                <td>{{ $inscripcion->seccion->seccion  }}</td>
-                            </tr>
-
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
