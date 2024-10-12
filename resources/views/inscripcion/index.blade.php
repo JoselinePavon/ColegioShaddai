@@ -16,7 +16,28 @@
                                 {{ __('Inscripción') }}
                             </span>
 
-                            <div class="float-right">
+                                <div class="float-right">
+                                    <form action="{{ route('inscripcions.index') }}" method="GET" class="d-inline-block">
+                                        <select name="seccions_id" class="form-select" onchange="this.form.submit()">
+                                            <option value="">Todos los Registros</option>
+                                            @foreach($seccion as $id => $nombre)
+                                                <option value="{{ $id }}" {{ request()->get('seccions_id') == $id ? 'selected' : '' }}>
+                                                    {{ $nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+
+
+                                    <select name="grados_id" class="form-select ml-2" onchange="this.form.submit()">
+                                        <option value="">Todos los Grados</option>
+                                        @foreach($grado as $id => $nombre_grado)
+                                            <option value="{{ $id }}" {{ request()->get('grados_id') == $id ? 'selected' : '' }}>
+                                                {{ $nombre_grado }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    </form>
+
                                 <a href="{{ route('inscripcions.create') }}" class="btn btn-dark btn-sm" data-placement="left">
                                     {{ __('Registrar Nueva') }}
                                 </a>

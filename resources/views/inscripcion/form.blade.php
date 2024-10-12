@@ -13,8 +13,11 @@
                         <h4>{{ __('Registrar Inscripción') }}</h4>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('inscripcions.store') }}" method="POST">
+                        <form action="{{ isset($inscripcion) ? route('inscripcions.update', $inscripcion->id) : route('inscripcions.store') }}" method="POST">
                             @csrf
+                            @if(isset($inscripcion))
+                                @method('PUT')
+                            @endif
 
                             <!-- Select para Registro Alumnos -->
                             <div class="form-group mb-2 mb20">

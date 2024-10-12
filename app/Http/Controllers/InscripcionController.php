@@ -20,13 +20,31 @@ class InscripcionController extends Controller
      */
     public function index()
     {
-        $inscripcions = Inscripcion::paginate();
-        $registro_alumno = RegistroAlumno::pluck('nombres', 'id');
-        $grado = Grado::pluck('nombre_grado', 'id');
+        // Obtener todas las secciones y grados
         $seccion = Seccion::pluck('seccion', 'id');
-        return view('inscripcion.index', compact('inscripcions', 'registro_alumno','grado','seccion'))
+        $grado = Grado::pluck('nombre_grado', 'id');
+
+        // Obtener los filtros seleccionados por el usuario
+        $seccions_id = request()->get('seccions_id');
+        $grados_id = request()->get('grados_id');
+
+        // Filtrar las inscripciones en base a la sección y/o grado seleccionados
+        $inscripcions = Inscripcion::query();
+
+        if ($seccions_id) {
+            $inscripcions->where('seccions_id', $seccions_id);
+        }
+
+        if ($grados_id) {
+            $inscripcions->where('grados_id', $grados_id);
+        }
+
+        $inscripcions = $inscripcions->paginate();
+
+        return view('inscripcion.index', compact('inscripcions', 'seccion', 'grado'))
             ->with('i', (request()->input('page', 1) - 1) * $inscripcions->perPage());
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -67,11 +85,10 @@ class InscripcionController extends Controller
      */
     public function edit($id)
     {
-        $inscripcion = new Inscripcion();
+        $inscripcion = Inscripcion::find($id);
         $registro_alumno = RegistroAlumno::pluck('nombres', 'id');
         $grado = Grado::pluck('nombre_grado', 'id');
         $seccion = Seccion::pluck('seccion', 'id');
-        $inscripcion = Inscripcion::find($id);
 
         return view('inscripcion.edit', compact('inscripcion', 'registro_alumno','grado','seccion'));
     }
