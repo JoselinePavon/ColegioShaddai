@@ -26,7 +26,7 @@
                                                 </option>
                                             @endforeach
                                         </select>
-
+l
 
                                     <select name="grados_id" class="form-select ml-2" onchange="this.form.submit()">
                                         <option value="">Todos los Grados</option>

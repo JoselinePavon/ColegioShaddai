@@ -1,23 +1,3 @@
-@extends('layouts.app')
-
-@section('template_title')
-    {{ __('Registrar Inscripcion') }}
-@endsection
-
-@section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow-lg">
-                    <div class="card-header text-center bg-warning text-dark">
-                        <h4>{{ __('Registrar Inscripción') }}</h4>
-                    </div>
-                    <div class="card-body">
-                        <form action="{{ isset($inscripcion) ? route('inscripcions.update', $inscripcion->id) : route('inscripcions.store') }}" method="POST">
-                            @csrf
-                            @if(isset($inscripcion))
-                                @method('PUT')
-                            @endif
 
                             <!-- Select para Registro Alumnos -->
                             <div class="form-group mb-2 mb20">
@@ -65,10 +45,4 @@
                                 <button type="submit" class="btn btn-primary me-2">{{ __('Guardar') }}</button>
                                 <a href="{{ route('inscripcions.index') }}" class="btn btn-danger">{{ __('Cancelar') }}</a>
                             </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection
+
