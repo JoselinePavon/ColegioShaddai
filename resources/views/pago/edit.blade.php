@@ -5,15 +5,15 @@
 @endsection
 
 @section('content')
-    <section class="content container-fluid">
-        <div class="">
-            <div class="col-md-12">
-
-                <div class="card card-default">
-                    <div class="card-header">
-                        <span class="card-title">{{ __('Update') }} Pago</span>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-header text-center bg-warning text-dark">
+                        <h4>{{ __('Editar') }} Pago</h4>
                     </div>
-                    <div class="card-body bg-white">
+
+                    <div class="card-body bg-light">
                         <form method="POST" action="{{ route('pagos.update', $pago->id) }}"  role="form" enctype="multipart/form-data">
                             {{ method_field('PATCH') }}
                             @csrf
@@ -25,5 +25,6 @@
                 </div>
             </div>
         </div>
+    </div>
     </section>
 @endsection

@@ -1,17 +1,3 @@
-@extends('layouts.app')
-
-@section('template_title')
-    {{ __('Registro de Alumnos') }}
-@endsection
-
-@section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow-lg">
-                    <div class="card-header text-center bg-warning text-dark">
-                        <h4>{{ __('Registro de Alumnos') }}</h4>
-                    </div>
 
                     <div class="card-body bg-light">
                         <form method="POST" action="{{ route('registro-alumnos.store') }}">
@@ -54,9 +40,5 @@
                             </div>
                         </form>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection
+
 

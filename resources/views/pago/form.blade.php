@@ -1,21 +1,3 @@
-@extends('layouts.app')
-
-@section('template_title')
-    {{ __('Registro de Pago') }}
-@endsection
-
-@section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow-lg">
-                    <div class="card-header text-center bg-warning text-dark">
-                        <h4>{{ __('Registro de Pago') }}</h4>
-                    </div>
-
-                    <div class="card-body bg-light">
-                        <form method="POST" action="{{ route('pagos.store') }}">
-                            @csrf
 
                             <div class="form-group mb-3">
                                 <label for="num_serie" class="form-label">{{ __('Num Serie') }}</label>
@@ -59,10 +41,4 @@
                                     <a href="{{ route('pagos.index') }}" class="btn btn-danger">{{ __('Cancelar') }}</a>
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection
+

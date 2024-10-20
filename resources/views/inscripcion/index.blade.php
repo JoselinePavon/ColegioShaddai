@@ -16,19 +16,10 @@
                                 {{ __('Inscripción') }}
                             </span>
 
-                                <div class="float-right">
-                                    <form action="{{ route('inscripcions.index') }}" method="GET" class="d-inline-block">
-                                        <select name="seccions_id" class="form-select" onchange="this.form.submit()">
-                                            <option value="">Todos los Registros</option>
-                                            @foreach($seccion as $id => $nombre)
-                                                <option value="{{ $id }}" {{ request()->get('seccions_id') == $id ? 'selected' : '' }}>
-                                                    {{ $nombre }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-l
+                            <div class="float-right d-flex align-items-center">
+                                <form action="{{ route('inscripcions.index') }}" method="GET" class="d-flex align-items-center">
 
-                                    <select name="grados_id" class="form-select ml-2" onchange="this.form.submit()">
+                                    <select name="grados_id" class="form-select me-2 btn btn-outline-dark btn-sm pe-5" onchange="this.form.submit()">
                                         <option value="">Todos los Grados</option>
                                         @foreach($grado as $id => $nombre_grado)
                                             <option value="{{ $id }}" {{ request()->get('grados_id') == $id ? 'selected' : '' }}>
@@ -36,7 +27,16 @@ l
                                             </option>
                                         @endforeach
                                     </select>
-                                    </form>
+
+                                    <select name="seccions_id" class="form-select me-2 btn btn-outline-dark btn-sm pe-5" onchange="this.form.submit()">
+                                        <option value="">Todas las secciones</option>
+                                        @foreach($seccion as $id => $nombre)
+                                            <option value="{{ $id }}" {{ request()->get('seccions_id') == $id ? 'selected' : '' }}>
+                                                {{ $nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </form>
 
                                 <a href="{{ route('inscripcions.create') }}" class="btn btn-dark btn-sm" data-placement="left">
                                     {{ __('Registrar Nueva') }}

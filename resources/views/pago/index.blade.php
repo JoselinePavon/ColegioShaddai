@@ -50,6 +50,7 @@
                                     <th>Nombre Alumno</th>
                                     <th>Grado</th>
                                     <th>Fecha</th>
+                                  
                                     <th class="text-center">Acciones</th>
                                 </tr>
                                 </thead>
