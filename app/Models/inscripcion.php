@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Inscripcion extends Model
 {
-    
+
 
     protected $perPage = 20;
 
@@ -41,7 +41,7 @@ class Inscripcion extends Model
     {
         return $this->belongsTo(\App\Models\Grado::class, 'grados_id', 'id');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -49,7 +49,7 @@ class Inscripcion extends Model
     {
         return $this->belongsTo(\App\Models\RegistroAlumno::class, 'registro_alumnos_id', 'id');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -57,6 +57,6 @@ class Inscripcion extends Model
     {
         return $this->belongsTo(\App\Models\Seccion::class, 'seccions_id', 'id');
     }
-    
+
 
 }

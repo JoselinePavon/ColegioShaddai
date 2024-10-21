@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Producto;
 use App\Models\RegistroAlumno;
 use App\Models\Seccion;
 use App\Models\Grado;
 
 use App\Models\Inscripcion;
 use App\Http\Requests\InscripcionRequest;
+use Illuminate\Http\Request;
 
 /**
  * Class InscripcionController
@@ -56,7 +58,7 @@ class InscripcionController extends Controller
         $registro_alumno = RegistroAlumno::pluck('nombres', 'id');
         $grado = Grado::pluck('nombre_grado', 'id');
         $seccion = Seccion::pluck('seccion', 'id');
-        return view('inscripcion.create', compact('inscripcion', 'registro_alumno','grado','seccion'));
+        return view('inscripcion.form', compact('inscripcion', 'registro_alumno','grado','seccion'));
     }
 
     /**
@@ -111,4 +113,40 @@ class InscripcionController extends Controller
         return redirect()->route('inscripcions.index')
             ->with('success', 'Inscripcion deleted successfully');
     }
+
+    public function buscar()
+    {
+        return view('inscripcion.form');
+    }
+    public function resultados(Request $request)
+    {
+        $inscripcion = new Inscripcion();
+
+        $registro_alumno = RegistroAlumno::pluck('nombres', 'id');
+        $grado = Grado::pluck('nombre_grado', 'id');
+        $seccion = Seccion::pluck('seccion', 'id');
+
+        // Recuperar el valor de búsqueda desde la solicitud
+        $search = $request->input('search');
+
+        // Realizar la lógica de búsqueda según tus necesidades
+        $alumnos = RegistroAlumno::where('id', 'LIKE', "%$search%")
+            ->orWhere('nombres', 'LIKE', "%$search%")
+            ->get();
+
+        // Pasar el ID del primer alumno encontrado a la vista
+        $alumno = $alumnos->first();
+
+        // Verificar si el alumno ya tiene una inscripción
+        $yaInscrito = false;
+        if ($alumno) {
+            $yaInscrito = Inscripcion::where('registro_alumnos_id', $alumno->id)->exists();
+        }
+
+        // Pasar los resultados de la búsqueda a la vista resultados.blade.php
+        return view('inscripcion.form', compact('inscripcion', 'alumnos', 'registro_alumno', 'grado', 'seccion', 'alumno', 'yaInscrito'));
+    }
+
+
 }
+

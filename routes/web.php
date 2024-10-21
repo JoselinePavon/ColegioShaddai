@@ -42,3 +42,5 @@ Route::resource('registro-alumnos',RegistroAlumnoController::class);
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::get('/buscar', [InscripcionController::class, 'buscar'])->name('buscar');
+Route::get('/resultados', [InscripcionController::class, 'resultados'])->name('resultados');
