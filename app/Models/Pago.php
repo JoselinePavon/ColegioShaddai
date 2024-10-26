@@ -9,14 +9,14 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property $id
  * @property $num_serie
- * @property $tipo_pago
- * @property $costo_pago
- * @property $nombre_alumno
- * @property $grado
  * @property $fecha_pago
+ * @property $tipopagos_id
+ * @property $registro_alumnos_id
  * @property $created_at
  * @property $updated_at
  *
+ * @property RegistroAlumno $registroAlumno
+ * @property Tipopago $tipopago
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
@@ -31,8 +31,24 @@ class Pago extends Model
      *
      * @var array
      */
-    protected $fillable = ['num_serie', 'tipo_pago', 'costo_pago', 'nombre_alumno', 'grado', 'fecha_pago'];
+    protected $fillable = ['num_serie', 'fecha_pago', 'tipopagos_id', 'registro_alumnos_id'];
 
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function registroAlumno()
+    {
+        return $this->belongsTo(\App\Models\RegistroAlumno::class, 'registro_alumnos_id', 'id');
+    }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function tipopago()
+    {
+        return $this->belongsTo(\App\Models\Tipopago::class, 'tipopagos_id', 'id');
+    }
+    
 
 }

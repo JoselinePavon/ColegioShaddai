@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    Pago
+    Tipopago
 @endsection
 
 @section('content')
@@ -13,11 +13,11 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Pago') }}
+                                {{ __('Tipopago') }}
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('pagos.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('tipopagos.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                               </div>
@@ -35,31 +35,25 @@
                                 <thead class="thead">
                                     <tr>
                                         <th>No</th>
-
-										<th>Num Serie</th>
-										<th>Fecha Pago</th>
-										<th>Tipopagos Id</th>
-                                        <th>Monto</th>
-										<th>Registro Alumnos Id</th>
+                                        
+										<th>Tipo Pago</th>
+										<th>Monto</th>
 
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($pagos as $pago)
+                                    @foreach ($tipopagos as $tipopago)
                                         <tr>
                                             <td>{{ ++$i }}</td>
-
-											<td>{{ $pago->num_serie }}</td>
-											<td>{{ $pago->fecha_pago }}</td>
-											<td>{{ $pago->tipopago->tipo_pago}}</td>
-                                            <td>{{ $pago->tipopago->monto}}</td>
-											<td>{{ $pago->RegistroAlumno->nombres  }}</td>
+                                            
+											<td>{{ $tipopago->tipo_pago }}</td>
+											<td>{{ $tipopago->monto }}</td>
 
                                             <td>
-                                                <form action="{{ route('pagos.destroy',$pago->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('pagos.show',$pago->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('pagos.edit',$pago->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                <form action="{{ route('tipopagos.destroy',$tipopago->id) }}" method="POST">
+                                                    <a class="btn btn-sm btn-primary " href="{{ route('tipopagos.show',$tipopago->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
+                                                    <a class="btn btn-sm btn-success" href="{{ route('tipopagos.edit',$tipopago->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
@@ -72,7 +66,7 @@
                         </div>
                     </div>
                 </div>
-                {!! $pagos->links() !!}
+                {!! $tipopagos->links() !!}
             </div>
         </div>
     </div>

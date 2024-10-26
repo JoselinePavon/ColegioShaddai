@@ -3,6 +3,7 @@
 use App\Http\Controllers\GradoController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\PagoController;
+use App\Http\Controllers\TipopagoController;
 use App\Http\Controllers\RegistroAlumnoController;
 use App\Http\Controllers\SeccionController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,9 @@ Route::resource('inscripcions', InscripcionController::class);
 //ruta para grados
 Route::resource('grados', GradoController::class);
 
+Route::resource('tipopagos', TipopagoController::class);
+
+
 //ruta para secciones
 Route::resource('seccions', SeccionController::class);
 
@@ -44,3 +48,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::get('/buscar', [InscripcionController::class, 'buscar'])->name('buscar');
 Route::get('/resultados', [InscripcionController::class, 'resultados'])->name('resultados');
+
+Route::get('/buscar', [PagoController::class, 'buscar'])->name('buscar');
+Route::get('/resultadosp', [PagoController::class, 'resultadosp'])->name('resultadosp');
+

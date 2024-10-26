@@ -11,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pagos', function (Blueprint $table) {
+        Schema::create('tipopagos', function (Blueprint $table) {
             $table->id();
-            $table->integer('num_serie');
             $table->string('tipo_pago');
-            $table->integer('costo_pago');
-            $table->string('nombre_alumno');
-            $table->string('grado');
-            $table->date('fecha_pago');
+            $table->string('monto');
             $table->timestamps();
         });
+
     }
 
     /**
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pagos');
+        Schema::dropIfExists('tipopagos');
     }
 };
