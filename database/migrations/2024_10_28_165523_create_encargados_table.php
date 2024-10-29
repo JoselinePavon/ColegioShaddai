@@ -18,6 +18,8 @@ return new class extends Migration
             $table->integer('num_encargado1');
             $table->integer('num_encargado2');
             $table->string('persona_emergencia');
+
+            $table->foreign('registro_alumnos_id')->references('id')->on('registro_alumnos')->onDelete('cascade');
             $table->timestamps();
         });
     }
