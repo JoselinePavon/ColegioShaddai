@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EncargadoController;
 use App\Http\Controllers\GradoController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\PagoController;
@@ -42,6 +43,9 @@ Route::resource('pagos', PagoController::class);
 
 //ruta para alumno
 Route::resource('registro-alumnos',RegistroAlumnoController::class);
+
+//ruta de encargado
+Route::resource('encargados', EncargadoController::class);
 
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
