@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Encargado;
 use App\Http\Requests\EncargadoRequest;
+use App\Models\RegistroAlumno;
 
 /**
  * Class EncargadoController
@@ -28,7 +29,8 @@ class EncargadoController extends Controller
     public function create()
     {
         $encargado = new Encargado();
-        return view('encargado.create', compact('encargado'));
+        $registro_alumno = RegistroAlumno::pluck('nombres', 'id');
+        return view('encargado.create', compact('encargado','registro_alumno'));
     }
 
     /**

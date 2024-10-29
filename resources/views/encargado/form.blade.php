@@ -1,6 +1,6 @@
 <div class="row padding-1 p-1">
     <div class="col-md-12">
-        
+
         <div class="form-group mb-2 mb20">
             <label for="nombre_encargado" class="form-label">{{ __('Nombre Encargado') }}</label>
             <input type="text" name="nombre_encargado" class="form-control @error('nombre_encargado') is-invalid @enderror" value="{{ old('nombre_encargado', $encargado?->nombre_encargado) }}" id="nombre_encargado" placeholder="Nombre Encargado">
@@ -25,6 +25,19 @@
             <label for="persona_emergencia" class="form-label">{{ __('Persona Emergencia') }}</label>
             <input type="text" name="persona_emergencia" class="form-control @error('persona_emergencia') is-invalid @enderror" value="{{ old('persona_emergencia', $encargado?->persona_emergencia) }}" id="persona_emergencia" placeholder="Persona Emergencia">
             {!! $errors->first('persona_emergencia', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
+
+        <div class="form-group mb-2">
+            <label for="registro_alumnos_id" class="form-label">{{ __('Sección') }}</label>
+            <select name="registro_alumnos_id" class="form-control @error('registro_alumnos_id') is-invalid @enderror" id="registro_alumnos_id">
+                <option value="">Seleccione una sección</option>
+                @foreach( $registro_alumno as $id => $nombres)
+                    <option value="{{ $id }}" {{ old('registro_alumnos_id', $encargado->registro_alumnos_id ?? '') == $id ? 'selected' : '' }}>
+                        {{ $nombres }}
+                    </option>
+                @endforeach
+            </select>
+            {!! $errors->first('registro_alumnos_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
 
     </div>

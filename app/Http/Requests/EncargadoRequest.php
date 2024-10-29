@@ -27,6 +27,7 @@ class EncargadoRequest extends FormRequest
 			'num_encargado1' => 'required',
 			'num_encargado2' => 'required',
 			'persona_emergencia' => 'required|string',
+            'registro_alumnos_id' => 'required|string',
         ];
     }
 }

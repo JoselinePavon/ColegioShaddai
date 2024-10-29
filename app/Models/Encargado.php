@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property $num_encargado1
  * @property $num_encargado2
  * @property $persona_emergencia
+ * @property $registro_alumnos_id
  * @property $created_at
  * @property $updated_at
  *
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Encargado extends Model
 {
-    
+
 
     protected $perPage = 20;
 
@@ -30,7 +31,7 @@ class Encargado extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre_encargado', 'direccion', 'num_encargado1', 'num_encargado2', 'persona_emergencia'];
+    protected $fillable = ['nombre_encargado', 'direccion', 'num_encargado1', 'num_encargado2', 'persona_emergencia','registro_alumnos_id'];
 
 
 

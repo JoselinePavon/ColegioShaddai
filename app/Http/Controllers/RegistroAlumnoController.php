@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Encargado;
 use App\Models\RegistroAlumno;
 use App\Http\Requests\RegistroAlumnoRequest;
 
@@ -28,7 +29,8 @@ class RegistroAlumnoController extends Controller
     public function create()
     {
         $registroAlumno = new RegistroAlumno();
-        return view('registro-alumno.create', compact('registroAlumno'));
+        $encargado = new Encargado();
+        return view('registro-alumno.create', compact('registroAlumno','encargado'));
     }
 
     /**
@@ -36,8 +38,18 @@ class RegistroAlumnoController extends Controller
      */
     public function store(RegistroAlumnoRequest $request)
     {
-        RegistroAlumno::create($request->validated());
 
+        $alumno = RegistroAlumno::create($request->validated());
+
+        $encargado = new Encargado([
+            'nombre_encargado' => $request->input('nombre_encargado'),
+            'direccion' => $request->input('direccion'),
+            'num_encargado1' => $request->input('num_encargado1'),
+            'num_encargado2' => $request->input('num_encargado2'),
+            'persona_emergencia' => $request->input('persona_emergencia'),
+            'registro_alumnos_id' => $alumno->id, // Asignación automática
+        ]);
+        $encargado->save();
         return redirect()->route('registro-alumnos.index')
             ->with('success', 'RegistroAlumno created successfully.');
     }

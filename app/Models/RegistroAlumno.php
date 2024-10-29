@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class RegistroAlumno extends Model
 {
-    
+
 
     protected $perPage = 20;
 
@@ -32,6 +32,10 @@ class RegistroAlumno extends Model
      */
     protected $fillable = ['nombres', 'apellidos', 'genero', 'edad', 'fecha_nacimiento'];
 
+    public function encargado()
+    {
+        return $this->hasOne(Encargado::class, 'registro_alumnos_id');
+    }
 
 
 }
