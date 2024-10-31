@@ -22,6 +22,7 @@ class InscripcionController extends Controller
      */
     public function index()
     {
+
         // Obtener todas las secciones y grados
         $seccion = Seccion::pluck('seccion', 'id');
         $grado = Grado::pluck('nombre_grado', 'id');
@@ -41,10 +42,12 @@ class InscripcionController extends Controller
             $inscripcions->where('grados_id', $grados_id);
         }
 
+        $totalInscritos = Inscripcion::count();
         $inscripcions = $inscripcions->paginate();
 
-        return view('inscripcion.index', compact('inscripcions', 'seccion', 'grado'))
+        return view('inscripcion.index', compact('inscripcions', 'seccion', 'grado', 'totalInscritos'))
             ->with('i', (request()->input('page', 1) - 1) * $inscripcions->perPage());
+
     }
 
 

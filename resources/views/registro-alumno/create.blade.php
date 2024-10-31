@@ -7,10 +7,11 @@
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="card shadow-lg">
                     <div class="card-header text-center bg-warning text-dark">
-                        <h4>{{ __('Registrar') }} Alumno</h4>
+                        <h4><i class="fas fa-user"></i>
+                            {{ __('Registrar') }} Alumno</h4>
                     </div>
 
                     <div class="card-body bg-light">

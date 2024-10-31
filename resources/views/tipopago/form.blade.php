@@ -1,6 +1,6 @@
 <div class="row padding-1 p-1">
     <div class="col-md-12">
-        
+
         <div class="form-group mb-2 mb20">
             <label for="tipo_pago" class="form-label">{{ __('Tipo Pago') }}</label>
             <input type="text" name="tipo_pago" class="form-control @error('tipo_pago') is-invalid @enderror" value="{{ old('tipo_pago', $tipopago?->tipo_pago) }}" id="tipo_pago" placeholder="Tipo Pago">
@@ -13,7 +13,10 @@
         </div>
 
     </div>
-    <div class="col-md-12 mt20 mt-2">
-        <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+    <div class="row">
+        <div class="col text-center">
+            <button type="submit" class="btn btn-primary"> <i class="fas fa-save"></i> {{ __('Guardar') }}</button>
+            <a href="{{ route('tipopagos.index') }}" class="btn btn-danger">  <i class="fas fa-times"></i> {{ __('Cancelar') }}</a>
+        </div>
     </div>
 </div>

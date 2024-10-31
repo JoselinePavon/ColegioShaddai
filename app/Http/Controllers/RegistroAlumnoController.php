@@ -18,8 +18,9 @@ class RegistroAlumnoController extends Controller
     public function index()
     {
         $registroAlumnos = RegistroAlumno::paginate();
+        $encargado = Encargado::paginate();
 
-        return view('registro-alumno.index', compact('registroAlumnos'))
+        return view('registro-alumno.index', compact('registroAlumnos', 'encargado'))
             ->with('i', (request()->input('page', 1) - 1) * $registroAlumnos->perPage());
     }
 
@@ -59,7 +60,12 @@ class RegistroAlumnoController extends Controller
      */
     public function show($id)
     {
-        $registroAlumno = RegistroAlumno::find($id);
+        $registroAlumno = RegistroAlumno::with('encargado')->find($id);
+
+        if (!$registroAlumno) {
+            return redirect()->route('registro-alumnos.index')
+                ->with('error', 'Registro de Alumno no encontrado');
+        }
 
         return view('registro-alumno.show', compact('registroAlumno'));
     }

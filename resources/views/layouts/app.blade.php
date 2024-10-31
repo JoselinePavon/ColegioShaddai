@@ -79,13 +79,11 @@
             transform: scale(1.05);
         }
 
-
         .main-content {
             margin-left: var(--navbar-width);
             padding: 20px;
             flex-grow: 1;
         }
-
 
         @media (max-width: 768px) {
             .navbar-vertical {
@@ -108,13 +106,18 @@
 <nav class="navbar-vertical">
     <div class="navbar-brand">
         <img src="{{ asset('imagenes/logo.png') }}" alt="Logo">
-
     </div>
     <ul class="nav flex-column">
         <li class="nav-item">
+            <a class="nav-link" href="/home">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="/inscripcions">
                 <i class="fas fa-edit"></i>
-                <span>Inscripcion de alumnos</span>
+                <span>Inscripción de alumnos</span>
             </a>
         </li>
         <li class="nav-item">
@@ -138,21 +141,16 @@
         <li class="nav-item">
             <a class="nav-link" href="#">
                 <i class="fas fa-check-circle"></i>
-                <span>Solvencia de alumnos </span>
+                <span>Solvencia de alumnos</span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="/tipopagos">
                 <i class="fas fa-check-circle"></i>
-                <span>tipo de pagos </span>
+                <span>Tipo de pagos</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/encargados">
-                <i class="fas fa-check-circle"></i>
-                <span>encargados </span>
-            </a>
-        </li>
+
         <li class="nav-item">
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
@@ -166,7 +164,7 @@
 </nav>
 <div class="main-content">
     @yield('content')
-</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

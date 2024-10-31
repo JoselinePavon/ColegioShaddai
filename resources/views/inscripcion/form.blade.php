@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    
+
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -18,9 +18,9 @@
                         <!-- Formulario de búsqueda -->
                         <form method="GET" action="{{ route('resultados') }}" class="text-center">
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" id="search" name="search" placeholder="Buscar por Nombre o Código de Barra">
+                                <input type="text" class="form-control" id="search" name="search" placeholder="Buscar por Nombre o Código del alumno">
                                 <div class="input-group-append">
-                                    <button class="btn btn-primary btn-sm" type="submit">
+                                    <button class="btn btn-primary btn-ml" type="submit">
                                         <i class="fas fa-search"></i> Buscar
                                     </button>
                                 </div>
@@ -85,15 +85,16 @@
                                     </div>
 
                                     <div class="d-flex justify-content-center mt-3">
-                                        <button type="submit" class="btn btn-primary me-2">{{ __('Guardar') }}</button>
-                                        <a href="{{ route('inscripcions.index') }}" class="btn btn-danger">{{ __('Cancelar') }}</a>
+                                        <button type="submit" class="btn btn-primary me-2"><i class="fas fa-save"></i> {{ __('Guardar') }}</button>
+                                        <a href="{{ route('inscripcions.index') }}" class="btn btn-danger"> <i class="fas fa-times"></i> {{ __('Cancelar') }}</a>
                                     </div>
                                 </form>
                             </div>
                             @endif
                         </div>
                     @else
-                        <p>No se encontraron resultados para la búsqueda.</p>
+                        <p style="text-align: center; margin-top: 20px;">No se encontraron resultados para la búsqueda.</p>
+
                     @endif
 
                 </div>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {{ $registroAlumno->name ?? __('Mostrar') . " " . __('Registro Alumno') }}
+
 @endsection
 
 @section('content')
@@ -42,9 +42,47 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">{{ __('Detalle del encargado') }}</h4>
+                    </div>
+                    <div class="card-body bg-light">
+                        <table class="table table-bordered">
+                            <tbody>
+                            @if ($registroAlumno->encargado)
+                                <tr>
+                                    <th>{{ __('Nombre Encargado') }}</th>
+                                    <td>{{ $registroAlumno->encargado->nombre_encargado }}</td>
+                                </tr>
+                                <tr>
+                                    <th>{{ __('Dirección') }}</th>
+                                    <td>{{ $registroAlumno->encargado->direccion }}</td>
+                                </tr>
+                                <tr>
+                                    <th>{{ __('Número de telefono 1') }}</th>
+                                    <td>{{ $registroAlumno->encargado->num_encargado1 }}</td>
+                                </tr>
+                                <tr>
+                                    <th>{{ __('Número de telefono 2') }}</th>
+                                    <td>{{ $registroAlumno->encargado->num_encargado2 }}</td>
+                                </tr>
+                                <tr>
+                                    <th>{{ __('Persona de Emergencia') }}</th>
+                                    <td>{{ $registroAlumno->encargado->persona_emergencia }}</td>
+                                </tr>
+                            @else
+                                <tr>
+                                    <td colspan="2">
+                                        <p>No se encontró un encargado asignado a este alumno.</p>
+                                    </td>
+                                </tr>
+                            @endif
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
-            </div>
+
+                </div>
         </div>
     </section>
 @endsection
-

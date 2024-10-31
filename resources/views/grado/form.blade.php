@@ -10,8 +10,8 @@
 
                             <div class="row">
                                 <div class="col text-center">
-                                    <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
-                                    <a href="{{ route('grados.index') }}" class="btn btn-danger">{{ __('Cancelar') }}</a>
+                                    <button type="submit" class="btn btn-primary"> <i class="fas fa-save"></i> {{ __('Guardar') }}</button>
+                                    <a href="{{ route('grados.index') }}" class="btn btn-danger">  <i class="fas fa-times"></i> {{ __('Cancelar') }}</a>
                                 </div>
                             </div>
                     </div>
