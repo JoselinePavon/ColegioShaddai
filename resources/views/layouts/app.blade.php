@@ -105,7 +105,9 @@
 <body>
 <nav class="navbar-vertical">
     <div class="navbar-brand">
+        <a href="{{ route('home') }}">
         <img src="{{ asset('imagenes/logo.png') }}" alt="Logo">
+        </a>
     </div>
     <ul class="nav flex-column">
         <li class="nav-item">
