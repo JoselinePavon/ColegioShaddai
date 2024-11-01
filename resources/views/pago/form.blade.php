@@ -5,6 +5,7 @@
 @endsection
 
 @section('content')
+
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12">
@@ -14,8 +15,8 @@
                     </div>
 
                     <div class="card-body bg-light">
+        <!-- Formulario de búsqueda -->
                         <form method="GET" action="{{ route('resultadosp') }}" class="mb-3">
-                            <!-- Combined Row for Search, ID, Name, and Grade -->
                             <div class="row align-items-end">
                                 <div class="col-md-3">
                                     <div class="input-group input-group-ml">
@@ -32,6 +33,7 @@
                                     <div class="form-group">
                                         <label for="alumno_id" class="form-label">ID del Alumno</label>
                                         <input type="text" id="alumno_id" class="form-control" value="{{ $alumno->id ?? '' }}" readonly>
+                                        <input type="hidden" name="registro_alumnos_id" value="{{ $alumno->id ?? '' }}">
                                     </div>
                                 </div>
 
@@ -49,66 +51,75 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Each Field in Its Own Row -->
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <div class="form-group mb-2">
-                                        <label for="num_serie" class="form-label">{{ __('Num Serie') }}</label>
-                                        <input type="text" name="num_serie" class="form-control @error('num_serie') is-invalid @enderror" value="{{ old('num_serie', $pago?->num_serie) }}" id="num_serie" placeholder="Num Serie">
-                                        {!! $errors->first('num_serie', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <div class="form-group mb-3">
-                                        <label for="fecha_pago" class="form-label">{{ __('Fecha Pago') }}</label>
-                                        <input type="date" id="fecha_pago" name="fecha_pago" class="form-control" value="{{ now()->toDateString() }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <div class="form-group mb-2">
-                                        <label for="tipopagos_id" class="form-label">{{ __('Tipo de Pago') }}</label>
-                                        <select name="tipopagos_id" class="form-control @error('tipopagos_id') is-invalid @enderror" id="tipopagos_id">
-                                            <option value="" disabled selected>Selecciona un tipo de pago</option>
-                                            @foreach($tipos as $id => $tipo_pago)
-                                                <option value="{{ $id }}" {{ old('tipopagos_id', $pago?->tipopagos_id) == $id ? 'selected' : '' }}>
-                                                    {{ $tipo_pago }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        {!! $errors->first('tipopagos_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <div class="form-group mb-2">
-                                        <label for="monto" class="form-label">{{ __('Monto') }}</label>
-                                        <input type="text" id="monto" class="form-control" readonly>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-12 mt-3 text-center">
-                                <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
-                            </div>
                         </form>
 
-                        @if(isset($alumnos) && $alumnos->count() === 0)
-                            <p class="text-danger">No se encontraron resultados para la búsqueda.</p>
+                        @if(isset($alumno) && is_null($alumno))
+                            <p class="text-danger mt-3">Alumno no encontrado.</p>
                         @endif
+
+        <form method="POST" action="{{ route('pagos.store') }}">
+            @csrf
+
+            <input type="hidden" name="registro_alumnos_id" value="{{ $alumno->id ?? '' }}">
+            <input type="hidden" name="fecha_pago" value="{{ now()->toDateString() }}">
+
+
+            <!-- Each Field in Its Own Row -->
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="form-group mb-2">
+                        <label for="num_serie" class="form-label">{{ __('Num Serie') }}</label>
+                        <input type="text" name="num_serie" class="form-control @error('num_serie') is-invalid @enderror" value="{{ old('num_serie', $pago?->num_serie) }}" id="num_serie" placeholder="Num Serie">
+                        {!! $errors->first('num_serie', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                     </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="form-group mb-3">
+                        <label for="fecha_pago" class="form-label">{{ __('Fecha Pago') }}</label>
+                        <input type="date" id="fecha_pago" name="fecha_pago" class="form-control" value="{{ now()->toDateString() }}" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="form-group mb-2">
+                        <label for="tipopagos_id" class="form-label">{{ __('Tipo de Pago') }}</label>
+                        <select name="tipopagos_id" class="form-control @error('tipopagos_id') is-invalid @enderror" id="tipopagos_id">
+                            <option value="" disabled selected>Selecciona un tipo de pago</option>
+                            @foreach($tipos as $id => $tipo_pago)
+                                <option value="{{ $id }}" {{ old('tipopagos_id', $pago?->tipopagos_id) == $id ? 'selected' : '' }}>
+                                    {{ $tipo_pago }}
+                                </option>
+                            @endforeach
+                        </select>
+                        {!! $errors->first('tipopagos_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="form-group mb-2">
+                        <label for="monto" class="form-label">{{ __('Monto') }}</label>
+                        <input type="text" id="monto" class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 mt-3 text-center">
+                <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+            </div>
+        </form>
+    </div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <script>
         // Asegúrate de que la variable montos esté disponible aquí
@@ -122,3 +133,5 @@
         });
     </script>
 @endsection
+
+

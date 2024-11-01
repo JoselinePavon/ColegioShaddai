@@ -120,6 +120,7 @@ class PagoController extends Controller
             $grado = $inscripcion ? $inscripcion->grado : null;
         }
 
-        return view('pago.form', compact('alumno', 'montos','grado','pago','tipos','registro_alumno'));
+        return view('pago.form', compact('alumno', 'montos','grado','pago','tipos','registro_alumno'))
+        ->with('noAlumno', !$alumno);
     }
 }
