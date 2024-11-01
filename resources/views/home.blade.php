@@ -104,28 +104,26 @@
 
 
 
-            <!-- Dashboard cards -->
             <div class="dashboard">
                 <div class="card blue">
                     <i class="fas fa-users" style="font-size: 50px; color: #333; margin-bottom: 15px;"></i>
                     <h2>Total Alumnos Inscritos</h2>
-                    <p></p>
+                    <p>{{ $totalAlumnos }}</p>
                 </div>
-
 
                 <div class="card yellow">
                     <i class="fas fa-exclamation-circle" style="font-size: 50px; color: #333; margin-bottom: 15px;"></i>
                     <h2>Alumnos Insolventes</h2>
                     <p>150</p>
-
                 </div>
+
                 <div class="card green">
                     <i class="fas fa-dollar-sign" style="font-size: 50px; color: #333; margin-bottom: 15px;"></i>
                     <h2>Total Ingresos</h2>
-                    <p>$43,000</p>
-
+                    <p>Q{{ number_format($totalIngresos, 2) }}</p>
                 </div>
             </div>
+
 
             <!-- Graph section -->
             <div class="graph-container" style="width: 100%; margin: auto; padding: 20px;">
