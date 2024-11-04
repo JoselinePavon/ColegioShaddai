@@ -9,40 +9,39 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card shadow-lg">
-
-                    <div class="card-header bg-warning text-dark">
+                    <div class="card-header  text-dark" style="background-color: #fff2b6;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span id="card_title" class="h4 font-weight-bold">
-                                {{ __('Inscripción') }}
+                                {{ __('Inscripción de Alumnos') }}
                             </span>
-
-                            <div class="float-right d-flex align-items-center">
-                                <form action="{{ route('inscripcions.index') }}" method="GET" class="d-flex align-items-center">
-
-                                    <select name="grados_id" class="form-select me-2 btn btn-outline-dark btn-sm pe-5" onchange="this.form.submit()">
-                                        <option value="">Todos los Grados</option>
-                                        @foreach($grado as $id => $nombre_grado)
-                                            <option value="{{ $id }}" {{ request()->get('grados_id') == $id ? 'selected' : '' }}>
-                                                {{ $nombre_grado }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-
-                                    <select name="seccions_id" class="form-select me-2 btn btn-outline-dark btn-sm pe-5" onchange="this.form.submit()">
-                                        <option value="">Todas las secciones</option>
-                                        @foreach($seccion as $id => $nombre)
-                                            <option value="{{ $id }}" {{ request()->get('seccions_id') == $id ? 'selected' : '' }}>
-                                                {{ $nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </form>
-
-                                <a href="{{ route('inscripcions.create') }}" class="btn btn-dark btn-sm" data-placement="left">
-                                    {{ __('Registrar Nueva') }}
-                                </a>
-                            </div>
+                            <a href="{{ route('inscripcions.create') }}" class="btn btn-dark btn-sm w-auto" style="border-radius: 50px;" data-placement="left">
+                                <i class="fa fa-plus"></i> {{ __('Registrar Nueva Inscripcion') }}
+                            </a>
                         </div>
+                    </div>
+
+                    <!-- Filtros de Grado y Sección debajo del título -->
+
+                    <div class="p-3">
+                        <form action="{{ route('inscripcions.index') }}" method="GET" class="d-flex align-items-center justify-content-start">
+                            <select name="grados_id" class="form-select me-2 btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
+                                <option value="">Todos los Grados</option>
+                                @foreach($grado as $id => $nombre_grado)
+                                    <option value="{{ $id }}" {{ request()->get('grados_id') == $id ? 'selected' : '' }}>
+                                        {{ $nombre_grado }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            <select name="seccions_id" class="form-select me-2 btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
+                                <option value="">Todas las secciones</option>
+                                @foreach($seccion as $id => $nombre)
+                                    <option value="{{ $id }}" {{ request()->get('seccions_id') == $id ? 'selected' : '' }}>
+                                        {{ $nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </form>
                     </div>
 
                     @if ($message = Session::get('success'))
@@ -59,15 +58,16 @@
 
                     <div class="card-body bg-light">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover align-middle">
-                                <thead class="thead-dark">
+                            <table class="table  table-hover align-middle text-center">
+                                <!-- Cambiamos el color de fondo a un amarillo pálido personalizado -->
+                                <thead style="background-color: #ffce94; color: #333;">
                                 <tr>
                                     <th>No</th>
                                     <th>Nombre</th>
                                     <th>Apellido</th>
                                     <th>Grado</th>
                                     <th>Sección</th>
-                                    <th class="text-center">Acciones</th>
+                                    <th>Acciones</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -78,7 +78,7 @@
                                         <td>{{ $inscripcion->RegistroAlumno->apellidos ?? 'N/A' }}</td>
                                         <td>{{ $inscripcion->grado->nombre_grado ?? 'N/A' }}</td>
                                         <td>{{ $inscripcion->seccion->seccion ?? 'N/A' }}</td>
-                                        <td class="text-center">
+                                        <td>
                                             <form action="{{ route('inscripcions.destroy',$inscripcion->id) }}" method="POST" class="delete-form">
                                                 <a class="btn btn-sm btn-primary" href="{{ route('inscripcions.show',$inscripcion->id) }}">
                                                     <i class="fa fa-fw fa-eye"></i>

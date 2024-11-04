@@ -8,13 +8,13 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
-            --navbar-bg-color: #000080; /* Azul pavo */
-            --navbar-hover-color: #0000b3; /* Un tono más claro de azul pavo */
-            --text-hover-color: #ffd700; /* Dorado para el hover del texto */
-            --navbar-width: 20%; /* Ancho del navbar */
+            --navbar-bg-color: #000080;
+            --navbar-hover-color: #0000b3;
+            --text-hover-color: #ffd700;
+            --navbar-width: 250px;
         }
 
         body {
@@ -34,7 +34,9 @@
             padding-top: 20px;
             transition: all 0.3s ease;
             overflow-y: auto;
+            z-index: 1000;
         }
+
         .navbar-brand {
             display: flex;
             justify-content: center;
@@ -83,17 +85,38 @@
             margin-left: var(--navbar-width);
             padding: 20px;
             flex-grow: 1;
+            transition: margin-left 0.3s ease;
+        }
+
+        #sidebarToggle {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1001;
+            background-color: var(--navbar-bg-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
         }
 
         @media (max-width: 768px) {
             .navbar-vertical {
-                width: 100%;
-                height: auto;
-                position: relative;
+                transform: translateX(-100%);
+            }
+
+            .navbar-vertical.show {
+                transform: translateX(0);
             }
 
             .main-content {
                 margin-left: 0;
+            }
+
+            #sidebarToggle {
+                display: block;
             }
 
             body {
@@ -102,11 +125,16 @@
         }
     </style>
 </head>
+
 <body>
+<button id="sidebarToggle" aria-label="Toggle Sidebar">
+    <i class="fas fa-bars"></i>
+</button>
+
 <nav class="navbar-vertical">
     <div class="navbar-brand">
         <a href="{{ route('home') }}">
-        <img src="{{ asset('imagenes/logo.png') }}" alt="Logo">
+            <img src="{{ asset('imagenes/logo.png') }}" alt="Logo">
         </a>
     </div>
     <ul class="nav flex-column">
@@ -152,7 +180,6 @@
                 <span>Tipo de pagos</span>
             </a>
         </li>
-
         <li class="nav-item">
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
@@ -164,10 +191,10 @@
         </li>
     </ul>
 </nav>
+
 <div class="main-content">
     @yield('content')
+</div>
 
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
