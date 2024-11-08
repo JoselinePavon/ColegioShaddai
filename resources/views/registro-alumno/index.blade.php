@@ -5,86 +5,73 @@
 @endsection
 
 @section('content')
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card shadow-lg">
-                    <div class="card-header bg-warning text-dark">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span id="card_title" class="h4 font-weight-bold">
-                                {{ __('Registro Alumno') }}
-                            </span>
-
-                            <div class="float-right">
-                                <a href="{{ route('registro-alumnos.create') }}" class="btn btn-dark btn-sm" data-placement="left">
-                                    {{ __('Registrar') }}
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- SweetAlert para mensajes de éxito --}}
-                    @if ($message = Session::get('success'))
-                        <script>
-                            Swal.fire({
-                                icon: 'success',
-                                title: '¡Éxito!',
-                                text: '{{ $message }}',
-                                timer: 3000,
-                                showConfirmButton: false
-                            });
-                        </script>
-                    @endif
-
-                    <div class="card-body bg-light">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover align-middle">
-                                <thead class="thead-dark">
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Nombres</th>
-                                    <th>Apellidos</th>
-                                    <th>Género</th>
-                                    <th>Edad</th>
-                                    <th>Fecha Nacimiento</th>
-                                    <th class="text-center">Acciones</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach ($registroAlumnos as $registroAlumno)
-                                    <tr>
-                                        <td>{{ ++$i }}</td>
-                                        <td>{{ $registroAlumno->nombres }}</td>
-                                        <td>{{ $registroAlumno->apellidos }}</td>
-                                        <td>{{ $registroAlumno->genero }}</td>
-                                        <td>{{ $registroAlumno->edad }}</td>
-                                        <td>{{ $registroAlumno->fecha_nacimiento }}</td>
-
-                                        <td class="text-center">
-                                            <form action="{{ route('registro-alumnos.destroy', $registroAlumno->id) }}" method="POST" class="delete-form">
-                                                <a class="btn btn-sm btn-primary" href="{{ route('registro-alumnos.show', $registroAlumno->id) }}">
-                                                    <i class="fa fa-fw fa-eye"></i> {{ __('') }}
-                                                </a>
-                                                <a class="btn btn-sm btn-warning" href="{{ route('registro-alumnos.edit', $registroAlumno->id) }}">
-                                                    <i class="fa fa-fw fa-edit"></i> {{ __('') }}
-                                                </a>
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-sm btn-danger delete-button">
-                                                    <i class="fa fa-fw fa-trash"></i> {{ __('') }}
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+    <div class="container mt-3">
+        <div class="card shadow-lg">
+            <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 id="card_title" class="font-weight-bold">{{ __('Registro Alumno') }}</h4>
+                    <a href="{{ route('registro-alumnos.create') }}" class="btn btn-dark btn-sm rounded-pill">
+                        <i class="fa fa-plus"></i> {{ __('Registrar Nuevo Alumno') }}
+                    </a>
                 </div>
-                {!! $registroAlumnos->links() !!}
+
+                {{-- SweetAlert para mensajes de éxito --}}
+                @if ($message = Session::get('success'))
+                    <script>
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            text: '{{ $message }}',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                    </script>
+                @endif
+                <div class="table-responsive">
+                    <table id="mediciones" class="table table-striped table-bordered shadow-sm mt-3">
+                        <thead class="text-white" style="background-color: #343a40;">
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Nombres</th>
+                            <th scope="col">Apellidos</th>
+                            <th scope="col">Género</th>
+                            <th scope="col">Edad</th>
+                            <th scope="col">Fecha Nacimiento</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach ($registroAlumnos as $registroAlumno)
+                            <tr>
+                                <td>{{ ++$i }}</td>
+                                <td>{{ $registroAlumno->nombres }}</td>
+                                <td>{{ $registroAlumno->apellidos }}</td>
+                                <td>{{ $registroAlumno->genero }}</td>
+                                <td>{{ $registroAlumno->edad }}</td>
+                                <td>{{ $registroAlumno->fecha_nacimiento }}</td>
+                                <td class="text-center d-flex gap-1">
+                                    <a class="btn btn-sm btn-primary" href="{{ route('registro-alumnos.show', $registroAlumno->id) }}">
+                                        <i class="fa fa-fw fa-eye"></i>
+                                    </a>
+                                    <a class="btn btn-sm btn-warning" href="{{ route('registro-alumnos.edit', $registroAlumno->id) }}">
+                                        <i class="fa fa-fw fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('registro-alumnos.destroy', $registroAlumno->id) }}" method="POST" class="delete-form d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="btn btn-sm btn-danger delete-button">
+                                            <i class="fa fa-fw fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+        {!! $registroAlumnos->links() !!}
     </div>
 
     {{-- SweetAlert para confirmación de eliminación --}}
@@ -112,5 +99,24 @@
         });
     </script>
 
+    <script>
+        $(document).ready(function() {
+            $('#mediciones').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ por página",
+                    "zeroRecords": "Nada encontrado",
+                    "info": "Mostrando _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar",
+                    "paginate": {
+                        "first": "Primera",
+                        "last": "Última",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+        });
+    </script>
 @endsection
-
