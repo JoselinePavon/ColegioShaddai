@@ -31,7 +31,7 @@
         }
 
         .navbar-vertical {
-            background: linear-gradient(to bottom, #1442f4, #021599);
+            background: linear-gradient(to bottom, #002878, #021599);
             width: var(--navbar-width);
             height: 100vh;
             position: fixed;

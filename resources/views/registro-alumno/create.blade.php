@@ -5,8 +5,8 @@
 @endsection
 
 @section('content')
-    <div class="container mt-5">
-                        <h2 class="text-center mb-4">Registro de Estudiante y Encargado</h2>
+    <div class="container mt-2">
+
                         <form method="POST" action="{{ route('registro-alumnos.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 
