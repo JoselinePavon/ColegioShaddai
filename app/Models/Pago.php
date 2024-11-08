@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property $num_serie
  * @property $fecha_pago
  * @property $tipopagos_id
+ * @property $estados_id
  * @property $registro_alumnos_id
  * @property $created_at
  * @property $updated_at
@@ -22,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Pago extends Model
 {
-    
+
 
     protected $perPage = 20;
 
@@ -31,7 +32,7 @@ class Pago extends Model
      *
      * @var array
      */
-    protected $fillable = ['num_serie', 'fecha_pago', 'tipopagos_id', 'registro_alumnos_id'];
+    protected $fillable = ['num_serie', 'fecha_pago', 'tipopagos_id', 'registro_alumnos_id','estados_id'];
 
 
     /**
@@ -41,7 +42,7 @@ class Pago extends Model
     {
         return $this->belongsTo(\App\Models\RegistroAlumno::class, 'registro_alumnos_id', 'id');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -49,6 +50,11 @@ class Pago extends Model
     {
         return $this->belongsTo(\App\Models\Tipopago::class, 'tipopagos_id', 'id');
     }
-    
+
+    public function estado()
+    {
+        return $this->belongsTo(\App\Models\estado::class, 'estados_id', 'id');
+    }
+
 
 }

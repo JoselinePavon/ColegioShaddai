@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Pago;
 use App\Models\RegistroAlumno;
 use App\Models\Tipopago;
+use App\Models\estado;
 use App\Models\Inscripcion;
 use App\Http\Requests\PagoRequest;
 use Illuminate\Http\Request;
+
+use Carbon\Carbon;
 
 /**
  * Class PagoController
@@ -15,6 +18,35 @@ use Illuminate\Http\Request;
  */
 class PagoController extends Controller
 {
+
+    public function actualizarSolvenciasMensuales()
+    {
+        $mes_actual = Carbon::now()->month;
+        $anio_actual = Carbon::now()->year;
+
+        // Obtener todos los alumnos registrados
+        $alumnos = RegistroAlumno::all();
+
+        foreach ($alumnos as $alumno) {
+            // Buscar pagos de colegiatura (tipopagos_id 1) para el mes actual
+            $pago = Pago::where('registro_alumnos_id', $alumno->id)
+                ->where('tipopagos_id', 1) // Solo colegiatura
+                ->whereMonth('fecha_pago', $mes_actual)
+                ->whereYear('fecha_pago', $anio_actual)
+                ->first();
+
+            // Si no hay pago de colegiatura para el mes actual, marcar como insolvente
+            if (!$pago) {
+                Pago::create([
+                    'registro_alumnos_id' => $alumno->id,
+                    'tipopagos_id' => 1, // Colegiatura
+                    'fecha_pago' => now(),
+                    'estados_id' => 2, // Estado 2 representa "insolvente"
+                ]);
+            }
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -45,11 +77,41 @@ class PagoController extends Controller
      */
     public function store(PagoRequest $request)
     {
-        Pago::create($request->validated());
+        $data = $request->validated();
+
+        // Verificar si el tipo de pago es colegiatura (id 1)
+        if ($data['tipopagos_id'] == 1) {
+            $mes_actual = Carbon::now()->month;
+            $anio_actual = Carbon::now()->year;
+
+            // Verificar si ya existe un pago de colegiatura para este alumno en el mes y año actuales
+            $pagoExistente = Pago::where('registro_alumnos_id', $data['registro_alumnos_id'])
+                ->where('tipopagos_id', 1) // Solo colegiatura
+                ->whereMonth('fecha_pago', $mes_actual)
+                ->whereYear('fecha_pago', $anio_actual)
+                ->first();
+
+            if ($pagoExistente) {
+                // Si ya existe un pago de colegiatura, redirigir con un mensaje de error
+                return redirect()->route('pagos.index')
+                    ->with('error', 'Ya existe un pago de colegiatura registrado para este mes.');
+            }
+
+            // Asignar estado "solvente" si es colegiatura
+            $data['estados_id'] = 1; // Estado 1 representa "solvente"
+        } else {
+            // Asignar estado 3 para otros tipos de pago que no son colegiatura
+            $data['estados_id'] = 3;
+        }
+
+        Pago::create($data);
 
         return redirect()->route('pagos.index')
-            ->with('success', 'Pago created successfully.');
+            ->with('success', 'Pago registrado exitosamente.');
     }
+
+
+
 
     /**
      * Display the specified resource.

@@ -38,6 +38,7 @@
                             <th>Tipo de Pago</th>
                             <th>Monto</th>
                             <th>Alumno</th>
+                            <th>estado</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                         </thead>
@@ -50,6 +51,19 @@
                                 <td>{{ $pago->tipopago->tipo_pago }}</td>
                                 <td>{{ $pago->tipopago->monto }}</td>
                                 <td>{{ $pago->RegistroAlumno->nombres }}</td>
+                                <td>
+                                    @if($pago->estado->id == 1)
+                                        <span style="color: green;">● Solvente</span>
+                                    @elseif($pago->estado->id == 2)
+                                        <span style="color: red;">● Insolvente</span>
+                                    @elseif($pago->estado->id == 3)
+                                        <span style="color: blue;">● Cancelado</span>
+                                    @else
+                                        <span style="color: gray;">● Sin estado</span>
+                                    @endif
+                                </td>
+
+
                                 <td class="text-center d-flex gap-1 justify-content-center">
                                     <a class="btn btn-sm btn-primary" href="{{ route('pagos.show', $pago->id) }}">
                                         <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}

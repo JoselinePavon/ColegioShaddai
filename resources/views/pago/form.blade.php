@@ -13,6 +13,17 @@
                     <div class="card-header text-center bg-warning text-dark">
                         <h4>{{ __('Registrar') }} Pago</h4>
                     </div>
+                    @if(session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
 
                     <div class="card-body bg-light">
         <!-- Formulario de búsqueda -->
