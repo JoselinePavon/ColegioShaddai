@@ -181,12 +181,15 @@ class PagoController extends Controller
             ->orWhere('nombres', 'LIKE', "%$search%")
             ->first();
 
-        // Si el alumno existe, obtenemos el grado asignado y verificamos pagos de colegiatura
+        // Variables para grado, sección y estado de colegiatura
         $grado = null;
-        $alumnoYaPagoColegiatura = false; // Variable para verificar si ya pagó colegiatura
+        $seccion = null;
+        $alumnoYaPagoColegiatura = false;
+
         if ($alumno) {
             $inscripcion = Inscripcion::where('registro_alumnos_id', $alumno->id)->first();
             $grado = $inscripcion ? $inscripcion->grado : null;
+            $seccion = $inscripcion ? $inscripcion->seccion : null; // Obtener la sección asignada si existe
 
             // Verificar si el alumno ya pagó colegiatura en el mes actual
             $mes_actual = Carbon::now()->month;
@@ -204,7 +207,7 @@ class PagoController extends Controller
             $error = "Alumno no encontrado";
         }
 
-        return view('pago.create', compact('alumno', 'montos', 'grado', 'pago', 'tipos', 'registro_alumno', 'error', 'alumnoYaPagoColegiatura'));
+        return view('pago.create', compact('alumno', 'montos', 'grado', 'seccion', 'pago', 'tipos', 'registro_alumno', 'error', 'alumnoYaPagoColegiatura'));
     }
 
 }
