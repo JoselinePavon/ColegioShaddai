@@ -8,7 +8,7 @@
                         @csrf
                         <div class="row">
                             <div class="col-md-6">
-                                <h4 class="mb-3">Datos del Estudiante</h4>
+                                <h4 class="mb-3" style="background-color: #001f3f; color: white; padding: 10px; border-radius: 5px;">Datos del Estudiante</h4>
                                 <div class="mb-3">
                                     <label for="studentName" class="form-label fs-5"><i class="bi bi-person-fill"></i> Nombres</label>
                                     <input type="text" name="nombres" class="form-control form-control-lg @error('nombres') is-invalid @enderror" value="{{ old('nombres', $registroAlumno?->nombres) }}" id="nombres" placeholder="Nombres">
@@ -38,7 +38,7 @@
 
                             <!-- Guardian Data (Right Side) -->
                             <div class="col-md-6">
-                                <h4 class="mb-3">Datos del Encargado</h4>
+                                <h4 class="mb-3" style="background-color: #05027b; color: white; padding: 10px; border-radius: 5px;">Datos del Encargado</h4>
                                 <div class="mb-3">
                                     <label for="guardianName" class="form-label fs-5"><i class="bi bi-person-fill"></i> Nombre completo</label>
                                     <input type="text" name="nombre_encargado" class="form-control form-control-lg @error('nombre_encargado') is-invalid @enderror" value="{{ old('nombre_encargado', $encargado?->nombre_encargado) }}" id="Encargado" placeholder="Nombre Encargado">
@@ -71,7 +71,7 @@
 
                         <div class="row mt-4">
                             <div class="col text-center">
-                                <button type="submit" class="btn btn-primary btn-lg px-5"><i class="fas fa-save me-2"></i>{{ __('Guardar') }}</button>
+                                <button type="submit" class="btn btn-dark btn-lg px-5"><i class="fas fa-save me-2"></i>{{ __('Guardar') }}</button>
                                 <a href="{{ route('registro-alumnos.index') }}" class="btn btn-danger btn-lg px-5 ms-3"><i class="fas fa-times me-2"></i>{{ __('Cancelar') }}</a>
                             </div>
                         </div>

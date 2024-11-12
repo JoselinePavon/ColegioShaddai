@@ -7,7 +7,10 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #0066cc 0%,#002878 100%);
+            background-image: url('imagenes/fondo.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             margin: 0;
             padding: 0;
             display: flex;
@@ -15,6 +18,7 @@
             align-items: center;
             height: 100vh;
         }
+
         .login-card {
             background: white;
             padding: 2rem;

@@ -9,10 +9,7 @@
         <div class="card shadow-lg">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 id="card_title" class="font-weight-bold">{{ __('Gestión de Pagos') }}</h4>
-                    <a href="{{ route('pagos.create') }}" class="btn btn-dark btn-sm rounded-pill">
-                        <i class="fa fa-plus"></i> {{ __('Registrar Nuevo Pago') }}
-                    </a>
+                    <h4 id="card_title" class="font-weight-bold"> <i class="bi bi-file-earmark-check"></i> {{ __('Solvencia del alumno') }}</h4>
                 </div>
 
                 {{-- SweetAlert para mensajes de éxito --}}
@@ -66,16 +63,16 @@
 
                                 <td class="text-center d-flex gap-1 justify-content-center">
                                     <a class="btn btn-sm btn-primary" href="{{ route('pagos.show', $pago->id) }}">
-                                        <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
+                                        <i class="fa fa-fw fa-eye"></i>
                                     </a>
                                     <a class="btn btn-sm btn-warning" href="{{ route('pagos.edit', $pago->id) }}">
-                                        <i class="fa fa-fw fa-edit"></i> {{ __('Editar') }}
+                                        <i class="fa fa-fw fa-edit"></i>
                                     </a>
                                     <form action="{{ route('pagos.destroy', $pago->id) }}" method="POST" class="delete-form d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn btn-sm btn-danger delete-button">
-                                            <i class="fa fa-fw fa-trash"></i> {{ __('Eliminar') }}
+                                            <i class="fa fa-fw fa-trash"></i>
                                         </button>
                                     </form>
                                 </td>

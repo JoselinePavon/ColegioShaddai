@@ -78,7 +78,7 @@
 
                     /* Specific colors for cards */
                     .card.blue { background-color: #fcae11; }
-                    .card.yellow { background-color: #2b34c6; }
+                    .card.yellow { background-color: #1ea49d; }
                     .card.green { background-color: #97e8ff; }
 
                     /* Graph container styling */
@@ -126,85 +126,14 @@
 
 
             <!-- Graph section -->
-            <div class="graph-container" style="width: 100%; margin: auto; padding: 20px;">
-                <div class="graph-header" style="text-align: center; font-size: 24px; font-weight: bold; color: #333;">Ingresos Mensuales</div>
-                <canvas id="incomeChart"></canvas>
+
+                <div style="flex: 1;">
+                    <img src="/imagenes/fondo.png" alt="Income visualization" style="max-width: 100%; height: auto;">
+                    <canvas id="incomeChart"></canvas>
+                </div>
+
             </div>
 
-            <!-- Chart.js Script -->
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script>
-                const ctx = document.getElementById('incomeChart').getContext('2d');
-                const incomeChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre',
-                            'Octubre', 'Noviembre', 'Diciembre'],
-                        datasets: [{
-                            label: 'Ingresos ($)',
-                            data: [5000, 7000, 8000, 5500, 9000, 10000, 5000, 4000, 3000, 5888, 1000, 2000],
-                            backgroundColor: 'rgb(48, 196, 201,0.5)', // Color azul con 50% de transparencia
-                            borderColor: 'rgba(7, 4, 214, 1)', // Color de borde (opaco)
-                            borderWidth: 1,
-                            // Para eliminar las líneas entre las barras, se desactiva el borde de las barras
-                            borderSkipped: false,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            x: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Meses',
-                                    color: '#333',
-                                    font: {
-                                        size: 16,
-                                        weight: 'bold'
-                                    }
-                                },
-                                ticks: {
-                                    color: '#333',
-                                }
-                            },
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Ingresos en $',
-                                    color: '#333',
-                                    font: {
-                                        size: 16,
-                                        weight: 'bold'
-                                    }
-                                },
-                                ticks: {
-                                    color: '#333',
-                                }
-                            }
-                        }
-                    }
-                });
-            </script>
-
-            <style>
-                /* Estilos generales para la gráfica */
-                .graph-container {
-                    background-color: #f8f9fa;
-                    border: 1px solid #dee2e6;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                }
-                canvas {
-                    max-height: 400px; /* Ajusta la altura máxima de la gráfica */
-                }
-            </style>
 
 
             </body>

@@ -9,7 +9,7 @@
         <div class="card shadow-lg">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 id="card_title" class="font-weight-bold">{{ __('Grados y Carreras') }}</h4>
+                    <h4 id="card_title" class="font-weight-bold"> <i class="bi bi-journal-bookmark"></i> {{ __('Grados y Carreras') }}</h4>
                 <a href="{{ route('grados.create') }}" class="btn btn-dark btn-sm rounded-pill">
                     <i class="fa fa-plus"></i> {{ __('Registrar Nuevo Grado') }}
                 </a>
@@ -45,9 +45,7 @@
                                     <a class="btn btn-sm btn-primary" href="{{ route('grados.show', $grado->id) }}">
                                         <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
                                     </a>
-                                    <a class="btn btn-sm btn-warning" href="{{ route('grados.edit', $grado->id) }}">
-                                        <i class="fa fa-fw fa-edit"></i> {{ __('Editar') }}
-                                    </a>
+
                                     <form action="{{ route('grados.destroy', $grado->id) }}" method="POST" class="delete-form d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -90,12 +88,23 @@
             });
         });
     </script>
+    <style>
+        .dataTables_empty {
+            background-color: #cff4fc;
+            color: #055160;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+    </style>
+
     <script>
         $(document).ready(function() {
             $('#mediciones').DataTable({
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ por página",
-                    "zeroRecords": "Nada encontrado",
+                    "zeroRecords": "<i class='fas fa-info-circle'></i> No se encontraron resultados para la búsqueda.",
+                    "emptyTable": "<i class='fas fa-info-circle'></i> No hay datos disponibles en la tabla",
                     "info": "Mostrando _PAGE_ de _PAGES_",
                     "infoEmpty": "No hay registros disponibles",
                     "infoFiltered": "(filtrado de _MAX_ registros totales)",
@@ -105,6 +114,11 @@
                         "last": "Última",
                         "next": "Siguiente",
                         "previous": "Anterior"
+                    }
+                },
+                "drawCallback": function(settings) {
+                    if (settings.fnRecordsTotal() == 0) {
+                        $(this).find('.dataTables_empty').addClass('alert-style');
                     }
                 }
             });

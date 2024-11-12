@@ -3,17 +3,12 @@
 
         <div class="form-row">
                             <div class="form-group mb-3">
-                                <label for="nombre_grado" class="form-label">{{ __('Nombre Grado') }}</label>
-                                <input type="text" name="nombre_grado" class="form-control @error('nombre_grado') is-invalid @enderror" value="{{ old('nombre_grado', $grado?->nombre_grado) }}" id="nombre_grado" placeholder="Nombre Grado">
+                                <label for="nombre_grado" class="form-label"> {{ __('Nombre Grado') }}</label>
+                                <input type="text" name="nombre_grado" class="form-control @error('nombre_grado') is-invalid @enderror" value="{{ old('nombre_grado', $grado?->nombre_grado) }}" id="nombre_grado" placeholder="Escribe el nombre del grado">
                                 {!! $errors->first('nombre_grado', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                             </div>
 
-                            <div class="row">
-                                <div class="col text-center">
-                                    <button type="submit" class="btn btn-primary"> <i class="fas fa-save"></i> {{ __('Guardar') }}</button>
-                                    <a href="{{ route('grados.index') }}" class="btn btn-danger">  <i class="fas fa-times"></i> {{ __('Cancelar') }}</a>
-                                </div>
-                            </div>
+
                     </div>
                 </div>
             </div>

@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="container mt-4">
-        <h1 class="mb-4">Formulario de Pago</h1>
+        <h1 class="mb-4"> <i class="bi bi-cash"></i> Formulario de Pago</h1>
         <div class="row">
             <div class="col-md-7">
                 <div class="card mb-4">

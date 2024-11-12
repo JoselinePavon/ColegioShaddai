@@ -9,7 +9,7 @@
         <div class="card shadow-lg">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 id="card_title" class="font-weight-bold">{{ __('Tipos de Pago') }}</h4>
+                    <h4 id="card_title" class="font-weight-bold"> <i class="bi bi-wallet"></i> {{ __('Tipos de Pago') }}</h4>
                     <a href="{{ route('tipopagos.create') }}" class="btn btn-dark btn-sm rounded-pill">
                         <i class="fa fa-plus"></i> {{ __('Registrar Nuevo Tipo de Pago') }}
                     </a>
@@ -94,12 +94,23 @@
         });
     </script>
 
+    <style>
+        .dataTables_empty {
+            background-color: #cff4fc;
+            color: #055160;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+    </style>
+
     <script>
         $(document).ready(function() {
             $('#mediciones').DataTable({
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ por página",
-                    "zeroRecords": "Nada encontrado",
+                    "zeroRecords": "<i class='fas fa-info-circle'></i> No se encontraron resultados para la búsqueda.",
+                    "emptyTable": "<i class='fas fa-info-circle'></i> No hay datos disponibles en la tabla",
                     "info": "Mostrando _PAGE_ de _PAGES_",
                     "infoEmpty": "No hay registros disponibles",
                     "infoFiltered": "(filtrado de _MAX_ registros totales)",
@@ -109,6 +120,11 @@
                         "last": "Última",
                         "next": "Siguiente",
                         "previous": "Anterior"
+                    }
+                },
+                "drawCallback": function(settings) {
+                    if (settings.fnRecordsTotal() == 0) {
+                        $(this).find('.dataTables_empty').addClass('alert-style');
                     }
                 }
             });

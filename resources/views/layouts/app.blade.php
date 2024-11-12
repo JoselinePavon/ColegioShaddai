@@ -169,13 +169,13 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/pagos">
+            <a class="nav-link" href="/pagos/create">
                 <i class="fas fa-money-bill-wave"></i>
                 <span>Pagos</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/pagos">
                 <i class="fas fa-check-circle"></i>
                 <span>Solvencia de alumnos</span>
             </a>
