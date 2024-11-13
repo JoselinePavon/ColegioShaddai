@@ -57,6 +57,9 @@ class Inscripcion extends Model
     {
         return $this->belongsTo(\App\Models\Seccion::class, 'seccions_id', 'id');
     }
-
+    public function encargado()
+    {
+        return $this->hasOne(Encargado::class, 'registro_alumnos_id');
+    }
 
 }

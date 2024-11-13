@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Producto;
+use App\Models\Encargado;
 use App\Models\RegistroAlumno;
 use App\Models\Seccion;
 use App\Models\Grado;
@@ -26,6 +26,7 @@ class InscripcionController extends Controller
         // Obtener todas las secciones y grados
         $seccion = Seccion::pluck('seccion', 'id');
         $grado = Grado::pluck('nombre_grado', 'id');
+        $encargado = Encargado::pluck('num_encargado1', 'id');
 
         // Obtener los filtros seleccionados por el usuario
         $seccions_id = request()->get('seccions_id');
@@ -45,7 +46,7 @@ class InscripcionController extends Controller
         $totalInscritos = Inscripcion::count();
         $inscripcions = $inscripcions->paginate();
 
-        return view('inscripcion.index', compact('inscripcions', 'seccion', 'grado', 'totalInscritos'))
+        return view('inscripcion.index', compact('inscripcions', 'seccion', 'grado', 'totalInscritos','encargado'))
             ->with('i', (request()->input('page', 1) - 1) * $inscripcions->perPage());
 
     }

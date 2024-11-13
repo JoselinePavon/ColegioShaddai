@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Encargado;
 use App\Models\RegistroAlumno;
 use App\Http\Requests\RegistroAlumnoRequest;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class RegistroAlumnoController
@@ -91,11 +92,15 @@ class RegistroAlumnoController extends Controller
             ->with('success', 'RegistroAlumno updated successfully');
     }
 
-    public function destroy($id)
-    {
+    public function destroy($id){
+        try {
         RegistroAlumno::find($id)->delete();
 
         return redirect()->route('registro-alumnos.index')
             ->with('success', 'RegistroAlumno deleted successfully');
+    }catch (\Exception $exception){
+            Log::debug($exception->getMessage());
+            return redirect()->route('registro-alumnos.index')->with('alerta','no');
+        }
     }
 }

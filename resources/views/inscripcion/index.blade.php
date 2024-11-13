@@ -68,7 +68,7 @@
                                 <td>{{ $inscripcion->grado->nombre_grado ?? 'N/A' }}</td>
                                 <td>{{ $inscripcion->seccion->seccion ?? 'N/A' }}</td>
                                 <td>{{ $inscripcion->RegistroAlumno->fecha_nacimiento ?? 'N/A' }}</td>
-                                <td>{{ $inscripcion->RegistroAlumno->telefono_encargado ?? 'N/A' }}</td>
+                                <td>{{ $inscripcion->RegistroAlumno->encargado->num_encargado1 ?? 'N/A' }}</td>
                                 <td class="d-flex gap-1">
                                     <a class="btn btn-sm btn-primary" href="{{ route('inscripcions.show', $inscripcion->id) }}">
                                         <i class="fa fa-fw fa-eye"></i>
@@ -154,5 +154,20 @@
             });
         });
     </script>
+
+    @if(session('alerta')=='si')
+
+        <script>
+            Swal.fire({
+                title: 'No se puede eliminar la categoria ',
+                text:'Esta categoria ya esta ligado a  un customer, por ende es imposible eliminarlo',
+                width: 600,
+                padding: '3em',
+                color: '#050404',
+                background: '#fff url(/images/trees.png)',
+                backdrop: `#F82D23`
+            })
+        </script>
+    @endif
 
 @endsection
