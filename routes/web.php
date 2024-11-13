@@ -23,35 +23,37 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+// Rutas de autenticación
 Auth::routes();
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-//ruta para inscripciones
-Route::resource('inscripcions', InscripcionController::class);
 
-//ruta para grados
-Route::resource('grados', GradoController::class);
+// Grupo de rutas protegidas por el middleware 'auth'
+Route::middleware(['auth'])->group(function () {
+    // Ruta para home
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::resource('tipopagos', TipopagoController::class);
+    // Rutas para inscripciones
+    Route::resource('inscripcions', App\Http\Controllers\InscripcionController::class);
+    Route::get('/buscar', [App\Http\Controllers\InscripcionController::class, 'buscar'])->name('buscar');
+    Route::get('/resultados', [App\Http\Controllers\InscripcionController::class, 'resultados'])->name('resultados');
 
+    // Rutas para grados
+    Route::resource('grados', App\Http\Controllers\GradoController::class);
 
-//ruta para secciones
-Route::resource('seccions', SeccionController::class);
+    // Rutas para tipos de pagos
+    Route::resource('tipopagos', App\Http\Controllers\TipopagoController::class);
 
-//ruta para pagos
-Route::resource('pagos', PagoController::class);
+    // Rutas para secciones
+    Route::resource('seccions', App\Http\Controllers\SeccionController::class);
 
-//ruta para alumno
-Route::resource('registro-alumnos',RegistroAlumnoController::class);
+    // Rutas para pagos
+    Route::resource('pagos', App\Http\Controllers\PagoController::class);
+    Route::get('/buscar', [App\Http\Controllers\PagoController::class, 'buscar'])->name('buscar');
+    Route::get('/resultadosp', [App\Http\Controllers\PagoController::class, 'resultadosp'])->name('resultadosp');
 
-//ruta de encargado
-Route::resource('encargados', EncargadoController::class);
+    // Rutas para registro de alumnos
+    Route::resource('registro-alumnos', App\Http\Controllers\RegistroAlumnoController::class);
 
-Auth::routes();
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::get('/buscar', [InscripcionController::class, 'buscar'])->name('buscar');
-Route::get('/resultados', [InscripcionController::class, 'resultados'])->name('resultados');
-
-Route::get('/buscar', [PagoController::class, 'buscar'])->name('buscar');
-Route::get('/resultadosp', [PagoController::class, 'resultadosp'])->name('resultadosp');
-
+    // Rutas para encargados
+    Route::resource('encargados', App\Http\Controllers\EncargadoController::class);
+});

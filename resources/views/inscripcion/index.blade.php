@@ -9,10 +9,8 @@
         <div class="card shadow-lg">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 id="card_title" class="font-weight-bold"><i class="bi bi-person-circle"></i> {{ __('Inscripción de Alumnos') }}</h4>
-                    <a href="{{ route('inscripcions.create') }}" class="btn btn-dark btn-sm rounded-pill">
-                        <i class="fa fa-plus"></i> {{ __('Registrar Nueva Inscripción') }}
-                    </a>
+                    <h4 id="card_title" class="font-weight-bold"><i class="bi bi-person-circle"></i> {{ __('Listado de alumnos') }}</h4>
+
                 </div>
 
                 <form action="{{ route('inscripcions.index') }}" method="GET" class="d-flex align-items-center gap-2 mb-4">
@@ -48,7 +46,7 @@
                 @endif
 
                 <div class="table-responsive">
-                    <table id="mediciones" class="table table-striped table-bordered shadow-sm mt-3">
+                    <table id="mediciones" class="table table-striped table-bordered shadow-sm mt-3" style="font-size: 0.85em;">
                         <thead class="text-white" style="background-color: #343a40;">
                         <tr>
                             <th scope="col">No</th>
@@ -56,6 +54,8 @@
                             <th scope="col">Apellido</th>
                             <th scope="col">Grado</th>
                             <th scope="col">Sección</th>
+                            <th scope="col">Fecha de nacimiento</th>
+                            <th scope="col">Telefono Encargado</th>
                             <th scope="col">Acciones</th>
                         </tr>
                         </thead>
@@ -67,14 +67,16 @@
                                 <td>{{ $inscripcion->RegistroAlumno->apellidos ?? 'N/A' }}</td>
                                 <td>{{ $inscripcion->grado->nombre_grado ?? 'N/A' }}</td>
                                 <td>{{ $inscripcion->seccion->seccion ?? 'N/A' }}</td>
+                                <td>{{ $inscripcion->RegistroAlumno->fecha_nacimiento ?? 'N/A' }}</td>
+                                <td>{{ $inscripcion->RegistroAlumno->telefono_encargado ?? 'N/A' }}</td>
                                 <td class="d-flex gap-1">
-                                    <a class="btn btn-sm btn-primary" href="{{ route('inscripcions.show',$inscripcion->id) }}">
+                                    <a class="btn btn-sm btn-primary" href="{{ route('inscripcions.show', $inscripcion->id) }}">
                                         <i class="fa fa-fw fa-eye"></i>
                                     </a>
-                                    <a class="btn btn-sm btn-warning" href="{{ route('inscripcions.edit',$inscripcion->id) }}">
+                                    <a class="btn btn-sm btn-warning" href="{{ route('inscripcions.edit', $inscripcion->id) }}">
                                         <i class="fa fa-fw fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('inscripcions.destroy',$inscripcion->id) }}" method="POST" class="delete-form d-inline">
+                                    <form action="{{ route('inscripcions.destroy', $inscripcion->id) }}" method="POST" class="delete-form d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn btn-sm btn-danger delete-button">

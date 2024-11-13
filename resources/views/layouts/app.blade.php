@@ -144,6 +144,7 @@
         </a>
     </div>
     <ul class="nav flex-column">
+
         <li class="nav-item">
             <a class="nav-link" href="/home">
                 <i class="fas fa-home"></i>
@@ -151,9 +152,15 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="/registro-alumnos">
+                <i class="fas fa-user"></i>
+                <span>Registrar Alumno</span>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="/inscripcions">
                 <i class="fas fa-edit"></i>
-                <span>Inscripción de alumnos</span>
+                <span>Listado de alumnos</span>
             </a>
         </li>
         <li class="nav-item">
@@ -162,12 +169,7 @@
                 <span>Grados y Carreras</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/registro-alumnos">
-                <i class="fas fa-user"></i>
-                <span>Alumnos</span>
-            </a>
-        </li>
+
         <li class="nav-item">
             <a class="nav-link" href="/pagos/create">
                 <i class="fas fa-money-bill-wave"></i>
