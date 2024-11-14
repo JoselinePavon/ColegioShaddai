@@ -56,4 +56,10 @@ Route::middleware(['auth'])->group(function () {
 
     // Rutas para encargados
     Route::resource('encargados', App\Http\Controllers\EncargadoController::class);
+
+    Route::resource('lugars', App\Http\Controllers\LugarController::class);
+
+    Route::resource('colonias', App\Http\Controllers\ColoniaController::class);
+
+
 });

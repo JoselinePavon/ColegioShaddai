@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Colonia;
 use App\Models\Encargado;
+use App\Models\Lugar;
 use App\Models\RegistroAlumno;
 use App\Http\Requests\RegistroAlumnoRequest;
 use Illuminate\Support\Facades\Log;
@@ -32,7 +34,10 @@ class RegistroAlumnoController extends Controller
     {
         $registroAlumno = new RegistroAlumno();
         $encargado = new Encargado();
-        return view('registro-alumno.create', compact('registroAlumno','encargado'));
+
+        $lugares = Lugar::all();
+        $colonias = Colonia::all();
+        return view('registro-alumno.create', compact('registroAlumno', 'encargado', 'lugares', 'colonias'));
     }
 
     /**
@@ -45,11 +50,12 @@ class RegistroAlumnoController extends Controller
 
         $encargado = new Encargado([
             'nombre_encargado' => $request->input('nombre_encargado'),
-            'direccion' => $request->input('direccion'),
-            'num_encargado1' => $request->input('num_encargado1'),
-            'num_encargado2' => $request->input('num_encargado2'),
+            'dpi' => $request->input('dpi'),
+            'telefono' => $request->input('telefono'),
             'persona_emergencia' => $request->input('persona_emergencia'),
             'registro_alumnos_id' => $alumno->id, // Asignación automática
+            'lugars_id' => $request->input('lugars_id'), // Lugar seleccionado
+            'colonias_id' => $request->input('colonias_id') // Colonia seleccionada
         ]);
         $encargado->save();
         return redirect()->route('registro-alumnos.index')

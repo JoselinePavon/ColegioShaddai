@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('registro_alumnos', function (Blueprint $table) {
+        Schema::create('lugars', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo_personal');
-            $table->string('nombres');
-            $table->string('apellidos');
-            $table->string('genero');
-            $table->Integer('edad');
-            $table->date('fecha_nacimiento');
+            $table->string('lugar');
             $table->timestamps();
         });
     }
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('registro_alumnos');
+        Schema::dropIfExists('lugars');
     }
 };

@@ -23,11 +23,12 @@ class EncargadoRequest extends FormRequest
     {
         return [
 			'nombre_encargado' => 'required|string',
-			'direccion' => 'required|string',
-			'num_encargado1' => 'required',
-			'num_encargado2' => 'required',
+			'dpi' => 'required|string',
+			'telefono' => 'required',
 			'persona_emergencia' => 'required|string',
             'registro_alumnos_id' => 'required|string',
+            'lugars_id' => 'required|string',
+            'colonias_id' => 'required|string',
         ];
     }
 }

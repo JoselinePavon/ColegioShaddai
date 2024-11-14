@@ -1,83 +1,168 @@
-<div class="container-fluid px-4">
-    <div class="row justify-content-center">
-        <div class="col-md-11">
-            <div class="card shadow-lg mt-2">
-                <div class="card-body p-4">
+@extends('layouts.app')
 
+@section('template_title')
+    {{ __('Create') }} Pago
+@endsection
+
+@section('content')
+    <div class="container mt-4">
+        <div class="row">
+
+            <div class="card mb-5">
+                <div class="card-body">
                     <form method="POST" action="{{ route('registro-alumnos.store') }}">
                         @csrf
+
+                        <!-- Row for student and guardian sections side by side -->
                         <div class="row">
                             <div class="col-md-6">
-                                <h4 class="mb-3" style="background-color: #001f3f; color: white; padding: 10px; border-radius: 5px;">Datos del Estudiante</h4>
-                                <div class="mb-3">
-                                    <label for="studentName" class="form-label fs-5"><i class="bi bi-person-fill"></i> Nombres</label>
-                                    <input type="text" name="nombres" class="form-control form-control-lg @error('nombres') is-invalid @enderror" value="{{ old('nombres', $registroAlumno?->nombres) }}" id="nombres" placeholder="Nombres">
-                                    {!! $errors->first('nombres', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                                </div>
-                                <div class="mb-3">
-                                    <label for="studentName" class="form-label fs-5"><i class="bi bi-person-fill"></i> Apellidos</label>
-                                    <input type="text" name="apellidos" class="form-control form-control-lg @error('apellidos') is-invalid @enderror" value="{{ old('apellidos', $registroAlumno?->apellidos) }}" id="apellidos" placeholder="Apellidos">
-                                    {!! $errors->first('apellidos', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                                </div>
-                                <div class="mb-3">
-                                    <label for="guardianRelation" class="form-label fs-5"><i class="bi bi-people-fill"></i> Genero</label>
-                                    <input type="text" name="genero" class="form-control form-control-lg @error('genero') is-invalid @enderror" value="{{ old('genero', $registroAlumno?->genero) }}" id="genero" placeholder="Género">
-                                    {!! $errors->first('genero', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                                </div>
-                                <div class="mb-3">
-                                    <label for="studentDOB" class="form-label fs-5"><i class="bi bi-calendar-date"></i> Edad</label>
-                                    <input type="text" name="edad" class="form-control form-control-lg @error('edad') is-invalid @enderror" value="{{ old('edad', $registroAlumno?->edad) }}" id="edad" placeholder="Edad">
-                                    {!! $errors->first('edad', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                                </div>
-                                <div class="mb-3">
-                                    <label for="studentDOB" class="form-label fs-5"><i class="bi bi-calendar-date"></i> Fecha de nacimiento</label>
-                                    <input type="date" name="fecha_nacimiento" class="form-control form-control-lg @error('fecha_nacimiento') is-invalid @enderror" value="{{ old('fecha_nacimiento', $registroAlumno?->fecha_nacimiento) }}" id="fecha_nacimiento" placeholder="Fecha de Nacimiento">
-                                    {!! $errors->first('fecha_nacimiento', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                <h4 class="mb-3" style="background-color: #343a40; color: white; padding: 10px; border-radius: 5px;">Datos del Alumno</h4>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label for="codigo_personal" class="form-label fs-5"><i class="bi bi-person-fill"></i> codigo_personal</label>
+                                            <input type="text" name="codigo_personal" class="form-control" value="{{ old('codigo_personal', $registroAlumno?->codigo_personal) }}" id="codigo_personal" placeholder="123456789">
+                                            {!! $errors->first('codigo_personal', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label for="nombres" class="form-label fs-5"><i class="bi bi-person-fill"></i> Nombres</label>
+                                            <input type="text" name="nombres" class="form-control" value="{{ old('nombres', $registroAlumno?->nombres) }}" id="nombres" placeholder="Nombres">
+                                            {!! $errors->first('nombres', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label for="apellidos" class="form-label fs-5"><i class="bi bi-person-fill"></i> Apellidos</label>
+                                            <input type="text" name="apellidos" class="form-control" value="{{ old('apellidos', $registroAlumno?->apellidos) }}" id="apellidos" placeholder="Apellidos">
+                                            {!! $errors->first('apellidos', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label for="genero" class="form-label fs-5"><i class="bi bi-people-fill"></i> Género</label>
+                                            <select name="genero" class="form-control" id="genero">
+                                                <option value="">Selecciona género</option>
+                                                <option value="Masculino" {{ old('genero', $registroAlumno?->genero) == 'Masculino' ? 'selected' : '' }}>Masculino</option>
+                                                <option value="Femenino" {{ old('genero', $registroAlumno?->genero) == 'Femenino' ? 'selected' : '' }}>Femenino</option>
+                                            </select>
+                                            {!! $errors->first('genero', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label for="edad" class="form-label fs-5"><i class="bi bi-calendar-date"></i> Edad</label>
+                                            <input type="number" name="edad" class="form-control" value="{{ old('edad', $registroAlumno?->edad) }}" id="edad" placeholder="Edad">
+                                            {!! $errors->first('edad', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="fecha_nacimiento" class="form-label fs-5"><i class="bi bi-calendar-date"></i> Fecha de nacimiento</label>
+                                        <input type="date" name="fecha_nacimiento" class="form-control" value="{{ old('fecha_nacimiento', $registroAlumno?->fecha_nacimiento) }}" id="fecha_nacimiento">
+                                        {!! $errors->first('fecha_nacimiento', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Guardian Data (Right Side) -->
+                            <!-- Guardian Information (Right Side) -->
                             <div class="col-md-6">
                                 <h4 class="mb-3" style="background-color: #05027b; color: white; padding: 10px; border-radius: 5px;">Datos del Encargado</h4>
-                                <div class="mb-3">
-                                    <label for="guardianName" class="form-label fs-5"><i class="bi bi-person-fill"></i> Nombre completo</label>
-                                    <input type="text" name="nombre_encargado" class="form-control form-control-lg @error('nombre_encargado') is-invalid @enderror" value="{{ old('nombre_encargado', $encargado?->nombre_encargado) }}" id="Encargado" placeholder="Nombre Encargado">
-                                    {!! $errors->first('nombre_encargado', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label for="nombre_encargado" class="form-label fs-5"><i class="bi bi-person-fill"></i> Nombre completo</label>
+                                            <input type="text" name="nombre_encargado" class="form-control" value="{{ old('nombre_encargado', $encargado?->nombre_encargado) }}" id="nombre_encargado" placeholder="Nombre del Encargado">
+                                            {!! $errors->first('nombre_encargado', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="dpi" class="form-label fs-5"><i class="bi bi-house-door-fill"></i> Numero de Dpi</label>
+                                        <input type="number" name="dpi" class="form-control" value="{{ old('dpi', $encargado?->dpi) }}" id="dpi" placeholder="1234 1232 1234">
+                                        {!! $errors->first('dpi', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="lugars_id" class="form-label fs-5"><i class="bi bi-geo-alt-fill"></i> Lugar</label>
+                                        <select name="lugars_id" id="lugars_id" class="form-control">
+                                            <option value="">Seleccione un lugar</option>
+                                            @foreach($lugares as $lugar)
+                                                <option value="{{ $lugar->id }}" {{ old('lugars_id', $encargado?->lugars_id) == $lugar->id ? 'selected' : '' }}>
+                                                    {{ $lugar->lugar}}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        {!! $errors->first('lugars_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="colonias_id" class="form-label fs-5"><i class="bi bi-map-fill"></i> Colonia</label>
+                                        <select name="colonias_id" id="colonias_id" class="form-control" disabled>
+                                            <option value="">Seleccione una colonia</option>
+                                        </select>
+                                        {!! $errors->first('colonias_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="telefono" class="form-label fs-5"><i class="bi bi-telephone-fill"></i> Teléfono</label>
+                                        <input type="text" name="telefono" class="form-control" value="{{ old('telefono', $encargado?->telefono) }}" id="telefono" placeholder="Número de Teléfono">
+                                        {!! $errors->first('telefono', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="persona_emergencia" class="form-label fs-5"><i class="bi bi-telephone-fill"></i> Persona de Emergencia</label>
+                                        <input type="text" name="persona_emergencia" class="form-control" value="{{ old('persona_emergencia', $encargado?->persona_emergencia) }}" id="persona_emergencia" placeholder="Nombre de Persona de Emergencia">
+                                        {!! $errors->first('persona_emergencia', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                    </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="studentAddress" class="form-label fs-5"><i class="bi bi-house-door-fill"></i> Dirección</label>
-                                    <input type="text" name="direccion" class="form-control form-control-lg @error('direccion') is-invalid @enderror" value="{{ old('direccion', $encargado?->direccion) }}" id="direccion" placeholder="Direccion">
-                                    {!! $errors->first('direccion', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                <!-- Botones de acción -->
+                                <div class="text-center mt-4">
+                                    <button type="submit" class="btn btn-dark px-5"><i class="fas fa-save me-2"></i> Guardar</button>
+                                    <a href="{{ route('encargados.index') }}" class="btn btn-danger px-5 ms-3"><i class="fas fa-times me-2"></i> Cancelar</a>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="guardianPhone" class="form-label fs-5"><i class="bi bi-telephone-fill"></i> Teléfono</label>
-                                    <input type="text" name="num_encargado1" class="form-control form-control-lg @error('num_encargado1') is-invalid @enderror" value="{{ old('num_encargado1', $encargado?->num_encargado1) }}" id="num_encargado1" placeholder="Numero de telefono">
-                                    {!! $errors->first('num_encargado1', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                                </div>
-                                <div class="mb-3">
-                                    <label for="guardianPhone" class="form-label fs-5"><i class="bi bi-telephone-fill"></i> Teléfono Alternativo</label>
-                                    <input type="text" name="num_encargado2" class="form-control form-control-lg @error('num_encargado2') is-invalid @enderror" value="{{ old('num_encargado2', $encargado?->num_encargado2) }}" id="num_encargado2" placeholder="Numero alternativo">
-                                    {!! $errors->first('num_encargado2', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                                </div>
-                                <div class="mb-3">
-                                    <label for="guardianPhone" class="form-label fs-5"><i class="bi bi-telephone-fill"></i> Telefono de Emergencia</label>
-                                    <input type="text" name="persona_emergencia" class="form-control form-control-lg @error('persona_emergencia') is-invalid @enderror" value="{{ old('persona_emergencia', $encargado?->persona_emergencia) }}" id="persona_emergencia" placeholder="Persona en caso de emergencia">
-                                    {!! $errors->first('persona_emergencia', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mt-4">
-                            <div class="col text-center">
-                                <button type="submit" class="btn btn-dark btn-lg px-5"><i class="fas fa-save me-2"></i>{{ __('Guardar') }}</button>
-                                <a href="{{ route('registro-alumnos.index') }}" class="btn btn-danger btn-lg px-5 ms-3"><i class="fas fa-times me-2"></i>{{ __('Cancelar') }}</a>
-                            </div>
-                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    </div>
+
+    <!-- Script para cargar colonias dinámicamente basado en el lugar -->
+    <script>
+        // Objeto de colonias organizado por lugar
+        const coloniasPorLugar = {
+            @foreach($lugares as $lugar)
+                {{ $lugar->id }}: [
+                    @foreach($colonias->where('lugars_id', $lugar->id) as $colonia)
+                { id: {{ $colonia->id }}, nombre: "{{ $colonia->nombre }}" },
+                @endforeach
+            ],
+            @endforeach
+        };
+
+        // Selección de elementos del DOM
+        const lugarSelect = document.getElementById('lugars_id');
+        const coloniaSelect = document.getElementById('colonias_id');
+
+        // Evento al cambiar el lugar seleccionado
+        lugarSelect.addEventListener('change', function () {
+            const lugarId = this.value;
+
+            // Limpiar el selector de colonia y deshabilitar por defecto
+            coloniaSelect.innerHTML = '<option value="">Seleccione una colonia</option>';
+            coloniaSelect.disabled = true;
+
+            // Si hay colonias para el lugar seleccionado, habilitar y cargar opciones
+            if (coloniasPorLugar[lugarId]) {
+                coloniasPorLugar[lugarId].forEach(colonia => {
+                    const option = document.createElement('option');
+                    option.value = colonia.id;
+                    option.textContent = colonia.nombre;
+                    coloniaSelect.appendChild(option);
+                });
+                coloniaSelect.disabled = false;
+            }
+        });
+    </script>
+@endsection

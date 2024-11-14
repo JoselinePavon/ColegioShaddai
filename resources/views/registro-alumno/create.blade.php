@@ -5,8 +5,7 @@
 @endsection
 
 @section('content')
-    <div class="container mt-2">
-
+    <div class="container">
                         <form method="POST" action="{{ route('registro-alumnos.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 
