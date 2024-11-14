@@ -26,7 +26,7 @@ class InscripcionController extends Controller
         // Obtener todas las secciones y grados
         $seccion = Seccion::pluck('seccion', 'id');
         $grado = Grado::pluck('nombre_grado', 'id');
-        $encargado = Encargado::pluck('num_encargado1', 'id');
+        $encargado = Encargado::paginate();
 
         // Obtener los filtros seleccionados por el usuario
         $seccions_id = request()->get('seccions_id');

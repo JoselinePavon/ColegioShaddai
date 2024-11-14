@@ -36,7 +36,8 @@
                             <th scope="col">Apellidos</th>
                             <th scope="col">Género</th>
                             <th scope="col">Edad</th>
-                            <th scope="col">Fecha Nacimiento</th>
+                            <th scope="col">Nombre del Encargado</th>
+                            <th scope="col">Telefono del Encargado</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                         </thead>
@@ -48,7 +49,8 @@
                                 <td>{{ $registroAlumno->apellidos }}</td>
                                 <td>{{ $registroAlumno->genero }}</td>
                                 <td>{{ $registroAlumno->edad }}</td>
-                                <td>{{ $registroAlumno->fecha_nacimiento }}</td>
+                                <td>{{ $registroAlumno->encargado->nombre_encargado ?? 'N/A' }}</td>
+                                <td>{{ $registroAlumno->encargado->telefono ?? 'N/A' }}</td>
                                 <td class="text-center d-flex gap-1">
                                     <a class="btn btn-sm btn-primary" href="{{ route('registro-alumnos.show', $registroAlumno->id) }}">
                                         <i class="fa fa-fw fa-eye"></i>

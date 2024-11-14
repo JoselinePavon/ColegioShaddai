@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Colonia;
 use App\Models\Encargado;
+use App\Models\Grado;
+use App\Models\Inscripcion;
 use App\Models\Lugar;
 use App\Models\RegistroAlumno;
 use App\Http\Requests\RegistroAlumnoRequest;
+use App\Models\Seccion;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -34,10 +37,13 @@ class RegistroAlumnoController extends Controller
     {
         $registroAlumno = new RegistroAlumno();
         $encargado = new Encargado();
+        $inscripcion = new Inscripcion();
+        $grado = Grado::pluck('nombre_grado', 'id');
+        $seccion = Seccion::pluck('seccion', 'id');
 
         $lugares = Lugar::all();
         $colonias = Colonia::all();
-        return view('registro-alumno.create', compact('registroAlumno', 'encargado', 'lugares', 'colonias'));
+        return view('registro-alumno.create', compact('registroAlumno', 'encargado', 'lugares', 'colonias','inscripcion','grado','seccion'));
     }
 
     /**
@@ -58,6 +64,16 @@ class RegistroAlumnoController extends Controller
             'colonias_id' => $request->input('colonias_id') // Colonia seleccionada
         ]);
         $encargado->save();
+
+        $inscripcion = new Inscripcion([
+            'registro_alumnos_id' => $alumno->id,  // ID automático
+            'grados_id' => $request->input('grados_id'),
+            'seccions_id' => $request->input('seccions_id'),
+            'codigo_correlativo' => $request->input('codigo_correlativo'),
+
+        ]);
+        $inscripcion->save();
+
         return redirect()->route('registro-alumnos.index')
             ->with('success', 'RegistroAlumno created successfully.');
     }

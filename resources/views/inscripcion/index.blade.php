@@ -68,7 +68,7 @@
                                 <td>{{ $inscripcion->grado->nombre_grado ?? 'N/A' }}</td>
                                 <td>{{ $inscripcion->seccion->seccion ?? 'N/A' }}</td>
                                 <td>{{ $inscripcion->RegistroAlumno->fecha_nacimiento ?? 'N/A' }}</td>
-                                <td>{{ $inscripcion->RegistroAlumno->encargado->num_encargado1 ?? 'N/A' }}</td>
+                                <td>{{ $inscripcion->RegistroAlumno->encargado->telefono ?? 'N/A' }}</td>
                                 <td class="d-flex gap-1">
                                     <a class="btn btn-sm btn-primary" href="{{ route('inscripcions.show', $inscripcion->id) }}">
                                         <i class="fa fa-fw fa-eye"></i>

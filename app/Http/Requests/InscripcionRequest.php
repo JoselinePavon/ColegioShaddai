@@ -22,6 +22,8 @@ class InscripcionRequest extends FormRequest
     public function rules(): array
     {
         return [
+
+            'codigo_correlativo' => 'required',
 			'registro_alumnos_id' => 'required',
 			'grados_id' => 'required',
 			'seccions_id' => 'required',

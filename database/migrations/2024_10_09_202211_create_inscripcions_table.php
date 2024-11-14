@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('inscripcions', function (Blueprint $table) {
             $table->id();
 
-
+            $table->string('codigo_correlativo');
             $table->unsignedBigInteger('registro_alumnos_id');
             $table->unsignedBigInteger('grados_id');
             $table->unsignedBigInteger('seccions_id');
+
 
 
             $table->foreign('registro_alumnos_id')->references('id')->on('registro_alumnos')->onDelete('cascade');

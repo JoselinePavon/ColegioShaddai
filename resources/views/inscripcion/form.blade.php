@@ -12,45 +12,18 @@
                     <h4 class="font-weight-bold"><i class="bi bi-person-circle"></i> {{ __('Registrar') }} Inscripción</h4>
                 </div>
 
-                <!-- Formulario de búsqueda -->
-                <form method="GET" action="{{ route('resultados') }}" class="mb-4">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="search" name="search" placeholder="Buscar por Nombre o Código del alumno">
-                        <button class="btn btn-outline-dark" type="submit">
-                            <i class="fas fa-search"></i> Buscar
-                        </button>
-                    </div>
-                </form>
 
-                @if(isset($alumnos) && $alumnos->count() > 0)
-                    <!-- Información del Alumno -->
-                    <div class="bg-light p-4 rounded mb-4">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="alumno_id" class="form-label">ID del Alumno</label>
-                                <input type="text" id="alumno_id" class="form-control" value="{{ $alumno->id }}" readonly>
-                                <input type="hidden" name="registro_alumnos_id" value="{{ $alumno->id }}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="alumno_nombre" class="form-label">Nombre del Alumno</label>
-                                <input type="text" id="alumno_nombre" class="form-control" value="{{ $alumno->nombres }}" readonly>
-                            </div>
-                        </div>
-
-                        @if($yaInscrito)
-                            <div class="alert alert-warning" role="alert">
-                                <i class="fas fa-exclamation-triangle"></i> Este alumno ya fue inscrito.
-                            </div>
-                        @endif
-                    </div>
-
-                    @if(!$yaInscrito)
-                        <!-- Formulario de Inscripción -->
                         <form method="POST" action="{{ route('inscripcions.store') }}" role="form" enctype="multipart/form-data">
                             @csrf
-                            <input type="hidden" name="registro_alumnos_id" value="{{ $alumno->id }}">
+
 
                             <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="codigo_correlativo" class="form-label"> {{ __('Codigo Correlativo') }}</label>
+                                    <input type="text" name="codigo_correlativo" class="form-control @error('codigo_correlativo') is-invalid @enderror" value="{{ old('codigo_correlativo', $inscripcion?->codigo_correlativo) }}" id="codigo_correlativo" placeholder="Escribe el nombre del grado">
+                                    {!! $errors->first('codigo_correlativo', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                </div>
+
                                 <div class="col-md-6 mb-3">
                                     <label for="grados_id" class="form-label">{{ __('Grado') }}</label>
                                     <select name="grados_id" class="form-select @error('grados_id') is-invalid @enderror" id="grados_id">
@@ -91,12 +64,7 @@
                                 </button>
                             </div>
                         </form>
-                    @endif
-                @else
-                    <div class="alert alert-info text-center" role="alert">
-                        <i class="fas fa-info-circle"></i> No se encontraron resultados para la búsqueda.
-                    </div>
-                @endif
+
             </div>
         </div>
     </div>
