@@ -2,18 +2,37 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Encargado
+ *
+ * @property $id
+ * @property $nombre_encargado
+ * @property $direccion
+ * @property $num_encargado1
+ * @property $num_encargado2
+ * @property $persona_emergencia
+ * @property $registro_alumnos_id
+ * @property $created_at
+ * @property $updated_at
+ *
+ * @package App
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ */
 class Encargado extends Model
 {
     protected $table = 'encargados'; // Nombre de la tabla
     protected $perPage = 20;
 
     /**
+     * Attributes that should be mass-assignable.
      * Atributos que pueden ser asignados masivamente.
      *
      * @var array
      */
+
     protected $fillable = [
         'nombre_encargado',
         'dpi',

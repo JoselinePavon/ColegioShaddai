@@ -116,7 +116,8 @@
             $('#mediciones').DataTable({
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ por página",
-                    "zeroRecords": "Nada encontrado",
+                    "zeroRecords": "<i class='fas fa-info-circle'></i> No se encontraron resultados para la búsqueda.",
+                    "emptyTable": "<i class='fas fa-info-circle'></i> No hay datos disponibles en la tabla",
                     "info": "Mostrando _PAGE_ de _PAGES_",
                     "infoEmpty": "No hay registros disponibles",
                     "infoFiltered": "(filtrado de _MAX_ registros totales)",
@@ -126,6 +127,11 @@
                         "last": "Última",
                         "next": "Siguiente",
                         "previous": "Anterior"
+                    }
+                },
+                "drawCallback": function(settings) {
+                    if (settings.fnRecordsTotal() == 0) {
+                        $(this).find('.dataTables_empty').addClass('alert-style');
                     }
                 }
             });

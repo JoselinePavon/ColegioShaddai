@@ -188,18 +188,7 @@
                 <span>Tipo de pagos</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/colonias">
-                <i class="fas fa-check-circle"></i>
-                <span>Colonias o Barrios</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/lugars">
-                <i class="fas fa-check-circle"></i>
-                <span>Lugares</span>
-            </a>
-        </li>
+
         <li class="nav-item">
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf

@@ -9,7 +9,8 @@
         <div class="card shadow-lg">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 id="card_title" class="font-weight-bold"> <i class="bi bi-wallet"></i> {{ __('Tipos de Pago') }}</h4>
+                    <h4 id="card_title" class="font-weight-bold"> <i class="bi bi-wallet-fill"></i>
+                        {{ __('Tipos de Pago') }}</h4>
                     <a href="{{ route('tipopagos.create') }}" class="btn btn-dark btn-sm rounded-pill">
                         <i class="fa fa-plus"></i> {{ __('Registrar Nuevo Tipo de Pago') }}
                     </a>

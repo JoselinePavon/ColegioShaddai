@@ -1,38 +1,58 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {{ $tipopago->name ?? __('Mostrar') . " " . __('Tipopago') }}
+    {{ $tipopago->name ?? __('Mostrar') . " " . __('Tipo de Pago') }}
 @endsection
 
 @section('content')
-    <section class="content container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">{{ __('Detalle del Tipo de Pago') }}</h4>
-                        <a class="btn btn-warning btn-sm" href="{{ route('tipopagos.index') }}">
-                            {{ __('Regresar') }}
-                        </a>
-                    </div>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-start mb-3">
+            <a href="{{ route('tipopagos.index') }}" class="btn btn-outline-dark btn-sm rounded-pill">
+                <i class="fas fa-arrow-left mr-1"></i> {{ __('Regresar') }}
+            </a>
+        </div>
 
-                    <div class="card-body bg-light">
-                        <table class="table table-bordered">
-                            <tbody>
-                            <tr>
-                                <th>{{ __('Tipo Pago') }}</th>
-                                <td>{{ $tipopago->tipo_pago }}</td>
-                            </tr>
-                            <tr>
-                                <th>{{ __('Monto') }}</th>
-                                <td>{{ $tipopago->monto }}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <!-- Detalle del Tipo de Pago -->
+        <div class="card border-0 shadow-sm rounded-lg">
+            <div class="card-header bg-light border-bottom-0">
+                <h5 class="mb-0 text-muted"><i class="fas fa-wallet mr-2"></i> Detalle del Tipo de Pago</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tbody>
+                    <tr>
+                        <th class="text-dark"><i class="fas fa-receipt text-muted mr-2"></i> {{ __('Tipo Pago') }}</th>
+                        <td class="text-secondary">{{ $tipopago->tipo_pago }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-dark"><i class="fas fa-dollar-sign text-muted mr-2"></i> {{ __('Monto') }}</th>
+                        <td class="text-secondary">{{ $tipopago->monto }}</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-    </section>
+    </div>
+
+    <style>
+        .card {
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1) !important;
+        }
+        .table-borderless tbody tr th {
+            font-weight: bold;
+            color: #343a40;
+        }
+        .table-borderless tbody tr td {
+            color: #6c757d;
+        }
+        .bg-light {
+            background-color: #f8f9fa !important;
+        }
+    </style>
 @endsection
+
 

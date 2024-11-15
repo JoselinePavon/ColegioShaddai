@@ -9,7 +9,8 @@
         <div class="card shadow-lg">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 id="card_title" class="font-weight-bold"> <i class="bi bi-journal-bookmark"></i> {{ __('Grados y Carreras') }}</h4>
+                    <h4 id="card_title" class="font-weight-bold"> <i class="bi bi-journal-bookmark-fill"></i>
+                        {{ __('Grados y Carreras') }}</h4>
                 <a href="{{ route('grados.create') }}" class="btn btn-dark btn-sm rounded-pill">
                     <i class="fa fa-plus"></i> {{ __('Registrar Nuevo Grado') }}
                 </a>

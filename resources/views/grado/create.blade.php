@@ -9,7 +9,8 @@
         <div class="card shadow-lg">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="font-weight-bold"> <i class="bi bi-journal-bookmark"></i> {{ __('Registrar') }} Grado</h4>
+                    <h4 class="font-weight-bold"> <i class="bi bi-journal-bookmark-fill"></i>
+                        {{ __('Registrar') }} Grado</h4>
                 </div>
 
                 <!-- Formulario de Grado -->
