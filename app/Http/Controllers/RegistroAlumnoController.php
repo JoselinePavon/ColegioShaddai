@@ -35,16 +35,17 @@ class RegistroAlumnoController extends Controller
      */
     public function create()
     {
-        $registroAlumno = new RegistroAlumno();
-        $encargado = new Encargado();
-        $inscripcion = new Inscripcion();
-        $grado = Grado::pluck('nombre_grado', 'id');
-        $seccion = Seccion::pluck('seccion', 'id');
+        $existingCodes = RegistroAlumno::pluck('codigo_personal')->toArray();
 
         $lugares = Lugar::all();
         $colonias = Colonia::all();
-        return view('registro-alumno.create', compact('registroAlumno', 'encargado', 'lugares', 'colonias','inscripcion','grado','seccion'));
+        $grado = Grado::pluck('nombre_grado', 'id');
+        $seccion = Seccion::pluck('seccion', 'id');
+
+        return view('registro-alumno.create', compact('lugares', 'colonias', 'grado', 'seccion', 'existingCodes'));
     }
+
+
 
     /**
      * Store a newly created resource in storage.

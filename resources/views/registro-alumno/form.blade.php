@@ -9,6 +9,13 @@
         <div class="row">
             <div class="card mb-5">
                 <div class="card-body">
+
+                    <!-- Mostrar el mensaje de error si el alumno no fue encontrado -->
+                    @if(isset($error))
+                        <div class="alert alert-danger" role="alert">
+                            {{ $error }}
+                        </div>
+                    @endif
                     <form method="POST" action="{{ route('registro-alumnos.store') }}">
                         @csrf
 
@@ -20,6 +27,7 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="codigo_personal" class="form-label"><i class="bi bi-person-fill"></i> Código Personal</label>
                                         <input type="text" name="codigo_personal" class="form-control required-field" id="codigo_personal" placeholder="123456789">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="nombres" class="form-label"><i class="bi bi-person-fill"></i> Nombres</label>
@@ -101,7 +109,9 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="codigo_correlativo" class="form-label">Código Correlativo</label>
                                     <input type="text" name="codigo_correlativo" class="form-control" id="codigo_correlativo" placeholder="Escribe el código">
+                                    <div class="invalid-feedback"></div>
                                 </div>
+
                                 <div class="col-md-6 mb-3">
                                     <label for="grados_id" class="form-label">Grado</label>
                                     <select name="grados_id" class="form-select" id="grados_id">
@@ -178,4 +188,48 @@
             }
         });
     </script>
+    <script>
+        document.getElementById('validateButton').addEventListener('click', async function () {
+            const requiredFields = document.querySelectorAll('.required-field');
+            let allFieldsFilled = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    allFieldsFilled = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            // Verificar unicidad del código personal si está lleno
+            const codigoPersonalField = document.getElementById('codigo_personal');
+            let isCodigoPersonalUnique = true;
+
+            if (codigoPersonalField.value.trim()) {
+                isCodigoPersonalUnique = await validateCodigoPersonal(codigoPersonalField.value.trim());
+                if (!isCodigoPersonalUnique) {
+                    codigoPersonalField.classList.add('is-invalid');
+                    codigoPersonalField.nextElementSibling.textContent = 'El código personal ya está en uso.';
+                    allFieldsFilled = false;
+                } else {
+                    codigoPersonalField.classList.remove('is-invalid');
+                    codigoPersonalField.nextElementSibling.textContent = '';
+                }
+            }
+
+            if (allFieldsFilled && isCodigoPersonalUnique) {
+                document.getElementById('inscripcionSection').style.display = 'block';
+            } else {
+                document.getElementById('inscripcionSection').style.display = 'none';
+            }
+        });
+        // Función para validar si el código personal es único
+        async function validateCodigoPersonal(codigo) {
+            const existingCodes = @json($existingCodes ?? []);
+            return !existingCodes.includes(codigo);
+        }
+    </script>
+
+
 @endsection

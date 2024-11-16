@@ -23,7 +23,7 @@ class InscripcionRequest extends FormRequest
     {
         return [
 
-            'codigo_correlativo' => 'required',
+            'codigo_correlativo' => 'required|unique:inscripcions,codigo_correlativo',
 			'registro_alumnos_id' => 'required',
 			'grados_id' => 'required',
 			'seccions_id' => 'required',

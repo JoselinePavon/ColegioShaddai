@@ -14,6 +14,8 @@
     <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap5.min.js"></script>
     <link rel="stylesheet" href="/css/admin_custom.css">
     <link href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 
     <style>
         :root {
@@ -68,6 +70,18 @@
         .nav-link:hover {
             background-color: var(--navbar-hover-color);
             transform: translateX(10px);
+        }
+        .nav-item.active, .nav-item.active .nav-link, .nav-item.active .nav-link span {
+            background-color: var(--navbar-hover-color); /* Fondo resaltado */
+            color: var(--text-hover-color); /* Color de texto resaltado */
+        }
+
+        .nav-item.active .nav-link {
+            transform: translateX(10px); /* Mantiene el efecto de desplazamiento */
+        }
+
+        .nav-item.active .nav-link span {
+            transform: scale(1.05); /* Resalta el texto */
         }
 
         .nav-link i {
@@ -145,44 +159,73 @@
     </div>
     <ul class="nav flex-column">
 
-        <li class="nav-item">
+        <li class="nav-item {{ request()->is('home') ? 'active' : '' }}">
             <a class="nav-link" href="/home">
                 <i class="fas fa-home"></i>
                 <span>Inicio</span>
             </a>
         </li>
+
         <li class="nav-item">
-            <a class="nav-link" href="/registro-alumnos">
+            <!-- Menú principal: Alumno -->
+            <a class="nav-link"
+               data-bs-toggle="collapse"
+               href="#submenu-alumno"
+               role="button"
+               aria-expanded="{{ request()->is('registro-alumnos*') ? 'true' : 'false' }}"
+               aria-controls="submenu-alumno">
                 <i class="fas fa-user"></i>
-                <span>Registrar Alumno</span>
+                <span>Alumno</span>
             </a>
+            <!-- Submenús -->
+            <div class="collapse {{ request()->is('registro-alumnos*') ? 'show' : '' }}" id="submenu-alumno">
+                <ul class="list-unstyled ps-3">
+                    <li class="nav-item {{ request()->is('registro-alumnos/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="/registro-alumnos/create">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Registrar Alumno</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {{ request()->is('registro-alumnos') ? 'active' : '' }}">
+                        <a class="nav-link" href="/registro-alumnos">
+                            <i class="fas fa-list"></i>
+                            <span>Lista de Alumnos</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
-        <li class="nav-item">
+
+
+        <li class="nav-item {{ request()->is('inscripcions') ? 'active' : '' }}">
             <a class="nav-link" href="/inscripcions">
                 <i class="fas fa-edit"></i>
-                <span>Listado de alumnos</span>
+                <span>Lista de Alumnos Inscritos</span>
             </a>
         </li>
-        <li class="nav-item">
+
+        <li class="nav-item {{ request()->is('grados') ? 'active' : '' }}">
             <a class="nav-link" href="/grados">
                 <i class="fas fa-graduation-cap"></i>
                 <span>Grados y Carreras</span>
             </a>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item {{ request()->is('pagos/create') ? 'active' : '' }}">
             <a class="nav-link" href="/pagos/create">
                 <i class="fas fa-money-bill-wave"></i>
                 <span>Pagos</span>
             </a>
         </li>
-        <li class="nav-item">
+
+        <li class="nav-item {{ request()->is('pagos') ? 'active' : '' }}">
             <a class="nav-link" href="/pagos">
                 <i class="fas fa-check-circle"></i>
                 <span>Solvencia de alumnos</span>
             </a>
         </li>
-        <li class="nav-item">
+
+        <li class="nav-item {{ request()->is('tipopagos') ? 'active' : '' }}">
             <a class="nav-link" href="/tipopagos">
                 <i class="fas fa-check-circle"></i>
                 <span>Tipo de pagos</span>
@@ -200,6 +243,7 @@
         </li>
     </ul>
 </nav>
+
 
 <div class="main-content">
     @yield('content')

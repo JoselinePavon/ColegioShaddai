@@ -27,7 +27,9 @@ class RegistroAlumnoRequest extends FormRequest
 			'genero' => 'required|string',
 			'edad' => 'required',
 			'fecha_nacimiento' => 'required',
-            'codigo_personal',
+            'codigo_personal' => 'unique:registro_alumnos,codigo_personal', // Validación única
+            'codigo_correlativo' => 'required|unique:inscripcions,codigo_correlativo',
+
 
         ];
     }
