@@ -121,6 +121,16 @@
             cursor: pointer;
             display: none;
         }
+        /* Flecha por defecto: Apunta hacia la derecha */
+        .rotate-icon {
+            transition: transform 0.3s ease; /* Transición suave */
+        }
+
+        /* Flecha rotada: Apunta hacia abajo cuando el submenú está expandido */
+        .nav-link[aria-expanded="true"] .rotate-icon {
+            transform: rotate(90deg);
+        }
+
 
         @media (max-width: 768px) {
             .navbar-vertical {
@@ -168,14 +178,18 @@
 
         <li class="nav-item">
             <!-- Menú principal: Alumno -->
-            <a class="nav-link"
+            <a class="nav-link d-flex justify-content-between align-items-center"
                data-bs-toggle="collapse"
                href="#submenu-alumno"
                role="button"
                aria-expanded="{{ request()->is('registro-alumnos*') ? 'true' : 'false' }}"
                aria-controls="submenu-alumno">
-                <i class="fas fa-user"></i>
-                <span>Alumno</span>
+                <div>
+                    <i class="fas fa-user"></i>
+                    <span>Alumno</span>
+                </div>
+                <i class="fas fa-chevron-right ms-2 rotate-icon" style="font-size: 0.8rem;"
+                   aria-hidden="true"></i>
             </a>
             <!-- Submenús -->
             <div class="collapse {{ request()->is('registro-alumnos*') ? 'show' : '' }}" id="submenu-alumno">
@@ -195,6 +209,8 @@
                 </ul>
             </div>
         </li>
+
+
 
 
         <li class="nav-item {{ request()->is('inscripcions') ? 'active' : '' }}">
