@@ -9,7 +9,7 @@
         <div class="card shadow-lg">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 id="card_title" class="font-weight-bold"><i class="bi bi-person-circle"></i> {{ __('Listado de alumnos') }}</h4>
+                    <h4 id="card_title" class="font-weight-bold"><i class="bi bi-person-circle"></i> {{ __('Listado de Alumnos Inscritos') }}</h4>
 
                 </div>
 
@@ -49,13 +49,13 @@
                     <table id="mediciones" class="table table-striped table-bordered shadow-sm mt-3" style="font-size: 0.85em;">
                         <thead class="text-white" style="background-color: #343a40;">
                         <tr>
-                            <th scope="col">No</th>
+                            <th>No</th>
+                            <th scope="col">Codigo Correlativo</th>
                             <th scope="col">Nombre</th>
                             <th scope="col">Apellido</th>
                             <th scope="col">Grado</th>
                             <th scope="col">Sección</th>
-                            <th scope="col">Fecha de nacimiento</th>
-                            <th scope="col">Telefono Encargado</th>
+                            <th scope="col">Edad</th>
                             <th scope="col">Acciones</th>
                         </tr>
                         </thead>
@@ -63,12 +63,13 @@
                         @foreach ($inscripcions as $inscripcion)
                             <tr>
                                 <td>{{ ++$i }}</td>
+                                <td>{{$inscripcion->codigo_correlativo}}</td>
                                 <td>{{ $inscripcion->RegistroAlumno->nombres ?? 'N/A' }}</td>
                                 <td>{{ $inscripcion->RegistroAlumno->apellidos ?? 'N/A' }}</td>
                                 <td>{{ $inscripcion->grado->nombre_grado ?? 'N/A' }}</td>
                                 <td>{{ $inscripcion->seccion->seccion ?? 'N/A' }}</td>
-                                <td>{{ $inscripcion->RegistroAlumno->fecha_nacimiento ?? 'N/A' }}</td>
-                                <td>{{ $inscripcion->RegistroAlumno->encargado->telefono ?? 'N/A' }}</td>
+                                <td>{{ $inscripcion->RegistroAlumno->edad ?? 'N/A' }}</td>
+
                                 <td class="d-flex gap-1">
                                     <a class="btn btn-sm btn-primary" href="{{ route('inscripcions.show', $inscripcion->id) }}">
                                         <i class="fa fa-fw fa-eye"></i>

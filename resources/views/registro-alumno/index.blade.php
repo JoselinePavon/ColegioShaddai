@@ -9,7 +9,7 @@
         <div class="card shadow-lg">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 id="card_title" class="font-weight-bold"> <i class="bi bi-person-circle"></i> {{ __('Registro de Alumnos') }}</h4>
+                    <h4 id="card_title" class="font-weight-bold"> <i class="bi bi-person-circle"></i> {{ __('Listado de Alumnos Registrados') }}</h4>
                     <a href="{{ route('registro-alumnos.create') }}" class="btn btn-dark btn-sm rounded-pill">
                         <i class="fa fa-plus"></i> {{ __('Registrar Nuevo Alumno') }}
                     </a>
@@ -31,7 +31,8 @@
                     <table id="mediciones" class="table table-striped table-bordered shadow-sm mt-3" style="font-size: 0.85em;">
                         <thead class="text-white" style="background-color: #343a40;">
                         <tr>
-                            <th scope="col">No.</th>
+                            <th>No</th>
+                            <th scope="col">Codigo Personal</th>
                             <th scope="col">Nombres</th>
                             <th scope="col">Apellidos</th>
                             <th scope="col">Género</th>
@@ -45,6 +46,7 @@
                         @foreach ($registroAlumnos as $registroAlumno)
                             <tr>
                                 <td>{{ ++$i }}</td>
+                                <td>{{ $registroAlumno->codigo_personal}}</td>
                                 <td>{{ $registroAlumno->nombres }}</td>
                                 <td>{{ $registroAlumno->apellidos }}</td>
                                 <td>{{ $registroAlumno->genero }}</td>

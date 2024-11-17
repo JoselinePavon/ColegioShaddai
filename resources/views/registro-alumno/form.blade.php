@@ -27,7 +27,7 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="codigo_personal" class="form-label"><i class="bi bi-person-fill"></i> Código Personal</label>
                                         <input type="text" name="codigo_personal" class="form-control required-field" id="codigo_personal" placeholder="123456789">
-                                        <div class="invalid-feedback"></div>
+                                        <div class="invalid-feedback">El código personal ya está en uso.</div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="nombres" class="form-label"><i class="bi bi-person-fill"></i> Nombres</label>
@@ -109,7 +109,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="codigo_correlativo" class="form-label">Código Correlativo</label>
                                     <input type="text" name="codigo_correlativo" class="form-control" id="codigo_correlativo" placeholder="Escribe el código">
-                                    <div class="invalid-feedback"></div>
+                                    <div class="invalid-feedback">El código correlativo ya está en uso.</div>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
@@ -131,9 +131,104 @@
                                     </select>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-dark mt-3">Guardar</button>
+                            <button type="button" id="guardarButton" class="btn btn-dark mt-3">Guardar</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <!-- Últimos Alumnos Registrados -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header  rounded-top">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-circle me-2"></i> Últimos Alumnos Registrados
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if ($ultimosAlumnos && count($ultimosAlumnos) > 0)
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                            <tr>
+                                <th><i class="fas fa-arrow-down"></i></th>
+                                <th>Código Personal</th>
+                                <th>Nombre</th>
+                                <th>Género</th>
+                                <th>Edad</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($ultimosAlumnos as $index => $alumno)
+                                <tr class="{{ $index == 0 ? 'text-success fw-bold' : ($index == 1 ? ' ' : '') }}">
+                                    <td>
+                                        @if ($index == 1)
+                                            <i class="fas fa-arrow-down"></i>
+                                        @else
+                                            <i class="fas fa-arrow-right"></i>
+                                        @endif
+                                    </td>
+                                    <td>{{ $alumno->codigo_personal }}</td>
+                                    <td>{{ $alumno->nombres }} {{ $alumno->apellidos }}</td>
+                                    <td>{{ $alumno->genero }}</td>
+                                    <td>{{ $alumno->edad }}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-2"></i> No hay alumnos registrados.
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- Últimos Alumnos Inscritos -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header rounded-top">
+                    <h5 class="mb-0">
+                        <i class="fas fa-book me-2"></i> Últimos Alumnos Inscritos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if ($ultimasInscripciones && count($ultimasInscripciones) > 0)
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                            <tr>
+                                <th><i class="fas fa-arrow-down"></i></th>
+                                <th>Código Correlativo</th>
+                                <th>Nombre</th>
+                                <th>Grado</th>
+                                <th>Sección</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($ultimasInscripciones as $index => $inscripcion)
+                                <tr class="{{ $index == 0 ? 'text-success fw-bold' : ($index == 1 ? ' ' : '') }}">
+                                    <td>
+                                        @if ($index == 1)
+                                            <i class="fas fa-arrow-down"></i>
+                                        @else
+                                            <i class="fas fa-arrow-right"></i>
+                                        @endif
+                                    </td>
+                                    <td>{{ $inscripcion->codigo_correlativo }}</td>
+                                    <td>{{ $inscripcion->registroAlumno->nombres }} {{ $inscripcion->registroAlumno->apellidos }}</td>
+                                    <td>{{ $inscripcion->grado->nombre_grado ?? 'N/A' }}</td>
+                                    <td>{{ $inscripcion->seccion->seccion ?? 'N/A' }}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-2"></i> No hay alumnos inscritos.
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -189,47 +284,83 @@
         });
     </script>
     <script>
-        document.getElementById('validateButton').addEventListener('click', async function () {
+
+            // Verificar unicidad del código personal si está lleno
+            document.getElementById('validateButton').addEventListener('click', function () {
+                const requiredFields = document.querySelectorAll('.required-field');
+                let allFieldsFilled = true;
+
+                // Obtener la lista de códigos existentes desde el backend
+                const existingCodes = @json($existingCodes);
+
+                // Limpiar mensajes de error previos
+                requiredFields.forEach(field => {
+                    field.classList.remove('is-invalid');
+                });
+
+                // Validar que todos los campos requeridos estén llenos
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add('is-invalid');
+                        allFieldsFilled = false;
+                    }
+                });
+
+                // Validar código personal
+                const codigoPersonalField = document.getElementById('codigo_personal');
+                if (existingCodes.includes(codigoPersonalField.value.trim())) {
+                    codigoPersonalField.classList.add('is-invalid');
+                    allFieldsFilled = false;
+                }
+
+                // Mostrar la siguiente sección si todo está correcto
+                if (allFieldsFilled) {
+                    document.getElementById('inscripcionSection').style.display = 'block';
+                } else {
+                    document.getElementById('inscripcionSection').style.display = 'none';
+                }
+            });
+    </script>
+    <script>
+        document.getElementById('guardarButton').addEventListener('click', function (event) {
+            // Prevenir el comportamiento predeterminado del formulario
+            event.preventDefault();
+
+            // Obtener todos los campos requeridos
             const requiredFields = document.querySelectorAll('.required-field');
             let allFieldsFilled = true;
 
+            // Lista de códigos correlativos existentes (traídos desde el backend)
+            const existingCorrelativos = @json($existingCorrelativos);
+
+            // Limpiar mensajes de error previos
+            requiredFields.forEach(field => {
+                field.classList.remove('is-invalid');
+            });
+
+            // Validar que todos los campos requeridos estén llenos
             requiredFields.forEach(field => {
                 if (!field.value.trim()) {
                     field.classList.add('is-invalid');
                     allFieldsFilled = false;
-                } else {
-                    field.classList.remove('is-invalid');
                 }
             });
 
-            // Verificar unicidad del código personal si está lleno
-            const codigoPersonalField = document.getElementById('codigo_personal');
-            let isCodigoPersonalUnique = true;
-
-            if (codigoPersonalField.value.trim()) {
-                isCodigoPersonalUnique = await validateCodigoPersonal(codigoPersonalField.value.trim());
-                if (!isCodigoPersonalUnique) {
-                    codigoPersonalField.classList.add('is-invalid');
-                    codigoPersonalField.nextElementSibling.textContent = 'El código personal ya está en uso.';
-                    allFieldsFilled = false;
-                } else {
-                    codigoPersonalField.classList.remove('is-invalid');
-                    codigoPersonalField.nextElementSibling.textContent = '';
-                }
-            }
-
-            if (allFieldsFilled && isCodigoPersonalUnique) {
-                document.getElementById('inscripcionSection').style.display = 'block';
+            // Validar el código correlativo
+            const codigoCorrelativoField = document.getElementById('codigo_correlativo');
+            if (existingCorrelativos.includes(codigoCorrelativoField.value.trim())) {
+                codigoCorrelativoField.classList.add('is-invalid');
+                codigoCorrelativoField.nextElementSibling.textContent = 'El código correlativo ya está en uso.';
+                allFieldsFilled = false;
             } else {
-                document.getElementById('inscripcionSection').style.display = 'none';
+                codigoCorrelativoField.classList.remove('is-invalid');
+                codigoCorrelativoField.nextElementSibling.textContent = '';
+            }
+            if (allFieldsFilled) {
+                // Aquí podrías enviar el formulario manualmente usando fetch, si lo deseas.
+                document.querySelector('form').submit();
             }
         });
-        // Función para validar si el código personal es único
-        async function validateCodigoPersonal(codigo) {
-            const existingCodes = @json($existingCodes ?? []);
-            return !existingCodes.includes(codigo);
-        }
     </script>
-
 
 @endsection

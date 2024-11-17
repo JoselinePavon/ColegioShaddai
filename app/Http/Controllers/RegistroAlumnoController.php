@@ -18,6 +18,11 @@ use Illuminate\Support\Facades\Log;
  */
 class RegistroAlumnoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -36,13 +41,17 @@ class RegistroAlumnoController extends Controller
     public function create()
     {
         $existingCodes = RegistroAlumno::pluck('codigo_personal')->toArray();
+        $existingCorrelativos = Inscripcion::pluck('codigo_correlativo')->toArray();
 
         $lugares = Lugar::all();
         $colonias = Colonia::all();
         $grado = Grado::pluck('nombre_grado', 'id');
         $seccion = Seccion::pluck('seccion', 'id');
 
-        return view('registro-alumno.create', compact('lugares', 'colonias', 'grado', 'seccion', 'existingCodes'));
+        $ultimosAlumnos = RegistroAlumno::latest()->take(2)->get();
+        $ultimasInscripciones = Inscripcion::with('registroAlumno', 'grado', 'seccion')->latest()->take(2)->get();
+
+        return view('registro-alumno.create', compact('existingCorrelativos','ultimosAlumnos', 'ultimasInscripciones','lugares','colonias','grado','seccion','existingCodes'));
     }
 
 
@@ -75,7 +84,7 @@ class RegistroAlumnoController extends Controller
         ]);
         $inscripcion->save();
 
-        return redirect()->route('registro-alumnos.index')
+        return redirect()->route('registro-alumnos.create')
             ->with('success', 'RegistroAlumno created successfully.');
     }
 
