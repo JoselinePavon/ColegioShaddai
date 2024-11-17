@@ -75,8 +75,20 @@ class GradoController extends Controller
 
     public function destroy($id)
     {
-        Grado::find($id)->delete();
+        $grado = Grado::find($id);
 
+        if (!$grado) {
+            return redirect()->route('grados.index')
+                ->with('error', 'El grado no existe.');
+        }
+
+        // Verificar si el grado tiene inscripciones relacionadas
+        if ($grado->inscripciones()->exists()) { // Asegúrate de tener la relación 'inscripciones' definida en el modelo Grado
+            return redirect()->route('grados.index')
+                ->with('error', 'No se puede eliminar este grado porque tiene inscripciones relacionadas.');
+        }
+
+        $grado->delete();
         return redirect()->route('grados.index')
             ->with('success', 'Grado deleted successfully');
     }

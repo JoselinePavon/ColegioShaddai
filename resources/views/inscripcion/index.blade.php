@@ -92,7 +92,7 @@
                 </div>
             </div>
         </div>
-        {!! $inscripcions->links() !!}
+
     </div>
 
     <script>

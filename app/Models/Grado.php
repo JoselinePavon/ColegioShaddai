@@ -28,6 +28,9 @@ class Grado extends Model
      */
     protected $fillable = ['nombre_grado'];
 
-
+    public function inscripciones()
+    {
+        return $this->hasMany(Inscripcion::class);
+    }
 
 }
