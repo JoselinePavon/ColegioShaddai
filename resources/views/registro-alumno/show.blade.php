@@ -21,6 +21,10 @@
                 <table class="table table-borderless mb-0">
                     <tbody>
                     <tr>
+                        <th class="text-dark"><i class="fas fa-signature text-muted mr-2"></i> {{ __('Codigo Personal') }}</th>
+                        <td class="text-secondary">{{ $registroAlumno->codigo_personal }}</td>
+                    </tr>
+                    <tr>
                         <th class="text-dark"><i class="fas fa-signature text-muted mr-2"></i> {{ __('Nombres') }}</th>
                         <td class="text-secondary">{{ $registroAlumno->nombres }}</td>
                     </tr>
@@ -59,16 +63,21 @@
                             <td class="text-secondary">{{ $registroAlumno->encargado->nombre_encargado }}</td>
                         </tr>
                         <tr>
-                            <th class="text-dark"><i class="fas fa-map-marker-alt text-muted mr-2"></i> {{ __('Dirección') }}</th>
-                            <td class="text-secondary">{{ $registroAlumno->encargado->direccion }}</td>
+                            <th class="text-dark"><i class="fas fa-map-marker-alt text-muted mr-2"></i> {{ __('DPI') }}</th>
+                            <td class="text-secondary">{{ $registroAlumno->encargado->dpi }}</td>
                         </tr>
+                        <tr>
+                            <th class="text-dark"><i class="fas fa-map-marker-alt text-muted mr-2"></i> {{ __('Lugar') }}</th>
+                            <td class="text-secondary">{{ $registroAlumno->encargado->lugar->lugar ?? 'No asignado' }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-dark"><i class="fas fa-map-marker-alt text-muted mr-2"></i> {{ __('Colonia') }}</th>
+                            <td class="text-secondary">{{ $registroAlumno->encargado->colonia->nombre ?? 'No asignada' }}</td>
+                        </tr>
+
                         <tr>
                             <th class="text-dark"><i class="fas fa-phone text-muted mr-2"></i> {{ __('Teléfono 1') }}</th>
-                            <td class="text-secondary">{{ $registroAlumno->encargado->num_encargado1 }}</td>
-                        </tr>
-                        <tr>
-                            <th class="text-dark"><i class="fas fa-phone-alt text-muted mr-2"></i> {{ __('Teléfono 2') }}</th>
-                            <td class="text-secondary">{{ $registroAlumno->encargado->num_encargado2 ?: 'No disponible' }}</td>
+                            <td class="text-secondary">{{ $registroAlumno->encargado->telefono }}</td>
                         </tr>
                         <tr>
                             <th class="text-dark"><i class="fas fa-exclamation-circle text-muted mr-2"></i> {{ __('Contacto de Emergencia') }}</th>
