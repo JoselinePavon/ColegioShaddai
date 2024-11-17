@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {{ __('Crear Pago') }}
+
 @endsection
 
 @section('content')
@@ -9,14 +9,19 @@
         <div class="row">
             <div class="card mb-5">
                 <div class="card-body">
-
-                    <!-- Mostrar el mensaje de error si el alumno no fue encontrado -->
-                    @if(isset($error))
-                        <div class="alert alert-danger" role="alert">
-                            {{ $error }}
-                        </div>
+                    {{-- SweetAlert para mensajes de éxito --}}
+                    @if ($message = Session::get('success'))
+                        <script>
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                text: '{{ $message }}',
+                                timer: 3000,
+                                showConfirmButton: false
+                            });
+                        </script>
                     @endif
-                    <form method="POST" action="{{ route('registro-alumnos.store') }}">
+                    <form id="alumnoForm" method="POST" action="{{ route('registro-alumnos.store') }}">
                         @csrf
 
                         <!-- Row for student and guardian sections side by side -->
@@ -233,134 +238,93 @@
             </div>
         </div>
     </div>
-
     <script>
-        document.getElementById('validateButton').addEventListener('click', function () {
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('alumnoForm');
+            const validateButton = document.getElementById('validateButton');
+            const guardarButton = document.getElementById('guardarButton');
             const requiredFields = document.querySelectorAll('.required-field');
-            let allFieldsFilled = true;
-
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    field.classList.add('is-invalid');
-                    allFieldsFilled = false;
-                } else {
-                    field.classList.remove('is-invalid');
-                }
-            });
-
-            if (allFieldsFilled) {
-                document.getElementById('inscripcionSection').style.display = 'block';
-            }
-        });
-
-        // Script para cargar colonias basado en el lugar seleccionado
-        const coloniasPorLugar = {
-            @foreach($lugares as $lugar)
-                {{ $lugar->id }}: [
-                    @foreach($colonias->where('lugars_id', $lugar->id) as $colonia)
-                { id: {{ $colonia->id }}, nombre: "{{ $colonia->nombre }}" },
-                @endforeach
-            ],
-            @endforeach
-        };
-
-        const lugarSelect = document.getElementById('lugars_id');
-        const coloniaSelect = document.getElementById('colonias_id');
-
-        lugarSelect.addEventListener('change', function () {
-            const lugarId = this.value;
-            coloniaSelect.innerHTML = '<option value="">Seleccione una colonia</option>';
-            coloniaSelect.disabled = true;
-
-            if (coloniasPorLugar[lugarId]) {
-                coloniasPorLugar[lugarId].forEach(colonia => {
-                    const option = document.createElement('option');
-                    option.value = colonia.id;
-                    option.textContent = colonia.nombre;
-                    coloniaSelect.appendChild(option);
-                });
-                coloniaSelect.disabled = false;
-            }
-        });
-    </script>
-    <script>
-
-            // Verificar unicidad del código personal si está lleno
-            document.getElementById('validateButton').addEventListener('click', function () {
-                const requiredFields = document.querySelectorAll('.required-field');
-                let allFieldsFilled = true;
-
-                // Obtener la lista de códigos existentes desde el backend
-                const existingCodes = @json($existingCodes);
-
-                // Limpiar mensajes de error previos
+            const inscripcionSection = document.getElementById('inscripcionSection');
+            const existingCodes = @json($existingCodes);
+            const existingCorrelativos = @json($existingCorrelativos);
+            // alidar campos del alumno (antes de mostrar inscripción)
+            const validateAlumnoFields = () => {
+                let valid = true;
                 requiredFields.forEach(field => {
                     field.classList.remove('is-invalid');
-                });
-
-                // Validar que todos los campos requeridos estén llenos
-                requiredFields.forEach(field => {
                     if (!field.value.trim()) {
                         field.classList.add('is-invalid');
-                        allFieldsFilled = false;
+                        valid = false;
                     }
                 });
-
-                // Validar código personal
-                const codigoPersonalField = document.getElementById('codigo_personal');
-                if (existingCodes.includes(codigoPersonalField.value.trim())) {
-                    codigoPersonalField.classList.add('is-invalid');
-                    allFieldsFilled = false;
+                const codigoField = document.getElementById('codigo_personal');
+                if (existingCodes.includes(codigoField.value.trim())) {
+                    codigoField.classList.add('is-invalid');
+                    valid = false;
                 }
-
-                // Mostrar la siguiente sección si todo está correcto
-                if (allFieldsFilled) {
-                    document.getElementById('inscripcionSection').style.display = 'block';
+                return valid;
+            };
+            // Validar todos los campos (incluyendo grado y sección)
+            const validateAllFields = () => {
+                let valid = validateAlumnoFields(); // Reutilizamos la validación de alumno
+                // Validar grado
+                const gradoField = document.getElementById('grados_id');
+                if (!gradoField.value.trim()) {
+                    gradoField.classList.add('is-invalid');
+                    valid = false;
                 } else {
-                    document.getElementById('inscripcionSection').style.display = 'none';
+                    gradoField.classList.remove('is-invalid');
+                }
+                // Validar sección
+                const seccionField = document.getElementById('seccions_id');
+                if (!seccionField.value.trim()) {
+                    seccionField.classList.add('is-invalid');
+                    valid = false;
+                } else {
+                    seccionField.classList.remove('is-invalid');
+                }
+                // Validar código correlativo
+                const correlativoField = document.getElementById('codigo_correlativo');
+                if (correlativoField && existingCorrelativos.includes(correlativoField.value.trim())) {
+                    correlativoField.classList.add('is-invalid');
+                    correlativoField.nextElementSibling.textContent = 'El código correlativo ya está en uso.';
+                    valid = false;
+                } else if (correlativoField) {
+                    correlativoField.classList.remove('is-invalid');
+                    correlativoField.nextElementSibling.textContent = '';
+                }
+                return valid;
+            };
+            // Evento del botón "Siguiente"
+            validateButton.addEventListener('click', () => {
+                if (validateAlumnoFields()) {
+                    inscripcionSection.style.display = 'block';
                 }
             });
-    </script>
-    <script>
-        document.getElementById('guardarButton').addEventListener('click', function (event) {
-            // Prevenir el comportamiento predeterminado del formulario
-            event.preventDefault();
-
-            // Obtener todos los campos requeridos
-            const requiredFields = document.querySelectorAll('.required-field');
-            let allFieldsFilled = true;
-
-            // Lista de códigos correlativos existentes (traídos desde el backend)
-            const existingCorrelativos = @json($existingCorrelativos);
-
-            // Limpiar mensajes de error previos
-            requiredFields.forEach(field => {
-                field.classList.remove('is-invalid');
-            });
-
-            // Validar que todos los campos requeridos estén llenos
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    field.classList.add('is-invalid');
-                    allFieldsFilled = false;
+            // Evento del botón "Guardar"
+            guardarButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (validateAllFields()) {
+                    form.submit();
                 }
             });
+            // Actualizar el listado de colonias al seleccionar un lugar
+            const lugarSelect = document.getElementById('lugars_id');
+            const coloniaSelect = document.getElementById('colonias_id');
+            const coloniasPorLugar = @json($lugares->mapWithKeys(fn($lugar) => [$lugar->id => $colonias->where('lugars_id', $lugar->id)->pluck('nombre', 'id')]));
+            lugarSelect.addEventListener('change', () => {
+                const lugarId = lugarSelect.value;
+                coloniaSelect.innerHTML = '<option value="">Seleccione una colonia</option>';
+                coloniaSelect.disabled = true;
 
-            // Validar el código correlativo
-            const codigoCorrelativoField = document.getElementById('codigo_correlativo');
-            if (existingCorrelativos.includes(codigoCorrelativoField.value.trim())) {
-                codigoCorrelativoField.classList.add('is-invalid');
-                codigoCorrelativoField.nextElementSibling.textContent = 'El código correlativo ya está en uso.';
-                allFieldsFilled = false;
-            } else {
-                codigoCorrelativoField.classList.remove('is-invalid');
-                codigoCorrelativoField.nextElementSibling.textContent = '';
-            }
-            if (allFieldsFilled) {
-                // Aquí podrías enviar el formulario manualmente usando fetch, si lo deseas.
-                document.querySelector('form').submit();
-            }
+                if (coloniasPorLugar[lugarId]) {
+                    for (const [id, nombre] of Object.entries(coloniasPorLugar[lugarId])) {
+                        const option = new Option(nombre, id);
+                        coloniaSelect.add(option);
+                    }
+                    coloniaSelect.disabled = false;
+                }
+            });
         });
     </script>
-
 @endsection

@@ -25,7 +25,7 @@
                             <div class="row align-items-end">
                                 <div class="mb-3">
                                     <div class="input-group input-group-ml">
-                                        <input type="text" class="form-control" id="search" name="search" placeholder="Buscar por Nombre o No. Carnet" value="{{ old('search', request('search')) }}">
+                                        <input type="text" class="form-control" id="search" name="search" placeholder="Buscar por Nombre o No. Correlativo" value="{{ old('search', request('search')) }}">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary btn-ml" type="submit">
                                                 <i class="fas fa-search"></i>

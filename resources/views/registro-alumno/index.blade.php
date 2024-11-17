@@ -75,7 +75,7 @@
                 </div>
             </div>
         </div>
-        {!! $registroAlumnos->links() !!}
+
     </div>
 
     <script>

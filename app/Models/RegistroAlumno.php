@@ -37,6 +37,9 @@ class RegistroAlumno extends Model
     {
         return $this->hasOne(Encargado::class, 'registro_alumnos_id');
     }
-
+    public function inscripciones()
+    {
+        return $this->hasMany(Inscripcion::class, 'registro_alumnos_id', 'id');
+    }
 
 }

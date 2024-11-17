@@ -80,6 +80,16 @@ class PagoController extends Controller
      */
     public function store(PagoRequest $request)
     {
+        $request->validate([
+            'num_serie' => 'required|unique:pagos,num_serie',
+            'registro_alumnos_id' => 'required',
+            'tipopagos_id' => 'required',
+            'fecha_pago' => 'required|date',
+        ], [
+            'num_serie.unique' => 'El número de boleta ya está en uso.',
+            'num_serie.required' => 'El número de boleta es obligatorio.',
+        ]);
+
         $data = $request->validated();
 
         // Verificar si el tipo de pago es colegiatura (id 1)
@@ -176,9 +186,12 @@ class PagoController extends Controller
         $search = $request->input('search');
         $error = null;
 
-        // Buscar el alumno por ID o nombre
+        // Buscar el alumno por ID, nombre o código correlativo
         $alumno = RegistroAlumno::where('id', 'LIKE', "%$search%")
             ->orWhere('nombres', 'LIKE', "%$search%")
+            ->orWhereHas('inscripciones', function ($query) use ($search) {
+                $query->where('codigo_correlativo', 'LIKE', "%$search%");
+            })
             ->first();
 
         // Variables para grado, sección y estado de colegiatura
@@ -187,9 +200,10 @@ class PagoController extends Controller
         $alumnoYaPagoColegiatura = false;
 
         if ($alumno) {
+            // Obtener información de inscripción (grado y sección)
             $inscripcion = Inscripcion::where('registro_alumnos_id', $alumno->id)->first();
             $grado = $inscripcion ? $inscripcion->grado : null;
-            $seccion = $inscripcion ? $inscripcion->seccion : null; // Obtener la sección asignada si existe
+            $seccion = $inscripcion ? $inscripcion->seccion : null;
 
             // Verificar si el alumno ya pagó colegiatura en el mes actual
             $mes_actual = Carbon::now()->month;
@@ -200,14 +214,23 @@ class PagoController extends Controller
                 ->whereYear('fecha_pago', $anio_actual)
                 ->first();
 
-            // Si existe un pago de colegiatura, marcamos que ya ha pagado
             $alumnoYaPagoColegiatura = $pago_colegiatura ? true : false;
         } else {
-            // Si no se encontró el alumno
-            $error = "Alumno no encontrado";
+            $error = "Alumno no encontrado.";
         }
 
-        return view('pago.create', compact('alumno', 'montos', 'grado', 'seccion', 'pago', 'tipos', 'registro_alumno', 'error', 'alumnoYaPagoColegiatura'));
+        return view('pago.create', compact(
+            'alumno',
+            'montos',
+            'grado',
+            'seccion',
+            'pago',
+            'tipos',
+            'registro_alumno',
+            'error',
+            'alumnoYaPagoColegiatura'
+        ));
     }
+
 
 }
