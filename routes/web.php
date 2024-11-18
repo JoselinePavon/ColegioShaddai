@@ -61,5 +61,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('colonias', App\Http\Controllers\ColoniaController::class);
 
+    Route::resource('mes', App\Http\Controllers\MeController::class);
+
 
 });

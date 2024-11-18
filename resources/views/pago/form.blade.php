@@ -86,6 +86,22 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
+                                    <label for="mes_id" class="form-label">{{ __('Mes') }}</label>
+                                    <select name="mes_id" class="form-select @error('mes_id') is-invalid @enderror" id="mes_id">
+                                        <option value="">Seleccione una sección</option>
+                                        @foreach($mes as $id => $mes)
+                                            <option value="{{ $id }}" {{ old('mes_id', $pago->mes_id ?? '') == $id ? 'selected' : '' }}>
+                                                {{ $mes }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('seccions_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+
+                                <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <label for="fecha_pago" class="form-label">{{ __('Fecha Pago') }}</label>
                                         <input type="date" id="fecha_pago" name="fecha_pago" class="form-control" value="{{ old('fecha_pago', now()->toDateString()) }}">
@@ -143,56 +159,62 @@
             </div>
         </div>
     </div>
-
-    <!-- Scripts -->
     <script>
         // Variables
-        const alumnoYaPagoColegiatura = @json($alumnoYaPagoColegiatura);
+        const pagosPorMes = @json($pagosPorMes ?? []); // [{mes_id: 1, tipopagos_id: 1}, ...]
         let alertShown = false; // Control de mensaje único
         const montos = @json($montos);
         const tipoPagosSelect = document.getElementById('tipopagos_id');
+        const mesSelect = document.getElementById('mes_id');
         const montoInput = document.getElementById('monto');
         const resumenLista = document.getElementById('resumen-lista');
         const resumenTotal = document.getElementById('resumen-total');
 
-        // Actualizar el monto según el tipo de pago seleccionado y añadir al resumen
-        tipoPagosSelect.addEventListener('change', function() {
-            const selectedId = this.value;
+        // Función para validar el tipo de pago y mes seleccionado
+        function validarPago() {
+            const selectedTipoPagoId = tipoPagosSelect.value;
+            const selectedMesId = mesSelect.value;
 
-            // Mostrar mensaje de advertencia si es colegiatura y ya fue pagada
-            if (selectedId == '1' && alumnoYaPagoColegiatura && !alertShown) {
-                const errorDiv = document.createElement('div');
-                errorDiv.classList.add('alert', 'alert-danger');
-                errorDiv.textContent = 'El alumno ya ha pagado la colegiatura para este mes.';
-                document.querySelector('.card-body').prepend(errorDiv);
+            // Limpiar mensajes previos
+            const existingError = document.querySelector('.alert-danger');
+            if (existingError) existingError.remove();
+            alertShown = false;
 
-                // Restablecer la selección del tipo de pago y marcar la alerta como mostrada
-                this.value = '';
-                alertShown = true;
-                return;
+            // Mostrar mensaje de advertencia si es colegiatura y el mes ya fue pagado
+            if (selectedTipoPagoId === '1' && selectedMesId) {
+                const yaPagado = pagosPorMes.some(pago =>
+                    parseInt(pago.mes_id) === parseInt(selectedMesId) &&
+                    parseInt(pago.tipopagos_id) === parseInt(selectedTipoPagoId)
+                );
+
+                if (yaPagado) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.classList.add('alert', 'alert-danger');
+                    errorDiv.textContent = 'El alumno ya ha pagado la colegiatura para este mes.';
+                    document.querySelector('.card-body').prepend(errorDiv);
+
+                    // Restablecer la selección del tipo de pago
+                    tipoPagosSelect.value = '';
+                    alertShown = true;
+                    return false; // Detener el proceso
+                }
             }
 
-            // Obtener y asignar el monto al campo de monto y al resumen
-            const monto = montos[selectedId] || 0;
-            montoInput.value = monto;
-
-            // Agregar el elemento al resumen
-            const item = document.createElement('li');
-            item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
-            item.innerHTML = `${tipoPagosSelect.options[tipoPagosSelect.selectedIndex].text} <span>$${monto}</span>`;
-            resumenLista.appendChild(item);
-
-            // Actualizar el total en el resumen
-            actualizarTotal();
-        });
+            // Actualizar el monto si todo está en orden
+            actualizarMonto();
+            return true; // Continuar el proceso
+        }
 
         // Función para calcular y actualizar el total del resumen
-        function actualizarTotal() {
-            let total = 0;
-            resumenLista.querySelectorAll('li span').forEach(span => {
-                total += parseFloat(span.textContent.replace('Q', ''));
-            });
-            resumenTotal.textContent = `$${total.toFixed(2)}`;
+        function actualizarMonto() {
+            const selectedTipoPagoId = tipoPagosSelect.value;
+            const monto = montos[selectedTipoPagoId] || 0;
+            montoInput.value = monto;
         }
+
+        // Event listeners para cambios en el tipo de pago y mes
+        tipoPagosSelect.addEventListener('change', validarPago);
+        mesSelect.addEventListener('change', validarPago);
     </script>
+
 @endsection

@@ -35,7 +35,9 @@
                             <th>Tipo de Pago</th>
                             <th>Monto</th>
                             <th>Alumno</th>
+                            <th>Mes</th>
                             <th>estado</th>
+
                             <th class="text-center">Acciones</th>
                         </tr>
                         </thead>
@@ -48,6 +50,7 @@
                                 <td>{{ $pago->tipopago->tipo_pago }}</td>
                                 <td>{{ $pago->tipopago->monto }}</td>
                                 <td>{{ $pago->RegistroAlumno->nombres }}</td>
+                                <td>{{ $pago->mes->mes }}</td>
                                 <td>
                                     @if($pago->estado->id == 1)
                                         <span style="color: green;">● Solvente</span>

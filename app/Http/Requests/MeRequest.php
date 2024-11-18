@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PagoRequest extends FormRequest
+class MeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +22,7 @@ class PagoRequest extends FormRequest
     public function rules(): array
     {
         return [
-			'num_serie' => 'required|string',
-			'fecha_pago' => 'required|string',
-			'tipopagos_id' => 'required',
-			'registro_alumnos_id' => 'required',
-            'mes_id' => 'required',
+			'mes' => 'required|string',
         ];
     }
 }

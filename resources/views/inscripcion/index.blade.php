@@ -77,13 +77,7 @@
                                     <a class="btn btn-sm btn-warning" href="{{ route('inscripcions.edit', $inscripcion->id) }}">
                                         <i class="fa fa-fw fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('inscripcions.destroy', $inscripcion->id) }}" method="POST" class="delete-form d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="btn btn-sm btn-danger delete-button">
-                                            <i class="fa fa-fw fa-trash"></i>
-                                        </button>
-                                    </form>
+
                                 </td>
                             </tr>
                         @endforeach

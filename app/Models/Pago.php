@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property $fecha_pago
  * @property $tipopagos_id
  * @property $estados_id
+ * @property $mes_id
  * @property $registro_alumnos_id
  * @property $created_at
  * @property $updated_at
@@ -32,7 +33,7 @@ class Pago extends Model
      *
      * @var array
      */
-    protected $fillable = ['num_serie', 'fecha_pago', 'tipopagos_id', 'registro_alumnos_id','estados_id'];
+    protected $fillable = ['num_serie', 'fecha_pago', 'tipopagos_id', 'registro_alumnos_id','estados_id','mes_id'];
 
 
     /**
@@ -54,6 +55,11 @@ class Pago extends Model
     public function estado()
     {
         return $this->belongsTo(\App\Models\estado::class, 'estados_id', 'id');
+    }
+
+    public function mes()
+    {
+        return $this->belongsTo(\App\Models\mes::class, 'mes_id', 'id');
     }
 
 

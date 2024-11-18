@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Me;
 use App\Models\Pago;
 use App\Models\RegistroAlumno;
 use App\Models\Tipopago;
@@ -18,35 +19,6 @@ use Carbon\Carbon;
  */
 class PagoController extends Controller
 {
-
-    public function actualizarSolvenciasMensuales()
-    {
-        $mes_actual = Carbon::now()->month;
-        $anio_actual = Carbon::now()->year;
-
-        // Obtener todos los alumnos registrados
-        $alumnos = RegistroAlumno::all();
-
-        foreach ($alumnos as $alumno) {
-            // Buscar pagos de colegiatura (tipopagos_id 1) para el mes actual
-            $pago = Pago::where('registro_alumnos_id', $alumno->id)
-                ->where('tipopagos_id', 1) // Solo colegiatura
-                ->whereMonth('fecha_pago', $mes_actual)
-                ->whereYear('fecha_pago', $anio_actual)
-                ->first();
-
-            // Si no hay pago de colegiatura para el mes actual, marcar como insolvente
-            if (!$pago) {
-                Pago::create([
-                    'registro_alumnos_id' => $alumno->id,
-                    'tipopagos_id' => 1, // Colegiatura
-                    'fecha_pago' => now(),
-                    'estados_id' => 2, // Estado 2 representa "insolvente"
-                ]);
-            }
-        }
-    }
-
     /**
      * Display a listing of the resource.
      */
@@ -64,15 +36,24 @@ class PagoController extends Controller
     public function create()
     {
         $pago = new Pago();
-        $tipos = Tipopago::pluck('tipo_pago', 'id'); // Obtener todos los tipos de pago
-        $registro_alumnos = RegistroAlumno::pluck('nombres', 'id'); // Obtener todos los alumnos
-        $montos = Tipopago::pluck('monto', 'id'); // Agregar esto para obtener los montos
-        $alumnoYaPagoColegiatura = false; // Variable para verificar si ya pagó colegiatura
+        $tipos = Tipopago::pluck('tipo_pago', 'id');
+        $mes = Me::pluck('mes', 'id');
+        $registro_alumnos = RegistroAlumno::pluck('nombres', 'id');
+        $montos = Tipopago::pluck('monto', 'id');
 
+        // Obtener los pagos realizados para todos los alumnos
+        $pagosPorMes = [];
 
+        if ($alumno = RegistroAlumno::first()) { // Aquí debes ajustar la lógica para obtener el alumno correcto
+            $pagosPorMes = Pago::where('registro_alumnos_id', $alumno->id)
+                ->select('mes_id', 'tipopagos_id')
+                ->get()
+                ->toArray();
+        }
 
-        return view('pago.form', compact('pago', 'montos','tipos', 'registro_alumnos','alumnoYaPagoColegiatura'));
+        return view('pago.form', compact('pago', 'montos', 'tipos', 'registro_alumnos', 'mes', 'pagosPorMes'));
     }
+
 
 
     /**
@@ -85,6 +66,8 @@ class PagoController extends Controller
             'registro_alumnos_id' => 'required',
             'tipopagos_id' => 'required',
             'fecha_pago' => 'required|date',
+            'mes_id' => 'required',
+
         ], [
             'num_serie.unique' => 'El número de boleta ya está en uso.',
             'num_serie.required' => 'El número de boleta es obligatorio.',
@@ -94,20 +77,17 @@ class PagoController extends Controller
 
         // Verificar si el tipo de pago es colegiatura (id 1)
         if ($data['tipopagos_id'] == 1) {
-            $mes_actual = Carbon::now()->month;
-            $anio_actual = Carbon::now()->year;
 
             // Verificar si ya existe un pago de colegiatura para este alumno en el mes y año actuales
             $pagoExistente = Pago::where('registro_alumnos_id', $data['registro_alumnos_id'])
                 ->where('tipopagos_id', 1) // Solo colegiatura
-                ->whereMonth('fecha_pago', $mes_actual)
-                ->whereYear('fecha_pago', $anio_actual)
+                ->where('mes_id', $data['mes_id']) // Verificar el mes
                 ->first();
 
             if ($pagoExistente) {
-                // Si ya existe un pago de colegiatura, redirigir con un mensaje de error
-                return redirect()->route('pagos.index')
-                    ->with('error', 'Ya existe un pago de colegiatura registrado para este mes.');
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'El alumno ya ha realizado un pago para el mes seleccionado.');
             }
 
             // Asignar estado "solvente" si es colegiatura
@@ -176,12 +156,15 @@ class PagoController extends Controller
     {
         return view('pago.form');
     }
+
     public function resultadosp(Request $request)
     {
         $pago = new Pago();
         $registro_alumno = RegistroAlumno::pluck('nombres', 'id');
         $tipos = Tipopago::pluck('tipo_pago', 'id');
         $montos = Tipopago::pluck('monto', 'id');
+        $mes = Me::pluck('mes', 'id');// Obtener todos los tipos de pago
+
 
         $search = $request->input('search');
         $error = null;
@@ -197,7 +180,7 @@ class PagoController extends Controller
         // Variables para grado, sección y estado de colegiatura
         $grado = null;
         $seccion = null;
-        $alumnoYaPagoColegiatura = false;
+        $pagosPorMes = [];
 
         if ($alumno) {
             // Obtener información de inscripción (grado y sección)
@@ -205,19 +188,14 @@ class PagoController extends Controller
             $grado = $inscripcion ? $inscripcion->grado : null;
             $seccion = $inscripcion ? $inscripcion->seccion : null;
 
-            // Verificar si el alumno ya pagó colegiatura en el mes actual
-            $mes_actual = Carbon::now()->month;
-            $anio_actual = Carbon::now()->year;
-            $pago_colegiatura = Pago::where('registro_alumnos_id', $alumno->id)
-                ->where('tipopagos_id', 1) // Solo colegiatura
-                ->whereMonth('fecha_pago', $mes_actual)
-                ->whereYear('fecha_pago', $anio_actual)
-                ->first();
-
-            $alumnoYaPagoColegiatura = $pago_colegiatura ? true : false;
+            $pagosPorMes = Pago::where('registro_alumnos_id', $alumno->id)
+                ->select('mes_id', 'tipopagos_id')
+                ->get()
+                ->toArray();
         } else {
             $error = "Alumno no encontrado.";
         }
+
 
         return view('pago.create', compact(
             'alumno',
@@ -228,7 +206,8 @@ class PagoController extends Controller
             'tipos',
             'registro_alumno',
             'error',
-            'alumnoYaPagoColegiatura'
+            'pagosPorMes',
+            'mes',
         ));
     }
 

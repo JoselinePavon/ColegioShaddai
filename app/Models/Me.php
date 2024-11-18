@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Grado
+ * Class Me
  *
  * @property $id
- * @property $nombre_grado
+ * @property $mes
  * @property $created_at
  * @property $updated_at
  *
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-class Grado extends Model
+class Me extends Model
 {
-
+    
 
     protected $perPage = 20;
 
@@ -26,12 +26,8 @@ class Grado extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre_grado'];
+    protected $fillable = ['mes'];
 
-    public function inscripciones()
-    {
-        return $this->hasMany(Inscripcion::class, 'grados_id', 'id');
-    }
 
 
 }
