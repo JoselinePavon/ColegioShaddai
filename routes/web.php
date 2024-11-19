@@ -49,6 +49,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Rutas para pagos
     Route::resource('pagos', App\Http\Controllers\PagoController::class);
+
     Route::get('/buscar', [App\Http\Controllers\PagoController::class, 'buscar'])->name('buscar');
     Route::get('/resultadosp', [App\Http\Controllers\PagoController::class, 'resultadosp'])->name('resultadosp');
 
@@ -65,4 +66,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('mes', App\Http\Controllers\MeController::class);
 
     Route::get('/contrato', [ContratoController::class, 'contrato'])->name('contrato');
+
+    Route::get('pagos/{id}', [PagoController::class, 'show'])->name('pagos.show');
+
 });

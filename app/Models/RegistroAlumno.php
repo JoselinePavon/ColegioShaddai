@@ -41,5 +41,8 @@ class RegistroAlumno extends Model
     {
         return $this->hasMany(Inscripcion::class, 'registro_alumnos_id', 'id');
     }
-
+    public function inscripcion()
+    {
+        return $this->hasOne(\App\Models\Inscripcion::class, 'registro_alumnos_id', 'id');
+    }
 }

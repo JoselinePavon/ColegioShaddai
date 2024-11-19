@@ -62,5 +62,9 @@ class Pago extends Model
         return $this->belongsTo(\App\Models\me::class, 'mes_id', 'id');
     }
 
+    public function inscripcion()
+    {
+        return $this->hasOne(\App\Models\Inscripcion::class, 'registro_alumnos_id', 'id');
+    }
 
 }

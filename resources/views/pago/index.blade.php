@@ -30,12 +30,11 @@
                         <thead class="text-white" style="background-color: #343a40;">
                         <tr>
                             <th>No</th>
-                            <th>Num Serie</th>
-                            <th>Fecha Pago</th>
-                            <th>Tipo de Pago</th>
-                            <th>Monto</th>
-                            <th>Alumno</th>
-                            <th>Mes</th>
+                            <th>Correlativo</th>
+                            <th>Nombres</th>
+                            <th>Apellidos</th>
+                            <th>Grado</th>
+                            <th>Seccion</th>
                             <th>estado</th>
 
                             <th class="text-center">Acciones</th>
@@ -45,39 +44,24 @@
                         @foreach ($pagos as $pago)
                             <tr>
                                 <td>{{ ++$i }}</td>
-                                <td>{{ $pago->num_serie }}</td>
-                                <td>{{ $pago->fecha_pago }}</td>
-                                <td>{{ $pago->tipopago->tipo_pago }}</td>
-                                <td>{{ $pago->tipopago->monto }}</td>
-                                <td>{{ $pago->RegistroAlumno->nombres }}</td>
-                                <td>{{ $pago->mes->mes }}</td>
+                                <td>{{ $pago->inscripcion->codigo_correlativo ?? 'Sin Codigo correlativo' }}</td>
+                                <td>{{ $pago->registroAlumno->nombres }}</td>
+                                <td>{{ $pago->registroAlumno->apellidos }}</td>
+                                <td>{{ $pago->registroAlumno->inscripcion->grado->nombre_grado ?? 'Sin Grado' }}</td>
+                                <td>{{ $pago->registroAlumno->inscripcion->seccion->seccion ?? 'Sin Sección' }}</td>
                                 <td>
                                     @if($pago->estado->id == 1)
                                         <span style="color: green;">● Solvente</span>
                                     @elseif($pago->estado->id == 2)
                                         <span style="color: red;">● Insolvente</span>
-                                    @elseif($pago->estado->id == 3)
-                                        <span style="color: blue;">● Cancelado</span>
                                     @else
                                         <span style="color: gray;">● Sin estado</span>
                                     @endif
                                 </td>
-
-
-                                <td class="text-center d-flex gap-1 justify-content-center">
+                                <td class="text-center">
                                     <a class="btn btn-sm btn-primary" href="{{ route('pagos.show', $pago->id) }}">
-                                        <i class="fa fa-fw fa-eye"></i>
+                                        <i class="fa fa-fw fa-eye"></i> Mostrar Pagos
                                     </a>
-                                    <a class="btn btn-sm btn-warning" href="{{ route('pagos.edit', $pago->id) }}">
-                                        <i class="fa fa-fw fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('pagos.destroy', $pago->id) }}" method="POST" class="delete-form d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="btn btn-sm btn-danger delete-button">
-                                            <i class="fa fa-fw fa-trash"></i>
-                                        </button>
-                                    </form>
                                 </td>
                             </tr>
                         @endforeach
@@ -86,7 +70,7 @@
                 </div>
             </div>
         </div>
-        {!! $pagos->links() !!}
+
     </div>
 
     {{-- SweetAlert para confirmación de eliminación --}}

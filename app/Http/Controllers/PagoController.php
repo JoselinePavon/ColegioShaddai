@@ -24,11 +24,31 @@ class PagoController extends Controller
      */
     public function index()
     {
-        $pagos = Pago::paginate();
+        // Traer los pagos únicos por alumno
+        $pagos = Pago::with([
+            'registroAlumno.inscripcion.grado',
+            'registroAlumno.inscripcion.seccion',
+            'estado'
+        ])->get()
+            ->unique('registro_alumnos_id'); // Solo un pago por alumno
 
         return view('pago.index', compact('pagos'))
-            ->with('i', (request()->input('page', 1) - 1) * $pagos->perPage());
+            ->with('i', 0); // Reiniciar índice para paginación
     }
+
+    public function show($registro_alumnos_id)
+    {
+        // Obtener el pago actual y verificar si existe
+        $pago = Pago::with(['registroAlumno', 'tipopago', 'mes', 'estado'])->findOrFail($registro_alumnos_id);
+
+        // Obtener todos los pagos realizados por el mismo alumno
+        $pagos = Pago::where('registro_alumnos_id', $pago->registro_alumnos_id)
+            ->with(['registroAlumno', 'tipopago', 'mes', 'estado'])
+            ->get();
+
+        return view('pago.show', compact('pagos'));
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -112,12 +132,7 @@ class PagoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
-    {
-        $pago = Pago::find($id);
 
-        return view('pago.show', compact('pago'));
-    }
 
     /**
      * Show the form for editing the specified resource.
