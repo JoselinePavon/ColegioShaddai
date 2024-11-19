@@ -23,6 +23,9 @@ class EncargadoRequest extends FormRequest
     {
         return [
 			'nombre_encargado' => 'required|string',
+            'edad' => 'required|string',
+            'estado_civil' => 'required|string',
+            'oficio' => 'required|string',
 			'dpi' => 'required|string',
 			'telefono' => 'required',
 			'persona_emergencia' => 'required|string',

@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property $id
  * @property $nombre_encargado
+ * @property $edad
+ * @property $estado_civil
+ * @property $oficio
  * @property $direccion
  * @property $num_encargado1
  * @property $num_encargado2
@@ -35,6 +38,9 @@ class Encargado extends Model
 
     protected $fillable = [
         'nombre_encargado',
+        'edad',
+        'estado_civil',
+        'oficio',
         'dpi',
         'telefono',
         'persona_emergencia',

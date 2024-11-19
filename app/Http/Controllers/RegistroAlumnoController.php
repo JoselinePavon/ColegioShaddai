@@ -66,6 +66,9 @@ class RegistroAlumnoController extends Controller
 
         $encargado = new Encargado([
             'nombre_encargado' => $request->input('nombre_encargado'),
+            'edad' => $request->input('edad'),
+            'estado_civil' => $request->input('estado_civil'),
+            'oficio' => $request->input('oficio'),
             'dpi' => $request->input('dpi'),
             'telefono' => $request->input('telefono'),
             'persona_emergencia' => $request->input('persona_emergencia'),
