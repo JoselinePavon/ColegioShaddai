@@ -94,6 +94,18 @@ class PagoController extends Controller
         ]);
 
         $data = $request->validated();
+// Verificar si el tipo de pago es inscripción (id 2)
+        if ($data['tipopagos_id'] == 2) {
+            $pagoInscripcion = Pago::where('registro_alumnos_id', $data['registro_alumnos_id'])
+                ->where('tipopagos_id', 2) // Verificar solo pagos de inscripción
+                ->first();
+
+            if ($pagoInscripcion) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'El alumno ya ha realizado el pago de inscripción.');
+            }
+        }
 
         // Verificar si el tipo de pago es colegiatura (id 1)
         if ($data['tipopagos_id'] == 1) {
@@ -167,6 +179,7 @@ class PagoController extends Controller
         return redirect()->route('pagos.index')
             ->with('success', 'Pago deleted successfully');
     }
+
     public function buscar()
     {
         return view('pago.form');

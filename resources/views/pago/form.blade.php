@@ -200,6 +200,24 @@
                 }
             }
 
+            if (selectedTipoPagoId === '2') { // ID 2 corresponde a inscripción
+                const yaPagoInscripcion = pagosPorMes.some(pago =>
+                    parseInt(pago.tipopagos_id) === 2 // Verificar tipo de pago inscripción
+                );
+
+                if (yaPagoInscripcion) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.classList.add('alert', 'alert-danger');
+                    errorDiv.textContent = 'El alumno ya ha realizado el pago de inscripción.';
+                    document.querySelector('.card-body').prepend(errorDiv);
+
+                    // Restablecer la selección del tipo de pago
+                    tipoPagosSelect.value = '';
+                    alertShown = true;
+                    return false; // Detener el proceso
+                }
+            }
+
             // Actualizar el monto si todo está en orden
             actualizarMonto();
             return true; // Continuar el proceso
