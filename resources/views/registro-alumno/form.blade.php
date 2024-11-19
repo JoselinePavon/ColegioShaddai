@@ -27,7 +27,7 @@
                         <!-- Row for student and guardian sections side by side -->
                         <div class="row">
                             <div class="col-md-6">
-                                <h4 class="mb-3">Datos del Alumno</h4>
+                                <center><h4 class="mb-3" >Datos del Alumno</h4></center>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="codigo_personal" class="form-label"><i class="bi bi-person-fill"></i> Código Personal</label>
@@ -61,14 +61,29 @@
                                 </div>
                             </div>
 
+
                             <!-- Datos del Encargado -->
                             <div class="col-md-6">
-                                <h4 class="mb-3">Datos del Encargado</h4>
+                                <center>  <h4 class="mb-3">Datos del Encargado</h4></center>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="nombre_encargado" class="form-label"><i class="bi bi-person-fill"></i> Nombre completo</label>
                                         <input type="text" name="nombre_encargado" class="form-control required-field" id="nombre_encargado" placeholder="Nombre del Encargado">
                                     </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="edad" class="form-label"><i class="bi bi-person-fill"></i> Edad</label>
+                                        <input type="number" name="edad" class="form-control required-field" id="edad" placeholder="Ingresa la Edad" min="0" max="120" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="estado_civil" class="form-label"><i class="bi bi-person-fill"></i> Estado Civil</label>
+                                        <input type="text" name="estado_civil" class="form-control required-field" id="estado_civil" placeholder="Ingresa tu Estado Civil" required>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="oficio" class="form-label"> <i class="fas fa-briefcase" style="color: black;"></i> Oficio</label>
+                                        <input type="text" name="oficio" class="form-control required-field" id="oficio" placeholder="Ingresa tu Oficio" required>
+                                    </div>
+
                                     <div class="col-md-6 mb-3">
                                         <label for="dpi" class="form-label"><i class="bi bi-house-door-fill"></i> Número de DPI</label>
                                         <input type="number" name="dpi" class="form-control required-field" id="dpi" placeholder="1234 1232 1234">
@@ -101,7 +116,7 @@
                         </div>
 
                         <!-- Botón de Validación -->
-                        <div class="text-center mt-3">
+                        <div class="text-center mt-1">
                             <button type="button" id="validateButton" class="btn btn-dark"><i class="fas fa-check"></i> Siguiente</button>
                         </div>
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContratoController;
 use App\Http\Controllers\EncargadoController;
 use App\Http\Controllers\GradoController;
 use App\Http\Controllers\InscripcionController;
@@ -63,5 +64,5 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('mes', App\Http\Controllers\MeController::class);
 
-
+    Route::get('/contrato', [ContratoController::class, 'contrato'])->name('contrato');
 });

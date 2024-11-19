@@ -59,7 +59,7 @@ class Pago extends Model
 
     public function mes()
     {
-        return $this->belongsTo(\App\Models\mes::class, 'mes_id', 'id');
+        return $this->belongsTo(\App\Models\me::class, 'mes_id', 'id');
     }
 
 

@@ -11,15 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('encargados', function (Blueprint $table) {
+        Schema::create('reglamentos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre_encargado');
-            $table->string('edad');
-            $table->string('estado_civil');
-            $table->string('oficio');
-            $table->string('dpi');
-            $table->string('telefono');
-            $table->string('persona_emergencia');
             $table->timestamps();
         });
     }
@@ -29,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('encargados');
+        Schema::dropIfExists('reglamentos');
     }
 };

@@ -24,7 +24,7 @@
             --navbar-bg-color: #000080;
             --navbar-hover-color: #0000b3;
             --text-hover-color: #ffd700;
-            --navbar-width: 250px;
+            --navbar-width: 285px;
         }
 
         body {
@@ -245,11 +245,23 @@
 
         <li class="nav-item {{ request()->is('tipopagos') ? 'active' : '' }}">
             <a class="nav-link" href="/tipopagos">
-                <i class="fas fa-check-circle"></i>
+                <i class="bi bi-credit-card me-2"></i>
                 <span>Tipo de pagos</span>
             </a>
         </li>
 
+        <li class="nav-item {{ request()->is('contrato') ? 'active' : '' }}">
+            <a class="nav-link" href="/contrato">
+                <i class="bi bi-file-earmark-text "></i>
+                <span>Contrato de adhesión</span>
+            </a>
+        </li>
+        <li class="nav-item {{ request()->is(' ') ? 'active' : '' }}">
+            <a class="nav-link" href="#">
+                <i class="bi bi-journal-text me-2"></i>
+                <span>Reglamento interno</span>
+            </a>
+        </li>
         <li class="nav-item">
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
