@@ -69,4 +69,5 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('pagos/{id}', [PagoController::class, 'show'])->name('pagos.show');
 
+    Route::get('/buscar-alumno', [ContratoController::class, 'buscarAlumno'])->name('buscar.alumno');
 });

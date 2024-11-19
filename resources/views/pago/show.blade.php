@@ -14,9 +14,19 @@
                     </h4>
                     <a class="btn btn-primary btn-sm" href="{{ route('pagos.index') }}"> {{ __('Volver') }}</a>
                 </div>
-
+                @if ($message = Session::get('success'))
+                    <script>
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            text: '{{ $message }}',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                    </script>
+                @endif
                 <div class="table-responsive">
-                    <table id="pagos" class="table table-striped table-bordered shadow-sm mt-3">
+                    <table id="pagos" class="table table-striped table-bordered shadow-sm mt-3" style="font-size: 12px; border-spacing: 2px; padding: 5px;">
                         <thead class="text-white" style="background-color: #343a40;">
                         <tr>
                             <th>No</th>
@@ -27,6 +37,7 @@
                             <th>Alumno</th>
                             <th>Mes</th>
                             <th>Estado</th>
+                            <th>Accion</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -50,6 +61,19 @@
                                         <span style="color: gray;">● Sin estado</span>
                                     @endif
                                 </td>
+                                <td class="text-center d-flex gap-1 justify-content-center">
+                                    <a class="btn btn-sm btn-warning" href="{{ route('pagos.edit', $pago->id) }}">
+                                        <i class="fa fa-fw fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('pagos.destroy', $pago->id) }}" method="POST" class="delete-form d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger delete-button">
+                                            <i class="fa fa-fw fa-trash"></i>
+                                        </button>
+
+                                    </form>
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -60,15 +84,15 @@
     </div>
 
     <script>
-        $(document).ready(function() {
-            $('#mediciones').DataTable({
+        $(document).ready(function () {
+            $('#pagos').DataTable({
                 "language": {
-                    "lengthMenu": "Mostrar _MENU_ por página",
+                    "lengthMenu": "Mostrar_MENU_por página",
                     "zeroRecords": "<i class='fas fa-info-circle'></i> No se encontraron resultados para la búsqueda.",
                     "emptyTable": "<i class='fas fa-info-circle'></i> No hay datos disponibles en la tabla",
-                    "info": "Mostrando _PAGE_ de _PAGES_",
+                    "info": "Mostrando PAGE de PAGES",
                     "infoEmpty": "No hay registros disponibles",
-                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "infoFiltered": "(filtrado de MAX registros totales)",
                     "search": "Buscar",
                     "paginate": {
                         "first": "Primera",
@@ -76,12 +100,31 @@
                         "next": "Siguiente",
                         "previous": "Anterior"
                     }
-                },
-                "drawCallback": function(settings) {
-                    if (settings.fnRecordsTotal() == 0) {
-                        $(this).find('.dataTables_empty').addClass('alert-style');
-                    }
                 }
+            });
+        });
+    </script>
+
+    <script>
+        document.querySelectorAll('.delete-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "No podrás revertir esta acción",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
             });
         });
     </script>

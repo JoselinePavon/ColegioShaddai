@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property $registro_alumnos_id
  * @property $grados_id
  * @property $seccions_id
+ * @property $jornada
  * @property $created_at
  * @property $updated_at
  *
@@ -32,7 +33,7 @@ class Inscripcion extends Model
      *
      * @var array
      */
-    protected $fillable = ['registro_alumnos_id', 'grados_id', 'seccions_id','codigo_correlativo'];
+    protected $fillable = ['registro_alumnos_id', 'grados_id', 'seccions_id','codigo_correlativo', 'jornada'];
 
 
     /**

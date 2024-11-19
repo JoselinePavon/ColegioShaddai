@@ -82,6 +82,7 @@ class RegistroAlumnoController extends Controller
             'registro_alumnos_id' => $alumno->id,  // ID automático
             'grados_id' => $request->input('grados_id'),
             'seccions_id' => $request->input('seccions_id'),
+            'jornada' => $request->input('jornada'),
             'codigo_correlativo' => $request->input('codigo_correlativo'),
 
         ]);

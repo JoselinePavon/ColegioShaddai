@@ -27,6 +27,7 @@ class InscripcionRequest extends FormRequest
 			'registro_alumnos_id' => 'required',
 			'grados_id' => 'required',
 			'seccions_id' => 'required',
+            'jornada' => 'required',
         ];
     }
 }

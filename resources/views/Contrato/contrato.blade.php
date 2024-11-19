@@ -5,11 +5,6 @@
     @endsection
 
     @section('content')
-        <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Contrato de Adhesión - Colegio Particular Mixto Shaddai</title>
         <style>
             body {
@@ -118,14 +113,17 @@
                 gap: 15px;
             }
         </style>
-    </head>
     <body>
     <div class="contract-header">
         <h1>CONTRATO DE ADHESIÓN POR PRESTACIÓN DE SERVICIOS EDUCATIVOS</h1>
         <h2>COLEGIO PARTICULAR MIXTO SHADDAI</h2>
-        <p>Correlativo interno Contrato No. ______</p>
+        <p>
+            Correlativo interno Contrato No.
+            <input type="text" name="contract_no" size="10" style="display: inline-block; width: auto; border: 1px solid #000; text-align: center;">
+        </p>
         <p>Aprobado y registrado según Resolución DIACO: DDC-342-2022</p>
     </div>
+
 
     <div class="contract-body">
         <p>En el municipio Puerto Barrios, del departamento de Izabal, el día DIECIOCHO DÍAS del mes de NOVIEMBRE del año dos mil veinticuatro.</p>
@@ -134,69 +132,77 @@
 
         <div class="clause">
             <p class="clause-title">DATOS DEL REPRESENTANTE DEL EDUCANDO</p>
-            <div class="form-grid">
+            <form method="GET" action="{{ route('buscar.alumno') }}">
                 <div class="form-group">
                     <label for="codigo-correlativo">Código de Correlativo:</label>
-                    <input type="text" id="codigo-correlativo" name="codigo-correlativo" required>
+                    <input type="text" id="codigo-correlativo" name="codigo_correlativo" value="{{ old('codigo_correlativo', $codigoCorrelativo ?? '') }}" required>
                 </div>
-                <div class="form-group">
-                    <label for="nombre-completo">Nombre Completo:</label>
-                    <input type="text" id="nombre-completo" name="nombre-completo" required>
-                </div>
-                <div class="form-group">
-                    <label for="edad">Edad:</label>
-                    <input type="number" id="edad" name="edad" required>
-                </div>
-                <div class="form-group">
-                    <label for="estado-civil">Estado Civil:</label>
-                    <input type="text" id="estado-civil" name="estado-civil" required>
-                </div>
-                <div class="form-group">
-                    <label for="oficio">Oficio:</label>
-                    <input type="text" id="oficio" name="oficio" required>
-                </div>
-                <div class="form-group">
-                    <label for="identificacion">Número de Identificación:</label>
-                    <input type="text" id="identificacion" name="identificacion" required>
-                </div>
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+
+            <div class="form-group">
+                <label for="nombre-completo">Nombre Completo:</label>
+                <input type="text" id="nombre-completo" name="nombre_completo" value="{{ old('nombre_completo', $nombreCompleto ?? '') }}">
             </div>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="residencia">Residencia:</label>
-                    <input type="text" id="residencia" name="residencia" required>
-                </div>
-                <div class="form-group">
-                    <label for="telefono-casa">Número de teléfono en casa:</label>
-                    <input type="tel" id="telefono-casa" name="telefono-casa">
-                </div>
+
+            <div class="form-group">
+                <label for="edad">Edad:</label>
+                <input type="text" id="edad" name="edad" value="{{ old('edad', $edad ?? '') }}">
             </div>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="telefono-celular">Número de celular:</label>
-                    <input type="tel" id="telefono-celular" name="telefono-celular" required>
-                </div>
-                <div class="form-group">
-                    <label for="correo-electronico">Correo electrónico:</label>
-                    <input type="email" id="correo-electronico" name="correo-electronico">
-                </div>
+
+            <div class="form-group">
+                <label for="estado-civil">Estado Civil:</label>
+                <input type="text" id="estado-civil" name="estado_civil" value="{{ old('estado_civil', $estadoCivil ?? '') }}">
             </div>
+
+            <div class="form-group">
+                <label for="oficio">Oficio:</label>
+                <input type="text" id="oficio" name="oficio" value="{{ old('oficio', $oficio ?? '') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="identificacion">Número de Identificación:</label>
+                <input type="text" id="identificacion" name="identificacion" value="{{ old('identificacion', $identificacion ?? '') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="residencia">Residencia:</label>
+                <input type="text" id="residencia" name="residencia" value="{{ old('residencia', $residencia ?? '') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="telefono-casa">Número de Teléfono en Casa:</label>
+                <input type="text" id="telefono-casa" name="telefono_casa" value="{{ old('telefono_casa', $telefonoCasa ?? '') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="telefono-celular">Número de Celular:</label>
+                <input type="text" id="telefono-celular" name="telefono_celular" value="{{ old('telefono_celular', $telefonoCelular ?? '') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="correo-electronico">Correo Electrónico:</label>
+                <input type="email" id="correo-electronico" name="correo_electronico" value="{{ old('correo_electronico', $correo ?? '') }}">
+            </div>
+
         </div>
 
         <div class="clause">
             <p class="clause-title">PRIMERA: INFORMACIÓN DEL EDUCANDO Y SERVICIO EDUCATIVO CONTRATADO.</p>
-            <div class="form-grid-3">
-                <div class="form-group">
-                    <label for="nombre-educando">Nombre del Educando:</label>
-                    <input type="text" id="nombre-educando" name="nombre-educando" required>
-                </div>
-                <div class="form-group">
-                    <label for="grado-nivel">Grado y Nivel:</label>
-                    <input type="text" id="grado-nivel" name="grado-nivel" required>
-                </div>
-                <div class="form-group">
-                    <label for="jornada">Jornada:</label>
-                    <input type="text" id="jornada" name="jornada" required>
-                </div>
+
+            <div class="form-group">
+                <label for="nombre-educando">Nombre del Educando:</label>
+                <input type="text" id="nombre-educando" name="nombre_educando" value="{{ old('nombre_educando', $nombreCompleto ?? '') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="grado-nivel">Grado y Nivel:</label>
+                <input type="text" id="grado-nivel" name="grado_nivel" value="{{ old('grado_nivel', $grado ?? '') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="jornada">Jornada:</label>
+                <input type="text" id="jornada" name="jornada" value="{{ old('jornada', $jornada ?? '') }}">
             </div>
             <p>Servicios educativos debidamente autorizados por el Ministerio de Educación, de conformidad con las siguientes resoluciones: a) No. AMP/DESPACHO/006-2020; b) No. REV/DESPACHO/026-2020 ambas de fecha 30 de diciembre de 2020, emitidas por la Dirección Departamental de Educación de Izabal, mismas que se ponen a la vista.</p>
         </div>
@@ -405,6 +411,17 @@
             </button>
         </div>
     </div>
-    </body>
-    </html>
+
+    <script>
+        document.getElementById('buscar-correlativo').addEventListener('click', function() {
+            var codigoCorrelativo = document.getElementById('codigo-correlativo').value;
+            if(codigoCorrelativo.trim() !== '') {
+                alert('Buscando información para el código: ' + codigoCorrelativo);
+                // Aquí puedes realizar la búsqueda, por ejemplo, hacer una solicitud a un servidor
+                // o filtrar resultados en una base de datos
+            } else {
+                alert('Por favor ingresa un código para buscar.');
+            }
+        });
+    </script>
 @endsection

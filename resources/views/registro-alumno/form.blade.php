@@ -142,6 +142,15 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
+                                    <label for="jornada" class="form-label">Jornada</label>
+                                    <select name="jornada" class="form-select" id="jornada">
+                                        <option value="">Selecciona género</option>
+                                        <option value="Matutina">Matutina</option>
+                                        <option value="Vespertina">Vespertina</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
                                     <label for="seccions_id" class="form-label">Sección</label>
                                     <select name="seccions_id" class="form-select" id="seccions_id">
                                         <option value="">Seleccione una sección</option>
@@ -150,7 +159,9 @@
                                         @endforeach
                                     </select>
                                 </div>
+
                             </div>
+
                             <button type="button" id="guardarButton" class="btn btn-dark mt-3">Guardar</button>
                         </div>
                     </form>

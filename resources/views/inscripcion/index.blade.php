@@ -46,7 +46,7 @@
                 @endif
 
                 <div class="table-responsive">
-                    <table id="mediciones" class="table table-striped table-bordered shadow-sm mt-3" style="font-size: 0.85em;">
+                    <table id="mediciones" class="table table-striped table-bordered shadow-sm mt-3" style="font-size: 0.75em;">
                         <thead class="text-white" style="background-color: #343a40;">
                         <tr>
                             <th>No</th>
@@ -55,6 +55,7 @@
                             <th scope="col">Apellido</th>
                             <th scope="col">Grado</th>
                             <th scope="col">Sección</th>
+                            <th scope="col">Jornada</th>
                             <th scope="col">Edad</th>
                             <th scope="col">Acciones</th>
                         </tr>
@@ -68,6 +69,7 @@
                                 <td>{{ $inscripcion->RegistroAlumno->apellidos ?? 'N/A' }}</td>
                                 <td>{{ $inscripcion->grado->nombre_grado ?? 'N/A' }}</td>
                                 <td>{{ $inscripcion->seccion->seccion ?? 'N/A' }}</td>
+                                <td>{{ $inscripcion->jornada ?? 'N/A' }}</td>
                                 <td>{{ $inscripcion->RegistroAlumno->edad ?? 'N/A' }}</td>
 
                                 <td class="d-flex gap-1">

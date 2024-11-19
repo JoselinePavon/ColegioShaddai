@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('registro_alumnos_id');
             $table->unsignedBigInteger('grados_id');
             $table->unsignedBigInteger('seccions_id');
+            $table->string('jornada');
 
 
 
