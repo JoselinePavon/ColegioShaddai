@@ -126,78 +126,73 @@
 
 
     <div class="contract-body">
-        <p>En el municipio Puerto Barrios, del departamento de Izabal, el día DIECIOCHO DÍAS del mes de NOVIEMBRE del año dos mil veinticuatro.</p>
-
-        <p>NOSOTROS: HERLINDO ARTIGA MARROQUÍN de sesenta y cuatro años de edad, casado, guatemalteco, bachiller, de este domicilio, me identifico con Documento Personal de Identificación, Código Único de Identificación –CUI— número 2679 12609 1804, extendido por el Registro Nacional de las Personas de la República de Guatemala, propietario del centro educativo COLEGIO PARTICULAR MIXTO SHADDAI, ubicado en 3ª. Calle 1ª. Avenida, Colonia San Agustín, Santo Tomás de Castilla, municipio de Puerto Barrios, departamento de Izabal; según lo acredito con la Constancia de Inscripción y Actualización de Datos y Registro Tributario Unificado 8319383, emitido por la Superintendencia de Administración Tributaria. Y por la otra parte:</p>
-
-        <div class="clause">
-            <p class="clause-title">DATOS DEL REPRESENTANTE DEL EDUCANDO</p>
-            <form method="GET" action="{{ route('buscar.alumno') }}">
-                <div class="form-group">
-                    <label for="codigo-correlativo">Código de Correlativo:</label>
-                    <input type="text" id="codigo-correlativo" name="codigo_correlativo" value="{{ old('codigo_correlativo', $codigoCorrelativo ?? '') }}" required>
-                </div>
+        <form method="POST" action="{{ route('buscar.alumno') }}">
+            @csrf
+            <div class="form-group">
+                <label for="codigo-correlativo">Código de Correlativo:</label>
+                <input type="text" id="codigo-correlativo" name="codigo_correlativo" value="{{ old('codigo_correlativo', $codigoCorrelativo ?? '') }}" required>
                 <button type="submit" class="btn btn-primary">Buscar</button>
-            </form>
-
-            <div class="form-group">
-                <label for="nombre-completo">Nombre Completo:</label>
-                <input type="text" id="nombre-completo" name="nombre_completo" value="{{ old('nombre_completo', $nombreCompleto ?? '') }}">
             </div>
+        </form>
 
-            <div class="form-group">
-                <label for="edad">Edad:</label>
-                <input type="text" id="edad" name="edad" value="{{ old('edad', $edad ?? '') }}">
-            </div>
+        @if(session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
 
-            <div class="form-group">
-                <label for="estado-civil">Estado Civil:</label>
-                <input type="text" id="estado-civil" name="estado_civil" value="{{ old('estado_civil', $estadoCivil ?? '') }}">
-            </div>
-
-            <div class="form-group">
-                <label for="oficio">Oficio:</label>
-                <input type="text" id="oficio" name="oficio" value="{{ old('oficio', $oficio ?? '') }}">
-            </div>
-
-            <div class="form-group">
-                <label for="identificacion">Número de Identificación:</label>
-                <input type="text" id="identificacion" name="identificacion" value="{{ old('identificacion', $identificacion ?? '') }}">
-            </div>
-
-            <div class="form-group">
-                <label for="residencia">Residencia:</label>
-                <input type="text" id="residencia" name="residencia" value="{{ old('residencia', $residencia ?? '') }}">
-            </div>
-
-            <div class="form-group">
-                <label for="telefono-casa">Número de Teléfono en Casa:</label>
-                <input type="text" id="telefono-casa" name="telefono_casa" value="{{ old('telefono_casa', $telefonoCasa ?? '') }}">
-            </div>
-
-            <div class="form-group">
-                <label for="telefono-celular">Número de Celular:</label>
-                <input type="text" id="telefono-celular" name="telefono_celular" value="{{ old('telefono_celular', $telefonoCelular ?? '') }}">
-            </div>
-
-            <div class="form-group">
-                <label for="correo-electronico">Correo Electrónico:</label>
-                <input type="email" id="correo-electronico" name="correo_electronico" value="{{ old('correo_electronico', $correo ?? '') }}">
-            </div>
-
+        <div class="form-group">
+            <label for="nombre-completo">Nombre Completo:</label>
+            <input type="text" id="nombre-completo" name="nombre_completo" value="{{ old('nombre_completo', $nombreCompleto ?? '') }}">
         </div>
+
+        <div class="form-group">
+            <label for="edad">Edad:</label>
+            <input type="text" id="edad" name="edad" value="{{ old('edad', $edad ?? '') }}">
+        </div>
+
+        <div class="form-group">
+            <label for="estado-civil">Estado Civil:</label>
+            <input type="text" id="estado-civil" name="estado_civil" value="{{ old('estado_civil', $estadoCivil ?? '') }}">
+        </div>
+
+        <div class="form-group">
+            <label for="oficio">Oficio:</label>
+            <input type="text" id="oficio" name="oficio" value="{{ old('oficio', $oficio ?? '') }}">
+        </div>
+
+        <div class="form-group">
+            <label for="identificacion">Número de Identificación:</label>
+            <input type="text" id="identificacion" name="identificacion" value="{{ old('identificacion', $identificacion ?? '') }}">
+        </div>
+
+        <div class="form-group">
+            <label for="residencia">Residencia:</label>
+            <input type="text" id="residencia" name="residencia" value="{{ old('residencia', $residencia ?? '') }}">
+        </div>
+
+        <div class="form-group">
+            <label for="telefono-casa">Número de Teléfono en Casa:</label>
+            <input type="text" id="telefono-casa" name="telefono_casa" value="{{ old('telefono_casa', $telefonoCasa ?? '') }}">
+        </div>
+
+        <div class="form-group">
+            <label for="telefono-celular">Número de Celular:</label>
+            <input type="text" id="telefono-celular" name="telefono_celular" value="{{ old('telefono_celular', $telefonoCelular ?? '') }}">
+        </div>
+
+
+    </div>
 
         <div class="clause">
             <p class="clause-title">PRIMERA: INFORMACIÓN DEL EDUCANDO Y SERVICIO EDUCATIVO CONTRATADO.</p>
 
             <div class="form-group">
                 <label for="nombre-educando">Nombre del Educando:</label>
-                <input type="text" id="nombre-educando" name="nombre_educando" value="{{ old('nombre_educando', $nombreCompleto ?? '') }}">
+                <input type="text" id="nombre-educando" name="nombre_educando" value="{{ old('nombre_educando', $nombreEducando ?? '') }}">
             </div>
 
             <div class="form-group">
                 <label for="grado-nivel">Grado y Nivel:</label>
-                <input type="text" id="grado-nivel" name="grado_nivel" value="{{ old('grado_nivel', $grado ?? '') }}">
+                <input type="text" id="grado-nivel" name="grado_nivel" value="{{ old('grado_nivel', $gradoNivel ?? '') }}">
             </div>
 
             <div class="form-group">
