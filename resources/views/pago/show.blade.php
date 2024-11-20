@@ -26,18 +26,18 @@
                     </script>
                 @endif
                 <div class="table-responsive">
-                    <table id="pagos" class="table table-striped table-bordered shadow-sm mt-3" style="font-size: 12px; border-spacing: 2px; padding: 5px;">
+                    <table id="mediciones" class="table table-striped table-bordered shadow-sm mt-3">
                         <thead class="text-white" style="background-color: #343a40;">
                         <tr>
-                            <th>No</th>
-                            <th>Num Serie</th>
-                            <th>Fecha Pago</th>
-                            <th>Tipo de Pago</th>
-                            <th>Monto</th>
-                            <th>Alumno</th>
-                            <th>Mes</th>
-                            <th>Estado</th>
-                            <th>Accion</th>
+                            <th scope="col">No</th>
+                            <th scope="col">Num Serie</th>
+                            <th scope="col">Fecha Pago</th>
+                            <th scope="col">Tipo de Pago</th>
+                            <th scope="col">Monto</th>
+                            <th scope="col">Alumno</th>
+                            <th scope="col">Mes</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Accion</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -84,21 +84,26 @@
     </div>
 
     <script>
-        $(document).ready(function () {
-            $('#pagos').DataTable({
+        $(document).ready(function() {
+            $('#mediciones').DataTable({
                 "language": {
-                    "lengthMenu": "Mostrar_MENU_por página",
+                    "lengthMenu": "Mostrar _MENU_ por página",
                     "zeroRecords": "<i class='fas fa-info-circle'></i> No se encontraron resultados para la búsqueda.",
                     "emptyTable": "<i class='fas fa-info-circle'></i> No hay datos disponibles en la tabla",
-                    "info": "Mostrando PAGE de PAGES",
+                    "info": "Mostrando _PAGE_ de _PAGES_",
                     "infoEmpty": "No hay registros disponibles",
-                    "infoFiltered": "(filtrado de MAX registros totales)",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
                     "search": "Buscar",
                     "paginate": {
                         "first": "Primera",
                         "last": "Última",
                         "next": "Siguiente",
                         "previous": "Anterior"
+                    }
+                },
+                "drawCallback": function(settings) {
+                    if (settings.fnRecordsTotal() == 0) {
+                        $(this).find('.dataTables_empty').addClass('alert-style');
                     }
                 }
             });

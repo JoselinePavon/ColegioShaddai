@@ -24,30 +24,44 @@ class PagoController extends Controller
      */
     public function index()
     {
-        // Traer los pagos únicos por alumno
+        $mesActual = Carbon::now()->month;
+
+        // Obtener todos los pagos con las relaciones necesarias
         $pagos = Pago::with([
             'registroAlumno.inscripcion.grado',
             'registroAlumno.inscripcion.seccion',
-            'estado'
-        ])->get()
-            ->unique('registro_alumnos_id'); // Solo un pago por alumno
+            'estado',
+            'mes'
+        ])->get();
 
-        return view('pago.index', compact('pagos'))
-            ->with('i', 0); // Reiniciar índice para paginación
+        // Agrupar los pagos por alumno y determinar los meses pagados
+        $alumnos = $pagos->groupBy('registro_alumnos_id')->map(function ($pagosAlumno) {
+            return [
+                'registroAlumno' => $pagosAlumno->first()->registroAlumno,
+                'mesesPagados' => $pagosAlumno->pluck('mes_id')->toArray(), // Meses pagados
+            ];
+        });
+
+        return view('pago.index', compact('alumnos', 'mesActual','pagos'))->with('i', 0);
     }
+
 
     public function show($registro_alumnos_id)
     {
-        // Obtener el pago actual y verificar si existe
-        $pago = Pago::with(['registroAlumno', 'tipopago', 'mes', 'estado'])->findOrFail($registro_alumnos_id);
-
-        // Obtener todos los pagos realizados por el mismo alumno
-        $pagos = Pago::where('registro_alumnos_id', $pago->registro_alumnos_id)
-            ->with(['registroAlumno', 'tipopago', 'mes', 'estado'])
+        // Obtener todos los pagos realizados por el alumno con el registro_alumnos_id
+        $pagos = Pago::where('registro_alumnos_id', $registro_alumnos_id)
+            ->with(['registroAlumno.inscripcion', 'tipopago', 'mes', 'estado'])
             ->get();
 
+        // Verificar si el alumno tiene pagos registrados
+        if ($pagos->isEmpty()) {
+            return redirect()->route('pagos.index')->with('error', 'No se encontraron pagos para este alumno.');
+        }
+
+        // Retornar la vista con los pagos del alumno
         return view('pago.show', compact('pagos'));
     }
+
 
 
     /**

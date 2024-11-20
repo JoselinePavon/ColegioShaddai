@@ -72,4 +72,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/buscar-alumno', [ContratoController::class, 'buscarAlumno'])->name('buscar.alumno');
 
     Route::post('/buscar', [ContratoController::class, 'buscar'])->name('buscar.alumno');
+
+    Route::get('/pagos/{registro_alumnos_id}/show', [PagoController::class, 'show'])->name('pagos.show');
+
 });
