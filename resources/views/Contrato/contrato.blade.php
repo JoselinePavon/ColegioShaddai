@@ -126,6 +126,7 @@
 
 
     <div class="contract-body">
+        <div class="form-grid-3">
         <form method="POST" action="{{ route('buscar.alumno') }}">
             @csrf
             <div class="form-group">
@@ -138,53 +139,51 @@
         @if(session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
+            <div class="form-group">
+                <label for="nombre-completo">Nombre Completo:</label>
+                <input type="text" id="nombre-completo" name="nombre_completo" value="{{ old('nombre_completo', $nombreCompleto ?? '') }}">
+            </div>
 
-        <div class="form-group">
-            <label for="nombre-completo">Nombre Completo:</label>
-            <input type="text" id="nombre-completo" name="nombre_completo" value="{{ old('nombre_completo', $nombreCompleto ?? '') }}">
-        </div>
+            <div class="form-group">
+                <label for="edad">Edad:</label>
+                <input type="text" id="edad" name="edad" value="{{ old('edad', $edad ?? '') }}">
+            </div>
 
-        <div class="form-group">
-            <label for="edad">Edad:</label>
-            <input type="text" id="edad" name="edad" value="{{ old('edad', $edad ?? '') }}">
-        </div>
+            <div class="form-group">
+                <label for="estado-civil">Estado Civil:</label>
+                <input type="text" id="estado-civil" name="estado_civil" value="{{ old('estado_civil', $estadoCivil ?? '') }}">
+            </div>
 
-        <div class="form-group">
-            <label for="estado-civil">Estado Civil:</label>
-            <input type="text" id="estado-civil" name="estado_civil" value="{{ old('estado_civil', $estadoCivil ?? '') }}">
-        </div>
+            <div class="form-group">
+                <label for="oficio">Oficio:</label>
+                <input type="text" id="oficio" name="oficio" value="{{ old('oficio', $oficio ?? '') }}">
+            </div>
 
-        <div class="form-group">
-            <label for="oficio">Oficio:</label>
-            <input type="text" id="oficio" name="oficio" value="{{ old('oficio', $oficio ?? '') }}">
-        </div>
+            <div class="form-group">
+                <label for="identificacion">Número de Identificación:</label>
+                <input type="text" id="identificacion" name="identificacion" value="{{ old('identificacion', $identificacion ?? '') }}">
+            </div>
 
-        <div class="form-group">
-            <label for="identificacion">Número de Identificación:</label>
-            <input type="text" id="identificacion" name="identificacion" value="{{ old('identificacion', $identificacion ?? '') }}">
-        </div>
+            <div class="form-group">
+                <label for="residencia">Residencia:</label>
+                <input type="text" id="residencia" name="residencia" value="{{ old('residencia', $residencia ?? '') }}">
+            </div>
 
-        <div class="form-group">
-            <label for="residencia">Residencia:</label>
-            <input type="text" id="residencia" name="residencia" value="{{ old('residencia', $residencia ?? '') }}">
-        </div>
+            <div class="form-group">
+                <label for="telefono-casa">Número de Teléfono en Casa:</label>
+                <input type="text" id="telefono-casa" name="telefono_casa" value="{{ old('telefono_casa', $telefonoCasa ?? '') }}">
+            </div>
 
-        <div class="form-group">
-            <label for="telefono-casa">Número de Teléfono en Casa:</label>
-            <input type="text" id="telefono-casa" name="telefono_casa" value="{{ old('telefono_casa', $telefonoCasa ?? '') }}">
-        </div>
-
-        <div class="form-group">
-            <label for="telefono-celular">Número de Celular:</label>
-            <input type="text" id="telefono-celular" name="telefono_celular" value="{{ old('telefono_celular', $telefonoCelular ?? '') }}">
-        </div>
-
+            <div class="form-group">
+                <label for="telefono-celular">Número de Celular:</label>
+                <input type="text" id="telefono-celular" name="telefono_celular" value="{{ old('telefono_celular', $telefonoCelular ?? '') }}">
+            </div>
 
     </div>
 
         <div class="clause">
             <p class="clause-title">PRIMERA: INFORMACIÓN DEL EDUCANDO Y SERVICIO EDUCATIVO CONTRATADO.</p>
-
+            <div class="form-grid-3">
             <div class="form-group">
                 <label for="nombre-educando">Nombre del Educando:</label>
                 <input type="text" id="nombre-educando" name="nombre_educando" value="{{ old('nombre_educando', $nombreEducando ?? '') }}">
@@ -198,6 +197,7 @@
             <div class="form-group">
                 <label for="jornada">Jornada:</label>
                 <input type="text" id="jornada" name="jornada" value="{{ old('jornada', $jornada ?? '') }}">
+            </div>
             </div>
             <p>Servicios educativos debidamente autorizados por el Ministerio de Educación, de conformidad con las siguientes resoluciones: a) No. AMP/DESPACHO/006-2020; b) No. REV/DESPACHO/026-2020 ambas de fecha 30 de diciembre de 2020, emitidas por la Dirección Departamental de Educación de Izabal, mismas que se ponen a la vista.</p>
         </div>
