@@ -21,7 +21,7 @@ class ContratoController extends Controller
 
         // Si no se encuentra, devolver un mensaje de error
         if (!$inscripcion) {
-            return redirect()->route('contrato.contrato')
+            return view('contrato.contrato')
                 ->with('error', 'No se encontró información para el código correlativo ingresado.');
         }
 
