@@ -24,7 +24,6 @@ class PagoController extends Controller
      */
     public function index(Request $request)
     {
-
         // Obtener los filtros de grado y sección del request
         $grados_id = $request->get('grados_id');
         $seccions_id = $request->get('seccions_id');
@@ -33,7 +32,8 @@ class PagoController extends Controller
         $query = Pago::with([
             'registroAlumno.inscripcion.grado',
             'registroAlumno.inscripcion.seccion',
-            'estado'
+            'estado',
+            'mes'
         ]);
 
         // Aplicar filtro por grado si existe
@@ -50,25 +50,11 @@ class PagoController extends Controller
             });
         }
 
-        // Ejecutar la consulta y obtener resultados únicos por alumno
+        // Obtener resultados únicos por alumno
         $pagos = $query->get()->unique('registro_alumnos_id');
 
-        // Obtener las listas de grados y secciones para los select
-        $grado = \App\Models\Grado::pluck('nombre_grado', 'id');
-        $seccion = \App\Models\Seccion::pluck('seccion', 'id');
-
-        return view('pago.index', compact('pagos', 'grado', 'seccion'))
-            ->with('i', 0); // Reiniciar índice para paginación
-
+        // Obtener el mes actual
         $mesActual = Carbon::now()->month;
-
-        // Obtener todos los pagos con las relaciones necesarias
-        $pagos = Pago::with([
-            'registroAlumno.inscripcion.grado',
-            'registroAlumno.inscripcion.seccion',
-            'estado',
-            'mes'
-        ])->get();
 
         // Agrupar los pagos por alumno y determinar los meses pagados
         $alumnos = $pagos->groupBy('registro_alumnos_id')->map(function ($pagosAlumno) {
@@ -78,9 +64,15 @@ class PagoController extends Controller
             ];
         });
 
-        return view('pago.index', compact('alumnos', 'mesActual','pagos'))->with('i', 0);
+        // Obtener las listas de grados y secciones para los select
+        $grado = \App\Models\Grado::pluck('nombre_grado', 'id');
+        $seccion = \App\Models\Seccion::pluck('seccion', 'id');
 
+        // Retornar la vista con todas las variables necesarias
+        return view('pago.index', compact('pagos', 'grado', 'seccion', 'alumnos', 'mesActual'))
+            ->with('i', 0); // Reiniciar índice para paginación
     }
+
 
 
     public function show($registro_alumnos_id)

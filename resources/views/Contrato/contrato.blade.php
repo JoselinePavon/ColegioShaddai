@@ -467,7 +467,7 @@
             background-color: #f2f2f2;
         }
     </style>
-                               
+
 
     <script>
         document.getElementById('printButton').addEventListener('click', function() {
