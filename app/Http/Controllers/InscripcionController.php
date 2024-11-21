@@ -102,13 +102,26 @@ class InscripcionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(InscripcionRequest $request, Inscripcion $inscripcion)
+    public function update(Request $request, Inscripcion $inscripcion)
     {
-        $inscripcion->update($request->validated());
+        $validated = $request->validate([
+            'codigo_correlativo' => 'required|unique:inscripcions,codigo_correlativo,' . $inscripcion->id,
+            'grados_id' => 'required|exists:grados,id',
+            'seccions_id' => 'required|exists:seccions,id',
+
+        ]);
+
+        $inscripcion->update([
+            'codigo_correlativo' => $validated['codigo_correlativo'],
+            'grados_id' => $validated['grados_id'],
+            'seccions_id' => $validated['seccions_id'],
+
+        ]);
 
         return redirect()->route('inscripcions.index')
-            ->with('success', 'Inscripcion updated successfully');
+            ->with('success', 'Inscripción actualizada correctamente.');
     }
+
 
     public function destroy($id)
     {

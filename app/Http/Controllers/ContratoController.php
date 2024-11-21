@@ -31,7 +31,7 @@ class ContratoController extends Controller
         return view('contrato.contrato', [
             'codigoCorrelativo' => $inscripcion->codigo_correlativo,
             'nombreCompleto' => $encargado->nombre_encargado ?? '',
-            'edad' => $encargado->edad ?? '',
+            'edad_encargado' => $encargado->edad_encargado ?? '',
             'estadoCivil' => $encargado->estado_civil ?? '',
             'oficio' => $encargado->oficio ?? '',
             'identificacion' => $encargado->dpi ?? '',

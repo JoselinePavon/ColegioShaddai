@@ -75,4 +75,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/pagos/{registro_alumnos_id}/show', [PagoController::class, 'show'])->name('pagos.show');
 
+
+
 });

@@ -84,7 +84,7 @@
 
                     <div class="form-group">
                         <label for="edad">Edad:</label>
-                        <input type="text" id="edad" name="edad" value="{{ old('edad', $edad ?? '') }}" style="border: none; background-color: #f5f5f5;">
+                        <input type="text" id="edad" name="edad" value="{{ old('edad_encargado', $edad_encargado ?? '') }}" style="border: none; background-color: #f5f5f5;">
                     </div>
 
                     <div class="form-group">

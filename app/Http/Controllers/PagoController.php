@@ -10,6 +10,7 @@ use App\Models\estado;
 use App\Models\Inscripcion;
 use App\Http\Requests\PagoRequest;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use Carbon\Carbon;
 
@@ -24,6 +25,7 @@ class PagoController extends Controller
      */
     public function index(Request $request)
     {
+        $mesActual = Carbon::now()->month;
         // Obtener los filtros de grado y sección del request
         $grados_id = $request->get('grados_id');
         $seccions_id = $request->get('seccions_id');
@@ -51,10 +53,9 @@ class PagoController extends Controller
         }
 
         // Obtener resultados únicos por alumno
-        $pagos = $query->get()->unique('registro_alumnos_id');
+        $pagos = $query->get();
 
-        // Obtener el mes actual
-        $mesActual = Carbon::now()->month;
+        // Obtener el mes actu
 
         // Agrupar los pagos por alumno y determinar los meses pagados
         $alumnos = $pagos->groupBy('registro_alumnos_id')->map(function ($pagosAlumno) {
@@ -77,6 +78,7 @@ class PagoController extends Controller
 
     public function show($registro_alumnos_id)
     {
+
         // Obtener todos los pagos realizados por el alumno con el registro_alumnos_id
         $pagos = Pago::where('registro_alumnos_id', $registro_alumnos_id)
             ->with(['registroAlumno.inscripcion', 'tipopago', 'mes', 'estado'])
@@ -86,9 +88,10 @@ class PagoController extends Controller
         if ($pagos->isEmpty()) {
             return redirect()->route('pagos.index')->with('error', 'No se encontraron pagos para este alumno.');
         }
+        $totalPagos = $pagos->sum(fn($pago) => $pago->tipopago->monto);
 
         // Retornar la vista con los pagos del alumno
-        return view('pago.show', compact('pagos'));
+        return view('pago.show', compact('pagos','totalPagos'));
     }
 
 
@@ -124,23 +127,55 @@ class PagoController extends Controller
      */
     public function store(PagoRequest $request)
     {
+        // Validación de los campos
         $request->validate([
             'num_serie' => 'required|unique:pagos,num_serie',
             'registro_alumnos_id' => 'required',
-            'tipopagos_id' => 'required',
+            'tipopagos_id' => 'nullable', // Puede ser nulo si es pago combinado
             'fecha_pago' => 'required|date',
-            'mes_id' => 'required',
-
+            'mes_id' => 'required_if:tipopagos_id,1|required_if:pagos_combinados,not_null', // Mes obligatorio en pagos combinados
+            'pagos_combinados' => 'nullable|array', // Aceptar array de pagos combinados
+            'pagos_combinados.*' => 'exists:tipopagos,id', // Validar que los IDs existan en la BD
         ], [
             'num_serie.unique' => 'El número de boleta ya está en uso.',
             'num_serie.required' => 'El número de boleta es obligatorio.',
+            'mes_id.required_if' => 'El mes es obligatorio para pagos de colegiatura o pagos combinados.',
         ]);
 
-        $data = $request->validated();
-// Verificar si el tipo de pago es inscripción (id 2)
+        $data = $request->all();
+
+        // Manejar el caso de "Pago Combinado"
+        if ($request->has('pagos_combinados')) {
+            foreach ($data['pagos_combinados'] as $tipopagos_id) {
+                // Excluir inscripción (ID 2) de pagos combinados
+                if ($tipopagos_id == 2) {
+                    continue;
+                }
+
+                // Determinar el estado del pago
+                $estado_id = ($tipopagos_id == 1) ? 1 : 3; // 1 = solvente para colegiatura, 3 = cancelado para otros
+
+                // Crear el pago combinado con el mes seleccionado
+                Pago::create([
+                    'num_serie' => $data['num_serie'],
+                    'registro_alumnos_id' => $data['registro_alumnos_id'],
+                    'tipopagos_id' => $tipopagos_id,
+                    'fecha_pago' => $data['fecha_pago'],
+                    'mes_id' => $data['mes_id'], // Tomar el mes seleccionado en el formulario
+                    'estados_id' => $estado_id,
+                ]);
+            }
+
+            // Redirigir con mensaje de éxito
+            return redirect()->route('pagos.index')
+                ->with('success', 'Pago combinado registrado exitosamente.');
+        }
+
+        // Manejar el caso de pagos individuales
         if ($data['tipopagos_id'] == 2) {
+            // Verificar si ya existe un pago de inscripción
             $pagoInscripcion = Pago::where('registro_alumnos_id', $data['registro_alumnos_id'])
-                ->where('tipopagos_id', 2) // Verificar solo pagos de inscripción
+                ->where('tipopagos_id', 2)
                 ->first();
 
             if ($pagoInscripcion) {
@@ -150,13 +185,11 @@ class PagoController extends Controller
             }
         }
 
-        // Verificar si el tipo de pago es colegiatura (id 1)
         if ($data['tipopagos_id'] == 1) {
-
-            // Verificar si ya existe un pago de colegiatura para este alumno en el mes y año actuales
+            // Verificar si ya existe un pago de colegiatura para el mes seleccionado
             $pagoExistente = Pago::where('registro_alumnos_id', $data['registro_alumnos_id'])
-                ->where('tipopagos_id', 1) // Solo colegiatura
-                ->where('mes_id', $data['mes_id']) // Verificar el mes
+                ->where('tipopagos_id', 1)
+                ->where('mes_id', $data['mes_id'])
                 ->first();
 
             if ($pagoExistente) {
@@ -165,20 +198,21 @@ class PagoController extends Controller
                     ->with('error', 'El alumno ya ha realizado un pago para el mes seleccionado.');
             }
 
-            // Asignar estado "solvente" si es colegiatura
-            $data['estados_id'] = 1; // Estado 1 representa "solvente"
+            // Asignar estado "solvente" para colegiatura
+            $data['estados_id'] = 1;
         } else {
-            // Asignar estado 3 para otros tipos de pago que no son colegiatura
+            // Estado 3 para otros tipos de pago
             $data['estados_id'] = 3;
         }
 
-        // Crear el pago con los datos validados
+        // Crear el pago individual
         Pago::create($data);
 
         // Redirigir con mensaje de éxito
         return redirect()->route('pagos.index')
             ->with('success', 'Pago registrado exitosamente.');
     }
+
 
 
 

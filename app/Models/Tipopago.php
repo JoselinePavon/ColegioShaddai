@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Tipopago extends Model
 {
-    
+
 
     protected $perPage = 20;
 
@@ -29,6 +29,9 @@ class Tipopago extends Model
      */
     protected $fillable = ['tipo_pago', 'monto'];
 
-
+    public function pagos()
+    {
+        return $this->hasMany(\App\Models\Pago::class, 'tipopagos_id');
+    }
 
 }

@@ -75,7 +75,15 @@ class TipopagoController extends Controller
 
     public function destroy($id)
     {
-        Tipopago::find($id)->delete();
+        $tipopago = Tipopago::find($id);
+
+        if ($tipopago->pagos()->exists()) {
+            return redirect()->route('tipopagos.index')
+                ->with('alerta','no');
+        }
+
+
+        $tipopago->delete();
 
         return redirect()->route('tipopagos.index')
             ->with('success', 'Tipopago deleted successfully');

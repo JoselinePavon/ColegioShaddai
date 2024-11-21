@@ -8,12 +8,26 @@
     <div class="container mt-3">
         <div class="card shadow-lg">
             <div class="p-4">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 id="card_title" class="font-weight-bold">
-                        <i class="bi bi-file-earmark-check"></i> {{ __('Pagos Realizados por el Alumno') }}
-                    </h4>
-                    <a class="btn btn-primary btn-sm" href="{{ route('pagos.index') }}"> {{ __('Volver') }}</a>
+                <!-- Encabezado -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h4 id="card_title" class="font-weight-bold mb-2">
+                            <i class="bi bi-file-earmark-check"></i>
+                            {{ __('Pagos Realizados por el Alumno:') }}
+                            <span style="color: #0056b3; font-weight: bold; text-decoration: underline;">
+                                {{ $pagos->first()->registroAlumno->nombres ?? '' }} {{ $pagos->first()->registroAlumno->apellidos ?? '' }}
+                            </span>
+                        </h4>
+                        <h6 class="text-muted">{{ now()->format('d/m/Y') }}</h6>
+                    </div>
+                    <div>
+                        <a class="btn btn-primary btn-sm" href="{{ route('pagos.index') }}">
+                            <i class="fa fa-arrow-left"></i> {{ __('Volver') }}
+                        </a>
+                    </div>
                 </div>
+
+                <!-- Mensaje de éxito -->
                 @if ($message = Session::get('success'))
                     <script>
                         Swal.fire({
@@ -25,19 +39,29 @@
                         });
                     </script>
                 @endif
+
+                <!-- Total Pagado -->
+                <div class="alert alert-info mt-3">
+                    <strong>Total Pagado por el Alumno:</strong>
+                    <span style="color: #006400; font-weight: bold;">
+                        Q. {{ number_format($totalPagos, 2) }}
+                    </span>
+                </div>
+
+                <!-- Tabla de Pagos -->
                 <div class="table-responsive">
                     <table id="mediciones" class="table table-striped table-bordered shadow-sm mt-3">
                         <thead class="text-white" style="background-color: #343a40;">
                         <tr>
                             <th scope="col">No</th>
-                            <th scope="col">Num Serie</th>
-                            <th scope="col">Fecha Pago</th>
+                            <th scope="col">No. Boleta</th>
+                            <th scope="col">Fecha de Pago</th>
+                            <th scope="col">Mes Pagado</th>
                             <th scope="col">Tipo de Pago</th>
                             <th scope="col">Monto</th>
                             <th scope="col">Alumno</th>
-                            <th scope="col">Mes</th>
                             <th scope="col">Estado</th>
-                            <th scope="col">Accion</th>
+                            <th scope="col">Acción</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -46,10 +70,10 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $pago->num_serie }}</td>
                                 <td>{{ $pago->fecha_pago }}</td>
-                                <td>{{ $pago->tipopago->tipo_pago }}</td>
-                                <td>{{ $pago->tipopago->monto }}</td>
-                                <td>{{ $pago->registroAlumno->nombres }} {{ $pago->registroAlumno->apellidos }}</td>
                                 <td>{{ $pago->mes->mes }}</td>
+                                <td>{{ $pago->tipopago->tipo_pago }}</td>
+                                <td>Q. {{ $pago->tipopago->monto }}.00</td>
+                                <td>{{ $pago->registroAlumno->nombres }} {{ $pago->registroAlumno->apellidos }}</td>
                                 <td>
                                     @if($pago->estado->id == 1)
                                         <span style="color: green;">● Solvente</span>
@@ -71,7 +95,6 @@
                                         <button type="submit" class="btn btn-sm btn-danger delete-button">
                                             <i class="fa fa-fw fa-trash"></i>
                                         </button>
-
                                     </form>
                                 </td>
                             </tr>
@@ -83,6 +106,7 @@
         </div>
     </div>
 
+    <!-- Script DataTable -->
     <script>
         $(document).ready(function() {
             $('#mediciones').DataTable({
@@ -110,6 +134,7 @@
         });
     </script>
 
+    <!-- Script SweetAlert para eliminar -->
     <script>
         document.querySelectorAll('.delete-button').forEach(button => {
             button.addEventListener('click', function(e) {

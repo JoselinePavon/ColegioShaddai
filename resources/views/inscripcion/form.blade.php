@@ -1,27 +1,19 @@
-@extends('layouts.app')
-
-@section('template_title')
-    {{ __('Create') }} Inscripcion
-@endsection
-
-@section('content')
-    <div class="container mt-3">
-        <div class="card shadow-lg">
-            <div class="p-4">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="font-weight-bold"><i class="bi bi-person-circle"></i> {{ __('Registrar') }} Inscripción</h4>
-                </div>
-
-
-                        <form method="POST" action="{{ route('inscripcions.store') }}" role="form" enctype="multipart/form-data">
-                            @csrf
-
-
+<div class="container mt-4">
+    <div class="row">
+        <div class="card mb-5">
+            <div class="card-body">
+                <!-- Row for student and guardian sections side by side -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <center><h4 class="mb-3">Datos de la Inscripcion</h4></center>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="codigo_correlativo" class="form-label"> {{ __('Codigo Correlativo') }}</label>
-                                    <input type="text" name="codigo_correlativo" class="form-control @error('codigo_correlativo') is-invalid @enderror" value="{{ old('codigo_correlativo', $inscripcion?->codigo_correlativo) }}" id="codigo_correlativo" placeholder="Escribe el nombre del grado">
-                                    {!! $errors->first('codigo_correlativo', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                    <input type="text" name="codigo_correlativo" class="form-control @error('codigo_correlativo') is-invalid @enderror"
+                                           value="{{ old('codigo_correlativo', $inscripcion?->codigo_correlativo) }}" id="codigo_correlativo" placeholder="Escribe el nombre del grado">
+                                    @error('codigo_correlativo')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <div class="col-md-6 mb-3">
@@ -68,4 +60,3 @@
             </div>
         </div>
     </div>
-@endsection

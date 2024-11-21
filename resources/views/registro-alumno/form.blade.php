@@ -63,32 +63,31 @@
 
 
                             <!-- Datos del Encargado -->
+                            <!-- Datos del Encargado -->
                             <div class="col-md-6">
-                                <center>  <h4 class="mb-3">Datos del Encargado</h4></center>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                <center><h4 class="mb-3">Datos del Encargado</h4></center>
+                                <div class="row row-cols-3 g-3">
+                                    <div class="col">
                                         <label for="nombre_encargado" class="form-label"><i class="bi bi-person-fill"></i> Nombre completo</label>
                                         <input type="text" name="nombre_encargado" class="form-control required-field" id="nombre_encargado" placeholder="Nombre del Encargado">
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="edad" class="form-label"><i class="bi bi-person-fill"></i> Edad</label>
-                                        <input type="number" name="edad" class="form-control required-field" id="edad" placeholder="Ingresa la Edad" min="0" max="120" required>
+                                    <div class="col">
+                                        <label for="edad_encargado" class="form-label"><i class="bi bi-person-fill"></i> Edad</label>
+                                        <input type="number" name="edad_encargado" class="form-control required-field" id="edad_encargado" placeholder="Ingresa la Edad" min="0" max="120" required>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col">
                                         <label for="estado_civil" class="form-label"><i class="bi bi-person-fill"></i> Estado Civil</label>
                                         <input type="text" name="estado_civil" class="form-control required-field" id="estado_civil" placeholder="Ingresa tu Estado Civil" required>
                                     </div>
-
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col">
                                         <label for="oficio" class="form-label"> <i class="fas fa-briefcase" style="color: black;"></i> Oficio</label>
                                         <input type="text" name="oficio" class="form-control required-field" id="oficio" placeholder="Ingresa tu Oficio" required>
                                     </div>
-
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col">
                                         <label for="dpi" class="form-label"><i class="bi bi-house-door-fill"></i> Número de DPI</label>
                                         <input type="number" name="dpi" class="form-control required-field" id="dpi" placeholder="1234 1232 1234">
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col">
                                         <label for="lugars_id" class="form-label"><i class="bi bi-geo-alt-fill"></i> Lugar</label>
                                         <select name="lugars_id" id="lugars_id" class="form-control required-field">
                                             <option value="">Seleccione un lugar</option>
@@ -97,22 +96,23 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col">
                                         <label for="colonias_id" class="form-label"><i class="bi bi-map-fill"></i> Colonia</label>
                                         <select name="colonias_id" id="colonias_id" class="form-control required-field" disabled>
                                             <option value="">Seleccione una colonia</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col">
                                         <label for="telefono" class="form-label"><i class="bi bi-telephone-fill"></i> Teléfono</label>
                                         <input type="text" name="telefono" class="form-control required-field" id="telefono" placeholder="Número de Teléfono">
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col">
                                         <label for="persona_emergencia" class="form-label"><i class="bi bi-telephone-fill"></i> Persona de Emergencia</label>
                                         <input type="text" name="persona_emergencia" class="form-control required-field" id="persona_emergencia" placeholder="Persona de Emergencia">
                                     </div>
                                 </div>
                             </div>
+
                         </div>
 
                         <!-- Botón de Validación -->

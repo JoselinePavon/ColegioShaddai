@@ -121,19 +121,38 @@
                                                     {{ $tipo_pago }}
                                                 </option>
                                             @endforeach
+                                            <option value="combinado">Pago Combinado</option>
                                         </select>
                                         {!! $errors->first('tipopagos_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                                     </div>
                                 </div>
 
-                                <!-- Campo de monto para mostrar el valor del tipo de pago seleccionado -->
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group">
-                                        <label for="monto" class="form-label">{{ __('Monto') }}</label>
-                                        <input type="text" id="monto" class="form-control" readonly>
-                                    </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="monto" class="form-label">{{ __('Monto') }}</label>
+                                <input type="text" id="monto" class="form-control" readonly>
+                            </div>
+                    </div>
+
+
+                            <!-- Pagos Combinados -->
+                            <!-- Pagos Combinados -->
+                            <div id="pago-combinado-section" style="display: none;">
+                                <h5>Seleccione los pagos que desea combinar:</h5>
+                                <div class="d-flex flex-wrap">
+                                    @foreach($tipos as $id => $tipo_pago)
+                                        @if($id !== 2) <!-- Excluir inscripción -->
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input pago-combinado-checkbox" type="checkbox" name="pagos_combinados[]" value="{{ $id }}" id="pago_combinado_{{ $id }}" data-monto="{{ $montos[$id] }}">
+                                            <label class="form-check-label" for="pago_combinado_{{ $id }}">
+                                                {{ $tipo_pago }} (Q. {{ number_format($montos[$id], 2) }})
+                                            </label>
+                                        </div>
+                                        @endif
+                                    @endforeach
                                 </div>
                             </div>
+                                <!-- Campo de monto para mostrar el valor del tipo de pago seleccionado -->
+
 
                             <div class="col-md-12 mt-3 text-center">
                                 <button type="submit" class="btn btn-primary">{{ __('Realizar Pago') }}</button>
@@ -144,6 +163,7 @@
             </div>
 
             <!-- Columna de Resumen del Pedido -->
+            <!-- Columna de Resumen del Pedido -->
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
@@ -152,87 +172,316 @@
                         <hr>
                         <div class="d-flex justify-content-between">
                             <strong>Total</strong>
-                            <strong id="resumen-total">$0.00</strong>
+                            <strong id="resumen-total">Q. 0.00</strong>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
+
     <script>
-        // Variables
-        const pagosPorMes = @json($pagosPorMes ?? []); // [{mes_id: 1, tipopagos_id: 1}, ...]
-        let alertShown = false; // Control de mensaje único
-        const montos = @json($montos);
-        const tipoPagosSelect = document.getElementById('tipopagos_id');
-        const mesSelect = document.getElementById('mes_id');
-        const montoInput = document.getElementById('monto');
-        const resumenLista = document.getElementById('resumen-lista');
-        const resumenTotal = document.getElementById('resumen-total');
 
-        // Función para validar el tipo de pago y mes seleccionado
-        function validarPago() {
-            const selectedTipoPagoId = tipoPagosSelect.value;
-            const selectedMesId = mesSelect.value;
 
-            // Limpiar mensajes previos
-            const existingError = document.querySelector('.alert-danger');
-            if (existingError) existingError.remove();
-            alertShown = false;
 
-            // Mostrar mensaje de advertencia si es colegiatura y el mes ya fue pagado
-            if (selectedTipoPagoId === '1' && selectedMesId) {
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tipoPagosSelect = document.getElementById('tipopagos_id');
+            const combinadoSection = document.getElementById('pago-combinado-section');
+            const checkboxes = document.querySelectorAll('.pago-combinado-checkbox');
+            const montoInput = document.getElementById('monto');
+            const resumenLista = document.getElementById('resumen-lista');
+            const resumenTotal = document.getElementById('resumen-total');
+            const montos = @json($montos);
+
+            function limpiarCheckboxes() {
+                // Desmarca todos los checkboxes de pagos combinados
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                actualizarResumen(); // Actualiza el resumen al limpiar los checkboxes
+            }
+
+            function actualizarResumen() {
+                let total = 0;
+                resumenLista.innerHTML = ''; // Limpia el resumen
+
+                if (tipoPagosSelect.value === 'combinado') {
+                    // Caso de pagos combinados
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox.checked) {
+                            const monto = parseFloat(checkbox.dataset.monto);
+                            const tipo = checkbox.nextElementSibling.textContent.trim();
+                            total += monto;
+
+                            // Agrega al resumen
+                            agregarItemResumen(tipo, monto);
+                        }
+                    });
+                } else if (tipoPagosSelect.value) {
+                    // Caso de pago individual
+                    const selectedTipoPagoId = tipoPagosSelect.value;
+                    if (montos[selectedTipoPagoId]) {
+                        const monto = parseFloat(montos[selectedTipoPagoId]);
+                        const tipo = tipoPagosSelect.options[tipoPagosSelect.selectedIndex].text.trim();
+                        total = monto;
+
+                        // Agrega al resumen
+                        agregarItemResumen(tipo, monto);
+                    }
+                }
+
+                // Actualiza el total
+                actualizarTotal(total);
+            }
+
+            function agregarItemResumen(tipo, monto) {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.textContent = tipo;
+                const span = document.createElement('span');
+                span.textContent = `Q. ${monto.toFixed(2)}`;
+                li.appendChild(span);
+                resumenLista.appendChild(li);
+            }
+
+            function actualizarTotal(total) {
+                resumenTotal.textContent = `Q. ${total.toFixed(2)}`;
+                montoInput.value = total > 0 ? `Q. ${total.toFixed(2)}` : '';
+            }
+
+            // Evento para mostrar/ocultar la sección de pagos combinados y limpiar checkboxes
+            tipoPagosSelect.addEventListener('change', () => {
+                if (tipoPagosSelect.value === 'combinado') {
+                    combinadoSection.style.display = 'block';
+                } else {
+                    combinadoSection.style.display = 'none';
+                    limpiarCheckboxes(); // Limpia los checkboxes si no es pago combinado
+                }
+                actualizarResumen();
+            });
+
+            // Evento para actualizar el resumen al seleccionar/deseleccionar checkboxes
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', actualizarResumen);
+            });
+        });
+
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tipoPagosSelect = document.getElementById('tipopagos_id');
+            const combinadoSection = document.getElementById('pago-combinado-section');
+            const checkboxes = document.querySelectorAll('.pago-combinado-checkbox');
+            const mesSelect = document.getElementById('mes_id');
+            const montoInput = document.getElementById('monto');
+            const resumenLista = document.getElementById('resumen-lista');
+            const resumenTotal = document.getElementById('resumen-total');
+            const alertContainer = document.createElement('div');
+            const formContainer = document.querySelector('.card-body');
+            const pagosPorMes = @json($pagosPorMes ?? []);
+            const montos = @json($montos);
+
+            formContainer.prepend(alertContainer);
+
+            // Función para limpiar checkboxes
+            function limpiarCheckboxes() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                actualizarResumen(); // Actualiza el resumen al limpiar los checkboxes
+            }
+
+            // Función para actualizar el resumen
+            function actualizarResumen() {
+                let total = 0;
+                resumenLista.innerHTML = ''; // Limpia el resumen
+
+                if (tipoPagosSelect.value === 'combinado') {
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox.checked) {
+                            const monto = parseFloat(checkbox.dataset.monto);
+                            const tipo = checkbox.nextElementSibling.textContent.trim();
+                            total += monto;
+
+                            // Agregar al resumen
+                            agregarItemResumen(tipo, monto);
+                        }
+                    });
+                } else if (tipoPagosSelect.value) {
+                    const selectedTipoPagoId = tipoPagosSelect.value;
+                    if (montos[selectedTipoPagoId]) {
+                        const monto = parseFloat(montos[selectedTipoPagoId]);
+                        const tipo = tipoPagosSelect.options[tipoPagosSelect.selectedIndex].text.trim();
+                        total = monto;
+
+                        // Agregar al resumen
+                        agregarItemResumen(tipo, monto);
+                    }
+                }
+
+                actualizarTotal(total); // Actualiza el total mostrado
+            }
+
+            // Agregar ítem al resumen
+            function agregarItemResumen(tipo, monto) {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.textContent = tipo;
+                const span = document.createElement('span');
+                span.textContent = `Q. ${monto.toFixed(2)}`;
+                li.appendChild(span);
+                resumenLista.appendChild(li);
+            }
+
+            // Actualizar el total en el resumen
+            function actualizarTotal(total) {
+                resumenTotal.textContent = `Q. ${total.toFixed(2)}`;
+                montoInput.value = total > 0 ? `Q. ${total.toFixed(2)}` : '';
+            }
+
+            // Mostrar alertas
+            function showAlert(message) {
+                const alertDiv = document.createElement('div');
+                alertDiv.classList.add('alert', 'alert-danger', 'mt-3');
+                alertDiv.textContent = message;
+                alertContainer.appendChild(alertDiv);
+            }
+
+            // Limpiar alertas
+            function clearAlert() {
+                alertContainer.innerHTML = '';
+            }
+// Validar antes de enviar el formulario
+            form.addEventListener('submit', (event) => {
+                clearAlert();
+
+                if (tipoPagosSelect.value === 'combinado') {
+                    const algunSeleccionado = Array.from(checkboxes).some(checkbox => checkbox.checked);
+
+                    if (!algunSeleccionado) {
+                        event.preventDefault(); // Evita el envío del formulario
+                        showAlert('Favor de seleccionar al menos un tipo de pago en el Pago Combinado.');
+                    }
+                }
+            });
+            // Validar pagos
+            function validarPagos() {
+                const selectedTipoPagoId = tipoPagosSelect.value;
+                const selectedMesId = mesSelect.value;
+
+                if (!selectedMesId || selectedTipoPagoId === 'combinado') {
+                    actualizarMonto();
+                    return;
+                }
+
+                clearAlert();
+
+                if (selectedTipoPagoId === '2') {
+                    const yaPagoInscripcion = pagosPorMes.some(pago => parseInt(pago.tipopagos_id) === 2);
+                    if (yaPagoInscripcion) {
+                        showAlert('El pago de inscripción ya ha sido realizado y no se puede repetir.');
+                        tipoPagosSelect.value = '';
+                        actualizarMonto();
+                        return;
+                    }
+                }
+
                 const yaPagado = pagosPorMes.some(pago =>
                     parseInt(pago.mes_id) === parseInt(selectedMesId) &&
                     parseInt(pago.tipopagos_id) === parseInt(selectedTipoPagoId)
                 );
 
                 if (yaPagado) {
-                    const errorDiv = document.createElement('div');
-                    errorDiv.classList.add('alert', 'alert-danger');
-                    errorDiv.textContent = 'El alumno ya ha pagado la colegiatura para este mes.';
-                    document.querySelector('.card-body').prepend(errorDiv);
-
-                    // Restablecer la selección del tipo de pago
+                    showAlert('El pago seleccionado ya ha sido realizado para este mes.');
                     tipoPagosSelect.value = '';
-                    alertShown = true;
-                    return false; // Detener el proceso
+                    actualizarMonto();
+                } else {
+                    actualizarMonto();
                 }
             }
 
-            if (selectedTipoPagoId === '2') { // ID 2 corresponde a inscripción
-                const yaPagoInscripcion = pagosPorMes.some(pago =>
-                    parseInt(pago.tipopagos_id) === 2 // Verificar tipo de pago inscripción
-                );
+            function actualizarMonto() {
+                let total = 0;
 
-                if (yaPagoInscripcion) {
-                    const errorDiv = document.createElement('div');
-                    errorDiv.classList.add('alert', 'alert-danger');
-                    errorDiv.textContent = 'El alumno ya ha realizado el pago de inscripción.';
-                    document.querySelector('.card-body').prepend(errorDiv);
-
-                    // Restablecer la selección del tipo de pago
-                    tipoPagosSelect.value = '';
-                    alertShown = true;
-                    return false; // Detener el proceso
+                if (tipoPagosSelect.value === 'combinado') {
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox.checked) {
+                            total += parseFloat(checkbox.dataset.monto);
+                        }
+                    });
+                } else {
+                    const selectedTipoPagoId = tipoPagosSelect.value;
+                    if (selectedTipoPagoId && montos[selectedTipoPagoId]) {
+                        total = parseFloat(montos[selectedTipoPagoId]); // Asegurarse de convertir el valor a número
+                    }
                 }
+
+                montoInput.value = total > 0 ? `Q. ${total.toFixed(2)}` : '';
             }
 
-            // Actualizar el monto si todo está en orden
-            actualizarMonto();
-            return true; // Continuar el proceso
-        }
 
-        // Función para calcular y actualizar el total del resumen
-        function actualizarMonto() {
-            const selectedTipoPagoId = tipoPagosSelect.value;
-            const monto = montos[selectedTipoPagoId] || 0;
-            montoInput.value = monto;
-        }
+            // Validar pagos combinados
+            function validarPagosCombinados() {
+                const selectedMesId = mesSelect.value;
 
-        // Event listeners para cambios en el tipo de pago y mes
-        tipoPagosSelect.addEventListener('change', validarPago);
-        mesSelect.addEventListener('change', validarPago);
+                if (!selectedMesId) return;
+
+                clearAlert();
+
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        if (checkbox.value === '2') {
+                            const yaPagoInscripcion = pagosPorMes.some(pago => parseInt(pago.tipopagos_id) === 2);
+                            if (yaPagoInscripcion) {
+                                showAlert('El pago de inscripción ya ha sido realizado y no se puede incluir en pagos combinados.');
+                                checkbox.checked = false;
+                            }
+                        }
+
+                        const yaPagado = pagosPorMes.some(pago =>
+                            parseInt(pago.mes_id) === parseInt(selectedMesId) &&
+                            parseInt(pago.tipopagos_id) === parseInt(checkbox.value)
+                        );
+
+                        if (yaPagado) {
+                            showAlert(`El tipo de pago seleccionado (${checkbox.nextElementSibling.innerText}) ya ha sido realizado para este mes.`);
+                            checkbox.checked = false;
+                        }
+                    }
+                });
+
+                actualizarMonto();
+            }
+            // Evento para limpiar checkboxes y validar al cambiar el mes
+            mesSelect.addEventListener('change', () => {
+                limpiarCheckboxes(); // Limpia los checkboxes al cambiar el mes
+                clearAlert(); // Limpia las alertas
+                actualizarResumen();
+            });
+            // Mostrar/ocultar pagos combinados
+            tipoPagosSelect.addEventListener('change', () => {
+                if (tipoPagosSelect.value === 'combinado') {
+                    combinadoSection.style.display = 'block';
+                } else {
+                    combinadoSection.style.display = 'none';
+                    limpiarCheckboxes();
+                }
+                actualizarResumen();
+            });
+
+            // Eventos adicionales
+            mesSelect.addEventListener('change', validarPagos);
+            tipoPagosSelect.addEventListener('change', validarPagos);
+            checkboxes.forEach(checkbox => checkbox.addEventListener('change', validarPagosCombinados));
+        });
+
     </script>
+
 
 @endsection

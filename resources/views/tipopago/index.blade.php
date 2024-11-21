@@ -131,4 +131,18 @@
             });
         });
     </script>
+    @if(session('alerta')=='no')
+
+        <script>
+            Swal.fire({
+                title: 'No se pudo eliminar! ',
+                text:'Este tipo de pago tiene realacion con otros registros, por ende es imposible eliminarlo!',
+                icon: 'error',
+                width: 600,
+                padding: '3em',
+                color: '#050404',
+
+            })
+        </script>
+    @endif
 @endsection

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property $id
  * @property $nombre_encargado
- * @property $edad
+ * @property $edad_encargado
  * @property $estado_civil
  * @property $oficio
  * @property $direccion
@@ -38,7 +38,7 @@ class Encargado extends Model
 
     protected $fillable = [
         'nombre_encargado',
-        'edad',
+        'edad_encargado',
         'estado_civil',
         'oficio',
         'dpi',
