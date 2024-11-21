@@ -90,7 +90,7 @@
                     "lengthMenu": "Mostrar_MENU_por página",
                     "zeroRecords": "<i class='fas fa-info-circle'></i> No se encontraron resultados para la búsqueda.",
                     "emptyTable": "<i class='fas fa-info-circle'></i> No hay datos disponibles en la tabla",
-                    "info": "Mostrando PAGE de PAGES",
+                    "info": "Mostrando _PAGE_ de _PAGES_",
                     "infoEmpty": "No hay registros disponibles",
                     "infoFiltered": "(filtrado de MAX registros totales)",
                     "search": "Buscar",

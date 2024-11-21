@@ -22,17 +22,41 @@ class PagoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Traer los pagos únicos por alumno
-        $pagos = Pago::with([
+        // Obtener los filtros de grado y sección del request
+        $grados_id = $request->get('grados_id');
+        $seccions_id = $request->get('seccions_id');
+
+        // Construir la consulta inicial
+        $query = Pago::with([
             'registroAlumno.inscripcion.grado',
             'registroAlumno.inscripcion.seccion',
             'estado'
-        ])->get()
-            ->unique('registro_alumnos_id'); // Solo un pago por alumno
+        ]);
 
-        return view('pago.index', compact('pagos'))
+        // Aplicar filtro por grado si existe
+        if ($grados_id) {
+            $query->whereHas('registroAlumno.inscripcion.grado', function ($q) use ($grados_id) {
+                $q->where('id', $grados_id);
+            });
+        }
+
+        // Aplicar filtro por sección si existe
+        if ($seccions_id) {
+            $query->whereHas('registroAlumno.inscripcion.seccion', function ($q) use ($seccions_id) {
+                $q->where('id', $seccions_id);
+            });
+        }
+
+        // Ejecutar la consulta y obtener resultados únicos por alumno
+        $pagos = $query->get()->unique('registro_alumnos_id');
+
+        // Obtener las listas de grados y secciones para los select
+        $grado = \App\Models\Grado::pluck('nombre_grado', 'id');
+        $seccion = \App\Models\Seccion::pluck('seccion', 'id');
+
+        return view('pago.index', compact('pagos', 'grado', 'seccion'))
             ->with('i', 0); // Reiniciar índice para paginación
     }
 
