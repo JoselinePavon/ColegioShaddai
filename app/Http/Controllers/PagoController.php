@@ -26,9 +26,10 @@ class PagoController extends Controller
     public function index(Request $request)
     {
         $mesActual = Carbon::now()->month;
-        // Obtener los filtros de grado y sección del request
+        // Obtener los filtros de grado, sección y estado del request
         $grados_id = $request->get('grados_id');
         $seccions_id = $request->get('seccions_id');
+        $estado = $request->get('estado');
 
         // Construir la consulta inicial
         $query = Pago::with([
@@ -55,15 +56,22 @@ class PagoController extends Controller
         // Obtener resultados únicos por alumno
         $pagos = $query->get();
 
-        // Obtener el mes actu
-
         // Agrupar los pagos por alumno y determinar los meses pagados
-        $alumnos = $pagos->groupBy('registro_alumnos_id')->map(function ($pagosAlumno) {
+        $alumnos = $pagos->groupBy('registro_alumnos_id')->map(function ($pagosAlumno) use ($mesActual) {
+            $mesesPagados = $pagosAlumno->pluck('mes_id')->toArray();
             return [
                 'registroAlumno' => $pagosAlumno->first()->registroAlumno,
-                'mesesPagados' => $pagosAlumno->pluck('mes_id')->toArray(), // Meses pagados
+                'mesesPagados' => $mesesPagados,
+                'esSolvente' => in_array($mesActual, $mesesPagados),
             ];
         });
+
+        // Aplicar filtro por estado si existe
+        if ($estado) {
+            $alumnos = $alumnos->filter(function ($alumno) use ($estado) {
+                return ($estado === 'solvente') ? $alumno['esSolvente'] : !$alumno['esSolvente'];
+            });
+        }
 
         // Obtener las listas de grados y secciones para los select
         $grado = \App\Models\Grado::pluck('nombre_grado', 'id');
@@ -73,8 +81,6 @@ class PagoController extends Controller
         return view('pago.index', compact('pagos', 'grado', 'seccion', 'alumnos', 'mesActual'))
             ->with('i', 0); // Reiniciar índice para paginación
     }
-
-
 
     public function show($registro_alumnos_id)
     {

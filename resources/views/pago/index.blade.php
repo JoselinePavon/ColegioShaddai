@@ -34,6 +34,12 @@
                             </option>
                         @endforeach
                     </select>
+
+                    <select name="estado" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
+                        <option value="">Todos los estados</option>
+                        <option value="solvente" {{ request()->get('estado') == 'solvente' ? 'selected' : '' }}>Solvente</option>
+                        <option value="insolvente" {{ request()->get('estado') == 'insolvente' ? 'selected' : '' }}>Insolvente</option>
+                    </select>
                 </form>
 
 
