@@ -38,7 +38,7 @@
         <div class="contract-body">
             <h3>DATOS DEL REPRESENTANTE DEL EDUCANDO</h3>
             <div class="form-grid-3">
-                <form  method="POST" action="{{ route('buscar.alumno') }}">
+                <form method="POST" action="{{ route('buscar.alumno') }}">
                     @csrf
                     <div class="form-group" style="position: relative; display: inline-block; width: 100%;">
                         <label for="codigo-correlativo">Código de Correlativo:</label>
@@ -49,23 +49,11 @@
                                 name="codigo_correlativo"
                                 value="{{ old('codigo_correlativo', $codigoCorrelativo ?? '') }}"
                                 required
-                                style="width: 100%; padding-right: 50px; border: none; background-color: #f5f5f5;"
-                            >
+                                style="width: 100%; padding-right: 50px; border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
                             <button
                                 type="submit"
                                 class="btn btn-primary"
-                                style="
-                            position: absolute;
-                            top: 0;
-                            right: 0;
-                            height: 100%;
-                            padding: 0 15px;
-                            border: none;
-                            background-color: #007bff;
-                            color: white;
-                            cursor: pointer;
-                        ">
-
+                                style="position: absolute; top: 0; right: 0; height: 100%; padding: 0 15px; border: none; background-color: #007bff; color: white; cursor: pointer;">
                                 <i class="fa fa-search" aria-hidden="true"></i>
                             </button>
                         </div>
@@ -78,65 +66,81 @@
 
                 <div class="form-group">
                     <label for="nombre-completo">Nombre Completo:</label>
-                    <input type="text" id="nombre-completo" name="nombre_completo" value="{{ old('nombre_completo', $nombreCompleto ?? '') }}" style="border: none; background-color: #f5f5f5;">
+                    <input type="text" id="nombre-completo" name="nombre_completo" value="{{ old('nombre_completo', $nombreCompleto ?? '') }}" style="border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
                 </div>
 
                 <div class="form-group">
                     <label for="edad">Edad:</label>
-                    <input type="text" id="edad" name="edad" value="{{ old('edad_encargado', $edad_encargado ?? '') }}" style="border: none; background-color: #f5f5f5;">
+                    <input type="text" id="edad" name="edad" value="{{ old('edad_encargado', $edad_encargado ?? '') }}" style="border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
                 </div>
 
                 <div class="form-group">
                     <label for="estado-civil">Estado Civil:</label>
-                    <input type="text" id="estado-civil" name="estado_civil" value="{{ old('estado_civil', $estadoCivil ?? '') }}" style="border: none; background-color: #f5f5f5;">
+                    <input type="text" id="estado-civil" name="estado_civil" value="{{ old('estado_civil', $estadoCivil ?? '') }}" style="border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
                 </div>
 
                 <div class="form-group">
                     <label for="oficio">Oficio:</label>
-                    <input type="text" id="oficio" name="oficio" value="{{ old('oficio', $oficio ?? '') }}" style="border: none; background-color: #f5f5f5;">
+                    <input type="text" id="oficio" name="oficio" value="{{ old('oficio', $oficio ?? '') }}" style="border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
                 </div>
 
                 <div class="form-group">
                     <label for="identificacion">Número de Identificación:</label>
-                    <input type="text" id="identificacion" name="identificacion" value="{{ old('identificacion', $identificacion ?? '') }}" style="border: none; background-color: #f5f5f5;">
+                    <input type="text" id="identificacion" name="identificacion" value="{{ old('identificacion', $identificacion ?? '') }}" style="border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
                 </div>
 
                 <div class="form-group">
                     <label for="residencia">Residencia:</label>
-                    <input type="text" id="residencia" name="residencia" value="{{ old('residencia', $residencia ?? '') }}" style="border: none; background-color: #f5f5f5;">
+                    <input type="text" id="residencia" name="residencia" value="{{ old('residencia', $residencia ?? '') }}" style="border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
                 </div>
 
                 <div class="form-group">
                     <label for="telefono-casa">Número de Teléfono en Casa:</label>
-                    <input type="text" id="telefono-casa" name="telefono_casa" value="{{ old('telefono_casa', $telefonoCasa ?? '') }}" style="border: none; background-color: #f5f5f5;">
+                    <input type="text" id="telefono-casa" name="telefono_casa" value="{{ old('telefono_casa', $telefonoCasa ?? '') }}" style="border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
                 </div>
 
                 <div class="form-group">
                     <label for="telefono-celular">Número de Celular:</label>
-                    <input type="text" id="telefono-celular" name="telefono_celular" value="{{ old('telefono_celular', $telefonoCelular ?? '') }}" style="border: none; background-color: #f5f5f5;">
+                    <input type="text" id="telefono-celular" name="telefono_celular" value="{{ old('telefono_celular', $telefonoCelular ?? '') }}" style="border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
                 </div>
             </div>
         </div>
 
 
-        <p>declarando que la información personal proporcionada, es de carácter confidencial. Los comparecientes aseguramos ser de los datos de identificación anotados, estar en el libre ejercicio de nuestros derechos civiles y la calidad que se ejercita es amplia y suficiente para la celebración del CONTRATO DE ADHESIÓN POR PRESTACIÓN DE SERVICIOS EDUCATIVOS, de conformidad con las siguientes cláusulas:</p>
+            <p>declarando que la información personal proporcionada, es de carácter confidencial. Los comparecientes aseguramos ser de los datos de identificación anotados, estar en el libre ejercicio de nuestros derechos civiles y la calidad que se ejercita es amplia y suficiente para la celebración del CONTRATO DE ADHESIÓN POR PRESTACIÓN DE SERVICIOS EDUCATIVOS, de conformidad con las siguientes cláusulas:</p>
 
         <div class="clause">
             <h3>PRIMERA: INFORMACIÓN DEL EDUCANDO Y SERVICIO EDUCATIVO CONTRATADO.</h3>
             <div class="form-grid-3">
                 <div class="form-group">
                     <label for="nombre-educando">Nombre del Educando:</label>
-                    <input type="text" id="nombre-educando" name="nombre_educando" value="{{ old('nombre_educando', $nombreEducando ?? '') }}" style="width: 135%; ">
-                </div>
-                <div class="form-group" >
-                    <label for="grado-nivel" style="margin-left: 80px;" >Grado y Nivel:</label>
-                    <input type="text" id="grado-nivel" name="grado_nivel" value="{{ old('grado_nivel', $gradoNivel ?? '') }}" style="width: 100%; margin-left: 80px;">
+                    <input
+                        type="text"
+                        id="nombre-educando"
+                        name="nombre_educando"
+                        value="{{ old('nombre_educando', $nombreEducando ?? '') }}"
+                        style="width: 135%; border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
                 </div>
                 <div class="form-group">
-                    <label for="jornada" style="margin-left: 90px;" >Jornada:</label>
-                    <input type="text" id="jornada" name="jornada" value="{{ old('jornada', $jornada ?? '') }}" style="width: 60%; margin-left: 90px;">
+                    <label for="grado-nivel" style="margin-left: 80px;">Grado y Nivel:</label>
+                    <input
+                        type="text"
+                        id="grado-nivel"
+                        name="grado_nivel"
+                        value="{{ old('grado_nivel', $gradoNivel ?? '') }}"
+                        style="width: 100%; margin-left: 80px; border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
+                </div>
+                <div class="form-group">
+                    <label for="jornada" style="margin-left: 90px;">Jornada:</label>
+                    <input
+                        type="text"
+                        id="jornada"
+                        name="jornada"
+                        value="{{ old('jornada', $jornada ?? '') }}"
+                        style="width: 60%; margin-left: 90px; border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
                 </div>
             </div>
+
 
             <p>Servicios educativos debidamente autorizados por el Ministerio de Educación, de conformidad con las siguientes resoluciones: a) No. AMP/DESPACHO/006-2020; b) No. REV/DESPACHO/026-2020 ambas de fecha 30 de diciembre de 2020, emitidas por la Dirección Departamental de Educación de Izabal, mismas que se ponen a la vista.</p>
         </div>

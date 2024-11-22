@@ -454,6 +454,7 @@
                 actualizarMonto();
             }
 
+
             // Mostrar/ocultar pagos combinados
             tipoPagosSelect.addEventListener('change', () => {
                 if (tipoPagosSelect.value === 'combinado') {

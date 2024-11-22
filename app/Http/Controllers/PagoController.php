@@ -140,12 +140,19 @@ class PagoController extends Controller
             'num_serie.unique' => 'El número de boleta ya está en uso.',
             'num_serie.required' => 'El número de boleta es obligatorio.',
             'mes_id.required_if' => 'El mes es obligatorio para pagos de colegiatura o pagos combinados.',
+            'pagos_combinados.required' => 'Debe seleccionar al menos un tipo de pago en Pago Combinado.',
         ]);
 
         $data = $request->all();
 
-        // Manejar el caso de "Pago Combinado"
-        if ($request->has('pagos_combinados')) {
+        // Si se selecciona "combinado" pero no se seleccionan pagos en pagos_combinados
+        if ($request->input('tipopagos_id') === 'combinado') {
+            if (empty($data['pagos_combinados']) || !is_array($data['pagos_combinados'])) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Debe seleccionar al menos un tipo de pago en Pago Combinado.');
+            }
+
             foreach ($data['pagos_combinados'] as $tipopagos_id) {
                 // Excluir inscripción (ID 2) de pagos combinados
                 if ($tipopagos_id == 2) {

@@ -257,7 +257,7 @@
             </a>
         </li>
         <li class="nav-item {{ request()->is(' ') ? 'active' : '' }}">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/reglamento">
                 <i class="bi bi-journal-text me-2"></i>
                 <span>Reglamento interno</span>
             </a>
