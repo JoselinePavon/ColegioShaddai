@@ -127,11 +127,11 @@
                                     </div>
                                 </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label for="monto" class="form-label">{{ __('Monto') }}</label>
-                                <input type="text" id="monto" class="form-control" readonly>
+                                <div class="col-md-6 mb-3">
+                                    <label for="monto" class="form-label">{{ __('Monto') }}</label>
+                                    <input type="text" id="monto" class="form-control" readonly>
+                                </div>
                             </div>
-                    </div>
 
 
                             <!-- Pagos Combinados -->
@@ -151,7 +151,7 @@
                                     @endforeach
                                 </div>
                             </div>
-                                <!-- Campo de monto para mostrar el valor del tipo de pago seleccionado -->
+                            <!-- Campo de monto para mostrar el valor del tipo de pago seleccionado -->
 
 
                             <div class="col-md-12 mt-3 text-center">
@@ -248,10 +248,12 @@
                 resumenLista.appendChild(li);
             }
 
+// Actualiza el total mostrado en el resumen
             function actualizarTotal(total) {
                 resumenTotal.textContent = `Q. ${total.toFixed(2)}`;
                 montoInput.value = total > 0 ? `Q. ${total.toFixed(2)}` : '';
             }
+
 
             // Evento para mostrar/ocultar la sección de pagos combinados y limpiar checkboxes
             tipoPagosSelect.addEventListener('change', () => {
@@ -357,19 +359,7 @@
             function clearAlert() {
                 alertContainer.innerHTML = '';
             }
-// Validar antes de enviar el formulario
-            form.addEventListener('submit', (event) => {
-                clearAlert();
 
-                if (tipoPagosSelect.value === 'combinado') {
-                    const algunSeleccionado = Array.from(checkboxes).some(checkbox => checkbox.checked);
-
-                    if (!algunSeleccionado) {
-                        event.preventDefault(); // Evita el envío del formulario
-                        showAlert('Favor de seleccionar al menos un tipo de pago en el Pago Combinado.');
-                    }
-                }
-            });
             // Validar pagos
             function validarPagos() {
                 const selectedTipoPagoId = tipoPagosSelect.value;
@@ -425,7 +415,12 @@
                 montoInput.value = total > 0 ? `Q. ${total.toFixed(2)}` : '';
             }
 
-
+// Evento para limpiar checkboxes y validar al cambiar el mes
+            mesSelect.addEventListener('change', () => {
+                limpiarCheckboxes(); // Limpia los checkboxes al cambiar el mes
+                clearAlert(); // Limpia las alertas
+                actualizarResumen();
+            });
             // Validar pagos combinados
             function validarPagosCombinados() {
                 const selectedMesId = mesSelect.value;
@@ -458,12 +453,7 @@
 
                 actualizarMonto();
             }
-            // Evento para limpiar checkboxes y validar al cambiar el mes
-            mesSelect.addEventListener('change', () => {
-                limpiarCheckboxes(); // Limpia los checkboxes al cambiar el mes
-                clearAlert(); // Limpia las alertas
-                actualizarResumen();
-            });
+
             // Mostrar/ocultar pagos combinados
             tipoPagosSelect.addEventListener('change', () => {
                 if (tipoPagosSelect.value === 'combinado') {
@@ -473,6 +463,10 @@
                     limpiarCheckboxes();
                 }
                 actualizarResumen();
+            });
+            // Validar pagos combinados al seleccionar o deseleccionar checkboxes
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', validarPagosCombinados);
             });
 
             // Eventos adicionales
