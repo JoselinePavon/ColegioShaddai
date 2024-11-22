@@ -72,6 +72,18 @@
                                     <td>{{ $registroAlumno->encargado->nombre_encargado }}</td>
                                 </tr>
                                 <tr>
+                                    <th><i class="bi bi-person-badge text-secondary me-2"></i>{{ __('Edad') }}</th>
+                                    <td>{{ $registroAlumno->encargado->edad_encargado }}</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="bi bi-people-fill text-secondary me-2"></i>{{ __('Estado Civil') }}</th>
+                                    <td>{{ $registroAlumno->encargado->estado_civil }}</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="bi bi-briefcase-fill text-secondary me-2"></i> {{ __('Oficio') }}</th>
+                                    <td>{{ $registroAlumno->encargado->oficio }}</td>
+                                </tr>
+                                <tr>
                                     <th><i class="fas fa-id-card text-secondary me-2"></i> {{ __('DPI') }}</th>
                                     <td>{{ $registroAlumno->encargado->dpi }}</td>
                                 </tr>

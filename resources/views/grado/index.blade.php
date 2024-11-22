@@ -46,6 +46,9 @@
                                     <a class="btn btn-sm btn-primary" href="{{ route('grados.show', $grado->id) }}">
                                         <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
                                     </a>
+                                    <a href="{{ route('grados.edit', $grado->id) }}" class="btn btn-sm btn-warning ">
+                                        <i class="fas fa-edit me-1"></i> {{ __('Editar') }}
+                                    </a>
 
                                     <form action="{{ route('grados.destroy', $grado->id) }}" method="POST" class="delete-form d-inline">
                                         @csrf

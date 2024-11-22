@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <div class="container mt-5">
+    <div class="container mt-3">
         <div class="d-flex justify-content-start mb-3">
             <a href="{{ route('grados.index') }}" class="btn btn-outline-dark btn-sm rounded-pill">
                 <i class="fas fa-arrow-left mr-1"></i> {{ __('Regresar') }}
@@ -13,9 +13,9 @@
         </div>
 
         <!-- Detalle del Grado -->
-        <div class="card border-0 shadow-sm rounded-lg">
+        <div class="card shadow-lg border-0 rounded-lg">
             <div class="card-header bg-light border-bottom-0">
-                <h5 class="mb-0 text-muted"><i class="fas fa-graduation-cap mr-2"></i> Detalle del Grado</h5>
+                <h5 class="mb-0 text-muted"><i class="fas fa-graduation-cap mr-2"></i> {{ __('Detalle del Grado') }}</h5>
             </div>
             <div class="card-body">
                 <table class="table table-borderless mb-0">

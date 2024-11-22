@@ -48,11 +48,11 @@
                             </div>
 
                             <div class="d-flex gap-2 justify-content-end mt-4">
-                                <a href="{{ route('inscripcions.index') }}" class="btn btn-outline-dark">
+                                <a href="{{ route('inscripcions.index') }}" class="btn btn-outline-danger">
                                     <i class="fas fa-times"></i> {{ __('Cancelar') }}
                                 </a>
                                 <button type="submit" class="btn btn-dark">
-                                    <i class="fas fa-save"></i> {{ __('Guardar') }}
+                                    <i class="fas fa-save"></i> {{ __('Actualizar') }}
                                 </button>
                             </div>
                         </form>

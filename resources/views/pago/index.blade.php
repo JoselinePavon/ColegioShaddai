@@ -11,7 +11,7 @@
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 id="card_title" class="font-weight-bold">
-                        <i class="bi bi-file-earmark-check"></i> {{ __('Pagos Realizados por el Alumno') }}
+                        <i class="bi bi-file-earmark-check"></i> {{ __('Solvencia de alumnos') }}
                     </h4>
                     <span class="text-muted" id="fecha-actual"></span> <!-- Fecha actual -->
                 </div>
@@ -51,13 +51,12 @@
                 @endif
 
                 <div class="table-responsive">
-                    <table id="mediciones" class="table table-striped table-bordered shadow-sm mt-3" style="font-size: 0.75em;">
-                        <thead class="text-white" style="background-color: #343a40;">
+                    <table id="mediciones" class="table table-striped table-bordered shadow-sm mt-3" style="font-size: 0.75em; margin: 0 auto; text-align: center;">
+                    <thead class="text-white" style="background-color: #343a40;">
                         <tr>
                             <th scope="col">No</th>
                             <th scope="col">Correlativo</th>
-                            <th scope="col">Nombres</th>
-                            <th scope="col">Apellidos</th>
+                            <th scope="col">Alumno</th>
                             <th scope="col">Grado</th>
                             <th scope="col">Sección</th>
                             <th scope="col">Estado</th>
@@ -69,13 +68,13 @@
                             <tr data-meses-pagados="{{ json_encode($alumno['mesesPagados']) }}">
                                 <td>{{ ++$i }}</td>
                                 <td>{{ $alumno['registroAlumno']->inscripcion->codigo_correlativo ?? 'Sin Correlativo' }}</td>
-                                <td>{{ $alumno['registroAlumno']->nombres }}</td>
-                                <td>{{ $alumno['registroAlumno']->apellidos }}</td>
+                                <td>{{ $alumno['registroAlumno']->nombres}} {{ $alumno['registroAlumno']->apellidos }}</td>
                                 <td>{{ $alumno['registroAlumno']->inscripcion->grado->nombre_grado ?? 'Sin Grado' }}</td>
                                 <td>{{ $alumno['registroAlumno']->inscripcion->seccion->seccion ?? 'Sin Sección' }}</td>
                                 <td class="estado">
                                     <!-- Esto será actualizado por el script -->
-                                    <span style="color: gray;">● Sin estado</span>
+
+                                    <span class="badge bg-secondary">● Sin estado</span>
                                 </td>
                                 <td class="text-center">
                                     <a class="btn btn-sm btn-primary" href="{{ route('pagos.show', $alumno['registroAlumno']->id) }}">
@@ -109,10 +108,10 @@
 
             if (mesesPagados.includes(mesActual)) {
                 // Si el mes actual está pagado
-                estadoCell.innerHTML = `<span style="color: green;">● Solvente</span>`;
+                estadoCell.innerHTML = `<span class="badge bg-success">● Solvente</span>`;
             } else {
                 // Si el mes actual no está pagado
-                estadoCell.innerHTML = `<span style="color: red;">● Insolvente</span>`;
+                estadoCell.innerHTML = `<span class="badge bg-danger">● Insolvente</span>`;
             }
         });
     </script>
