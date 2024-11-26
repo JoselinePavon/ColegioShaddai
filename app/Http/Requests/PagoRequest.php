@@ -27,6 +27,7 @@ class PagoRequest extends FormRequest
 			'tipopagos_id' => 'required',
 			'registro_alumnos_id' => 'required',
             'mes_id' => 'required',
+            'monto_abono' => ' ',
         ];
     }
 }

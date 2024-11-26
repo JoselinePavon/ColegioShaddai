@@ -73,7 +73,7 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $pago->num_serie }}</td>
                                 <td>{{ $pago->fecha_pago }}</td>
-                                <td>{{ $pago->mes->mes }}</td>
+                                <td>{{ $pago->mes->mes ?? 'sin Mes' }}</td>
                                 <td>{{ $pago->tipopago->tipo_pago }}</td>
                                 <td>Q. {{ $pago->tipopago->monto }}.00</td>
                                 <td>{{ $pago->registroAlumno->nombres }} {{ $pago->registroAlumno->apellidos }}</td>

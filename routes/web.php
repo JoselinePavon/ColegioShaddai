@@ -79,5 +79,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pagos/{registro_alumnos_id}/show', [PagoController::class, 'show'])->name('pagos.show');
 
 
+    Route::post('/validar-codigo', [RegistroAlumnoController::class, 'validarCodigo'])->name('validar-codigo');
+    Route::post('/validar-codigo-correlativo', [RegistroAlumnoController::class, 'validarCodigoCorrelativo'])->name('validar-codigo-correlativo');
+
 
 });

@@ -61,37 +61,71 @@ class RegistroAlumnoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(RegistroAlumnoRequest $request)
+
+    public function store(Request $request)
     {
-
-        $alumno = RegistroAlumno::create($request->validated());
-
-        $encargado = new Encargado([
-            'nombre_encargado' => $request->input('nombre_encargado'),
-            'edad_encargado' => $request->input('edad_encargado'),
-            'estado_civil' => $request->input('estado_civil'),
-            'oficio' => $request->input('oficio'),
-            'dpi' => $request->input('dpi'),
-            'telefono' => $request->input('telefono'),
-            'persona_emergencia' => $request->input('persona_emergencia'),
-            'registro_alumnos_id' => $alumno->id, // Asignación automática
-            'lugars_id' => $request->input('lugars_id'), // Lugar seleccionado
-            'colonias_id' => $request->input('colonias_id') // Colonia seleccionada
+        // Validar los datos
+        $request->validate([
+            // Validación del alumno
+            'codigo_personal' => 'nullable|string|unique:registro_alumnos,codigo_personal', // Permitir nulo
+            'nombres' => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'genero' => 'required|string|in:Masculino,Femenino',
+            'edad' => 'required|integer|min:1',
+            'fecha_nacimiento' => 'required|date',
+            // Validación del encargado
+            'nombre_encargado' => 'required|string|max:255',
+            'edad_encargado' => 'required|integer|min:1|max:120',
+            'estado_civil' => 'required|string|max:255',
+            'oficio' => 'required|string|max:255',
+            'dpi' => 'required|numeric',
+            'lugars_id' => 'required|exists:lugars,id',
+            'colonias_id' => 'required|exists:colonias,id',
+            'telefono' => 'required|string|max:20',
+            'persona_emergencia' => 'required|string|max:255',
+            // Validación de la inscripción
+            'codigo_correlativo' => 'required|unique:inscripcions,codigo_correlativo',
+            'grados_id' => 'required|exists:grados,id',
+            'jornada' => 'required|string|in:Matutina,Vespertina',
+            'seccions_id' => 'required|exists:seccions,id',
         ]);
-        $encargado->save();
 
-        $inscripcion = new Inscripcion([
-            'registro_alumnos_id' => $alumno->id,  // ID automático
-            'grados_id' => $request->input('grados_id'),
-            'seccions_id' => $request->input('seccions_id'),
-            'jornada' => $request->input('jornada'),
-            'codigo_correlativo' => $request->input('codigo_correlativo'),
-
+        // Crear el registro del encargado
+        $encargado = Encargado::create([
+            'nombre_encargado' => $request->nombre_encargado,
+            'edad_encargado' => $request->edad_encargado,
+            'estado_civil' => $request->estado_civil,
+            'oficio' => $request->oficio,
+            'dpi' => $request->dpi,
+            'lugars_id' => $request->lugars_id,
+            'colonias_id' => $request->colonias_id,
+            'telefono' => $request->telefono,
+            'persona_emergencia' => $request->persona_emergencia,
         ]);
-        $inscripcion->save();
 
+        // Crear el registro del alumno
+        $alumno = RegistroAlumno::create([
+            'codigo_personal' => $request->codigo_personal,
+            'nombres' => $request->nombres,
+            'apellidos' => $request->apellidos,
+            'genero' => $request->genero,
+            'edad' => $request->edad,
+            'fecha_nacimiento' => $request->fecha_nacimiento,
+            'encargados_id' => $encargado->id, // Asignar automáticamente el ID del encargado
+        ]);
+
+        // Crear el registro de inscripción
+        Inscripcion::create([
+            'registro_alumnos_id' => $alumno->id, // Asignar automáticamente el ID del alumno
+            'codigo_correlativo' => $request->codigo_correlativo,
+            'grados_id' => $request->grados_id,
+            'jornada' => $request->jornada,
+            'seccions_id' => $request->seccions_id,
+        ]);
+
+        // Redirigir con mensaje de éxito
         return redirect()->route('registro-alumnos.create')
-            ->with('success', 'RegistroAlumno created successfully.');
+            ->with('success', 'Registro realizado exitosamente.');
     }
 
     /**
@@ -119,7 +153,7 @@ class RegistroAlumnoController extends Controller
         $colonias = Colonia::all();
         $grado = Grado::pluck('nombre_grado', 'id');
         $seccion = Seccion::pluck('seccion', 'id');
-        $encargado = Encargado::where('registro_alumnos_id', $id)->first(); // Cambiar aquí
+        $encargado = Encargado::pluck('nombre_encargado', 'id');
 
         return view('registro-alumno.edit', compact('registroAlumno', 'lugares', 'colonias', 'grado', 'seccion', 'encargado'));
     }
@@ -145,11 +179,11 @@ class RegistroAlumnoController extends Controller
             'edad_encargado' => 'required|integer|min:1|max:120',
             'estado_civil' => 'required|string|max:255',
             'oficio' => 'required|string|max:255',
-            'dpi' => 'required|numeric',
+            'dpi' => 'required|string',
             'lugars_id' => 'required|exists:lugars,id',
             'colonias_id' => 'required|exists:colonias,id',
-            'telefono' => 'required|string|max:20',
-            'persona_emergencia' => 'required|string|max:255',
+            'telefono' => 'required|string',
+            'persona_emergencia' => 'required|string',
         ]);
 
         // Actualización en la tabla registro_alumnos
@@ -195,4 +229,21 @@ class RegistroAlumnoController extends Controller
             return redirect()->route('registro-alumnos.index')->with('alerta','no');
         }
     }
+
+    public function validarCodigo(Request $request)
+    {
+        $codigo = $request->input('codigo');
+        $existe = RegistroAlumno::where('codigo_personal', $codigo)->exists();
+
+        return response()->json(['existe' => $existe]);
+    }
+
+    public function validarCodigoCorrelativo(Request $request)
+    {
+        $codigo = $request->input('codigo');
+        $existe = Inscripcion::where('codigo_correlativo', $codigo)->exists();
+
+        return response()->json(['existe' => $existe]);
+    }
+
 }

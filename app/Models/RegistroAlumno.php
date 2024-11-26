@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property $genero
  * @property $edad
  * @property $codigo_personal
+ * @property $encargados_id
  * @property $fecha_nacimiento
  * @property $created_at
  * @property $updated_at
@@ -31,12 +32,13 @@ class RegistroAlumno extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombres', 'apellidos', 'genero', 'edad', 'fecha_nacimiento','codigo_personal'];
+    protected $fillable = ['nombres', 'apellidos', 'genero', 'edad', 'fecha_nacimiento','codigo_personal','encargados_id'];
 
     public function encargado()
     {
-        return $this->hasOne(Encargado::class, 'registro_alumnos_id');
+        return $this->belongsTo(Encargado::class, 'encargados_id','id');
     }
+
     public function inscripciones()
     {
         return $this->hasMany(Inscripcion::class, 'registro_alumnos_id', 'id');

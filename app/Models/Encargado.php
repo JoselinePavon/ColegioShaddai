@@ -13,11 +13,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property $edad_encargado
  * @property $estado_civil
  * @property $oficio
- * @property $direccion
- * @property $num_encargado1
+ * @property $dpi
+ * @property $telefono
  * @property $num_encargado2
  * @property $persona_emergencia
- * @property $registro_alumnos_id
+ * @property $lugars_id
+ * @property $colonias_id
  * @property $created_at
  * @property $updated_at
  *
@@ -44,7 +45,6 @@ class Encargado extends Model
         'dpi',
         'telefono',
         'persona_emergencia',
-        'registro_alumnos_id',
         'lugars_id',
         'colonias_id',
     ];
@@ -71,8 +71,8 @@ class Encargado extends Model
      * Relación con el modelo RegistroAlumno.
      * Un encargado está asociado a un alumno.
      */
-    public function registroAlumno()
+    public function RegistroAlumno()
     {
-        return $this->belongsTo(RegistroAlumno::class, 'registro_alumnos_id');
+        return $this->hasMany(RegistroAlumno::class, 'encargados_id', 'id');
     }
 }
