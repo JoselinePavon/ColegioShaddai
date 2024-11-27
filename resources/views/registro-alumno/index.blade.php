@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    Registro Alumno
+    Alumnos Registrados
 @endsection
 
 @section('content')
@@ -9,11 +9,30 @@
         <div class="card shadow-lg">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 id="card_title" class="font-weight-bold"> <i class="bi bi-person-circle"></i> {{ __('Listado de Alumnos Registrados') }}</h4>
+                    <h4 id="card_title" class="font-weight-bold"> <i class="bi bi-person-circle"></i> {{ __('Listado de Alumnos Registrados, Inscritos') }}</h4>
                     <a href="{{ route('registro-alumnos.create') }}" class="btn btn-dark btn-sm rounded-pill">
                         <i class="fa fa-plus"></i> {{ __('Registrar Nuevo Alumno') }}
                     </a>
                 </div>
+                <form action="{{ route('filtro.index') }}" method="GET" class="d-flex align-items-center gap-2 mb-4">
+                    <select name="grados_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
+                        <option value="">Todos los Grados</option>
+                        @foreach($grado as $id => $nombre_grado)
+                            <option value="{{ $id }}" {{ request()->get('grados_id') == $id ? 'selected' : '' }}>
+                                {{ $nombre_grado }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <select name="seccions_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
+                        <option value="">Todas las secciones</option>
+                        @foreach($seccion as $id => $nombre)
+                            <option value="{{ $id }}" {{ request()->get('seccions_id') == $id ? 'selected' : '' }}>
+                                {{ $nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
 
                 {{-- SweetAlert para mensajes de éxito --}}
                 @if ($message = Session::get('success'))
@@ -33,10 +52,14 @@
                         <tr>
                             <th>No</th>
                             <th scope="col">Codigo Personal</th>
-                            <th scope="col">Nombres</th>
-                            <th scope="col">Apellidos</th>
+                            <th scope="col">Codigo Correlativo</th>
+                            <th scope="col">Alumno</th>
                             <th scope="col">Género</th>
                             <th scope="col">Edad</th>
+                            <th scope="col">Grado</th>
+                            <th scope="col">Sección</th>
+                            <th scope="col">Jornada</th>
+                            <th scope="col">Ciclo Escolar</th>
                             <th scope="col">Nombre del Encargado</th>
                             <th scope="col">Telefono del Encargado</th>
                             <th class="text-center">Acciones</th>
@@ -46,11 +69,15 @@
                         @foreach ($registroAlumnos as $registroAlumno)
                             <tr>
                                 <td>{{ ++$i }}</td>
-                                <td>{{ $registroAlumno->codigo_personal}}</td>
-                                <td>{{ $registroAlumno->nombres }}</td>
-                                <td>{{ $registroAlumno->apellidos }}</td>
+                                <td>{{ $registroAlumno->codigo_personal ?? 'Codigo no asignado' }}</td>
+                                <td>{{ $registroAlumno->inscripcion->codigo_correlativo ?? 'Codigo no asignado' }}</td>
+                                <td>{{ $registroAlumno->nombres }} {{ $registroAlumno->apellidos }}</td>
                                 <td>{{ $registroAlumno->genero }}</td>
                                 <td>{{ $registroAlumno->edad }}</td>
+                                <td>{{ $registroAlumno->inscripcion->grado->nombre_grado ?? 'N/A' }}</td>
+                                <td>{{ $registroAlumno->inscripcion->seccion->seccion ?? 'N/A' }}</td>
+                                <td>{{ $registroAlumno->inscripcion->jornada ?? 'N/A' }}</td>
+                                <td>{{ $registroAlumno->inscripcion->updated_at ? $registroAlumno->inscripcion->updated_at->format('Y') : 'N/A' }}</td>
                                 <td>{{ $registroAlumno->encargado->nombre_encargado ?? 'N/A' }}</td>
                                 <td>{{ $registroAlumno->encargado->telefono ?? 'N/A' }}</td>
                                 <td class="text-center d-flex gap-1">
@@ -73,10 +100,13 @@
                         </tbody>
                     </table>
                 </div>
+
             </div>
+
         </div>
 
     </div>
+
 
     <script>
         $(document).ready(function() {

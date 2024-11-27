@@ -34,12 +34,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
     // Rutas para inscripciones
-    Route::resource('inscripcions', App\Http\Controllers\InscripcionController::class);
+    Route::resource('filtro', App\Http\Controllers\RegistroAlumnoController::class);
     Route::get('/buscar', [App\Http\Controllers\InscripcionController::class, 'buscar'])->name('buscar');
     Route::get('/resultados', [App\Http\Controllers\InscripcionController::class, 'resultados'])->name('resultados');
 
     // Rutas para grados
     Route::resource('grados', App\Http\Controllers\GradoController::class);
+
+    Route::resource('inscripcions', App\Http\Controllers\InscripcionController::class);
+
 
     // Rutas para tipos de pagos
     Route::resource('tipopagos', App\Http\Controllers\TipopagoController::class);

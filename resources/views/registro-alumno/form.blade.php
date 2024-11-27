@@ -76,16 +76,22 @@
                             {{-- Datos del Encargado --}}
                             <div class="col-lg-6 col-md-12">
                                 <input type="hidden" name="encargados_id" id="encargados_id">
-
-                                <div class="col-6">
-                                <label for="buscar_encargado" class="form-label">Buscar Encargado (Nombre o DPI)</label>
-                                <input type="text" id="buscar_encargado" class="form-control form-control-sm" placeholder="Ingrese el nombre o DPI del encargado">
-                                <small class="text-muted">Escriba para buscar un encargado.</small>
-                            </div>
                             <div id="formulario_encargado">
+
                                 <h6 class="text-primary mb-3 text-center"><i class="bi bi-person-check-fill"></i> Datos del Encargado</h6>
+                                <div class="col-12">
+                                    <label for="buscar_encargado" class="form-label">Buscar Encargado ya Registrado por Nombre o DPI</label>
+                                    <div class="input-group input-group-sm" style="border-radius: 10px; border: 2px solid #007bff; overflow: hidden;">
+        <span class="input-group-text" style="background-color: #007bff; color: #fff; border: none;">
+            <i class="bi bi-search"></i>
+        </span>
+                                        <input type="text" id="buscar_encargado" class="form-control" placeholder="Ingrese el nombre o DPI del encargado" style="border: none; box-shadow: none;">
+                                    </div>
+                                </div>
+                                <h6 class="text-primary mb-3 text-center"> Registrar Nuevo Encargado</h6>
                                 <div class="row g-2">
                                     <div class="col-9">
+
                                         <label for="nombre_encargado" class="form-label">
                                             Nombre Completo <span class="text-danger">*</span>
                                         </label>
@@ -403,7 +409,7 @@
         document.getElementById('buscar_encargado').addEventListener('input', function () {
             const query = this.value.trim();
 
-            if (query.length >= 3) {
+            if (query.length ) {
                 fetch('{{ route('buscar.encargado') }}', {
                     method: 'POST',
                     headers: {

@@ -178,17 +178,47 @@
             </a>
         </li>
 
-        <li class="nav-item {{ request()->is('registro-alumnos/create') ? 'active' : '' }}">
-            <a class="nav-link" href="/registro-alumnos/create">
-                <i class="fas fa-user-plus"></i>
-                <span>Registrar Alumno</span>
+        <li class="nav-item">
+            <!-- Menú principal: Alumno -->
+            <a class="nav-link d-flex justify-content-between align-items-center"
+               data-bs-toggle="collapse"
+               href="#submenu-alumno"
+               role="button"
+               aria-expanded="{{ request()->is('registro-alumnos*') ? 'true' : 'false' }}"
+               aria-controls="submenu-alumno">
+                <div>
+                    <i class="fas fa-user"></i>
+                    <span>Alumno</span>
+                </div>
+                <i class="fas fa-chevron-right ms-2 rotate-icon" style="font-size: 0.8rem;"
+                   aria-hidden="true"></i>
             </a>
+            <!-- Submenús -->
+            <div class="collapse {{ request()->is('registro-alumnos*') ? 'show' : '' }}" id="submenu-alumno">
+                <ul class="list-unstyled ps-3">
+                    <li class="nav-item {{ request()->is('registro-alumnos/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="/registro-alumnos/create">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Registrar Alumno</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {{ request()->is('registro-alumnos') ? 'active' : '' }}">
+                        <a class="nav-link" href="/registro-alumnos">
+                            <i class="fas fa-list"></i>
+                            <span>Lista de Alumnos</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
 
-        <li class="nav-item {{ request()->is('registro-alumnos') ? 'active' : '' }}">
-            <a class="nav-link" href="/registro-alumnos">
-                <i class="fas fa-list"></i>
-                <span>Lista de Alumnos</span>
+
+
+
+        <li class="nav-item {{ request()->is('inscripcions') ? 'active' : '' }}">
+            <a class="nav-link" href="/inscripcions">
+                <i class="fas fa-edit"></i>
+                <span>Lista de Alumnos Inscritos</span>
             </a>
         </li>
 

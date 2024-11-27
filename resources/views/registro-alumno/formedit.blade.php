@@ -66,9 +66,14 @@
                                     </div>
                                     <div class="col">
                                         <label for="estado_civil" class="form-label"><i class="bi bi-person-fill"></i> Estado Civil</label>
-                                        <input type="text" name="estado_civil" class="form-control @error('estado_civil') is-invalid @enderror" value="{{ old('estado_civil', $encargado?->estado_civil) }}" id="estado_civil" placeholder="Estado Civil">
+                                        <select name="estado_civil" class="form-select @error('estado_civil') is-invalid @enderror" id="estado_civil">
+                                            <option value="">Seleccione</option>
+                                            <option value="Casado(a)" {{ old('estado_civil', $encargado?->estado_civil) == 'Casado(a)' ? 'selected' : '' }}>Casado(a)</option>
+                                            <option value="Soltero(a)" {{ old('estado_civil', $encargado?->estado_civil) == 'Soltero(a)' ? 'selected' : '' }}>Soltero(a)</option>
+                                        </select>
                                         @error('estado_civil') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                     </div>
+
                                     <div class="col">
                                         <label for="oficio" class="form-label"><i class="fas fa-briefcase"></i> Oficio</label>
                                         <input type="text" name="oficio" class="form-control @error('oficio') is-invalid @enderror" value="{{ old('oficio', $encargado?->oficio) }}" id="oficio" placeholder="Oficio">
@@ -118,6 +123,47 @@
 
                                 </div>
                             </div>
+                        <center><h4 class="mb-3">Datos de la Inscripcion</h4></center>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="codigo_correlativo" class="form-label"> {{ __('Codigo Correlativo') }}</label>
+                                <input type="text" name="codigo_correlativo" class="form-control @error('codigo_correlativo') is-invalid @enderror"
+                                       value="{{ old('codigo_correlativo', $inscripcion?->codigo_correlativo) }}" id="codigo_correlativo" placeholder="Escribe el nombre del grado">
+                                @error('codigo_correlativo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="grados_id" class="form-label">{{ __('Grado') }}</label>
+                                <select name="grados_id" class="form-select @error('grados_id') is-invalid @enderror" id="grados_id">
+                                    <option value="">Seleccione un grado</option>
+                                    @foreach($grado as $id => $nombre_grado)
+                                        <option value="{{ $id }}" {{ old('grados_id', $inscripcion->grados_id ?? '') == $id ? 'selected' : '' }}>
+                                            {{ $nombre_grado }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('grados_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="seccions_id" class="form-label">{{ __('Sección') }}</label>
+                                <select name="seccions_id" class="form-select @error('seccions_id') is-invalid @enderror" id="seccions_id">
+                                    <option value="">Seleccione una sección</option>
+                                    @foreach($seccion as $id => $nombre_seccion)
+                                        <option value="{{ $id }}" {{ old('seccions_id', $inscripcion->seccions_id ?? '') == $id ? 'selected' : '' }}>
+                                            {{ $nombre_seccion }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('seccions_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
 
                         </div>
 
@@ -129,6 +175,7 @@
             </div>
         </div>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const lugarSelect = document.getElementById('lugars_id');
@@ -159,6 +206,38 @@
                     }
                     coloniaSelect.disabled = false;
                 }
+            }
+        });
+    </script>
+
+    <script>
+        // Función para formatear números con guiones cada 4 dígitos
+        const formatWithHyphen = (input) => {
+            let value = input.value.replace(/\D/g, ''); // Eliminar caracteres no numéricos
+            if (value.length > 8) {
+                value = value.slice(0, 8); // Limitar a 8 dígitos
+            }
+            value = value.match(/.{1,4}/g)?.join('-') || ''; // Agrupar cada 4 caracteres y unir con guiones
+            input.value = value;
+        };
+
+        const telefonoInput = document.getElementById('telefono');
+        const emergenciaInput = document.getElementById('persona_emergencia');
+
+        // Aplicar la función en cada evento de entrada
+        telefonoInput.addEventListener('input', () => formatWithHyphen(telefonoInput));
+        emergenciaInput.addEventListener('input', () => formatWithHyphen(emergenciaInput));
+
+        // Validación al enviar el formulario (opcional, para asegurar que no tenga menos de 8 números)
+        document.querySelector('form').addEventListener('submit', (event) => {
+            const telefonoRaw = telefonoInput.value.replace(/[-\s]/g, '');
+            const emergenciaRaw = emergenciaInput.value.replace(/[-\s]/g, '');
+
+            if (telefonoRaw.length !== 8) {
+                event.preventDefault();
+                alert('El número de teléfono debe tener exactamente 8 dígitos.');
+                telefonoInput.focus();
+                return;
             }
         });
     </script>

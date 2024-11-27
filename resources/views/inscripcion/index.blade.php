@@ -13,26 +13,6 @@
 
                 </div>
 
-                <form action="{{ route('inscripcions.index') }}" method="GET" class="d-flex align-items-center gap-2 mb-4">
-                    <select name="grados_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
-                        <option value="">Todos los Grados</option>
-                        @foreach($grado as $id => $nombre_grado)
-                            <option value="{{ $id }}" {{ request()->get('grados_id') == $id ? 'selected' : '' }}>
-                                {{ $nombre_grado }}
-                            </option>
-                        @endforeach
-                    </select>
-
-                    <select name="seccions_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
-                        <option value="">Todas las secciones</option>
-                        @foreach($seccion as $id => $nombre)
-                            <option value="{{ $id }}" {{ request()->get('seccions_id') == $id ? 'selected' : '' }}>
-                                {{ $nombre }}
-                            </option>
-                        @endforeach
-                    </select>
-                </form>
-
                 @if ($message = Session::get('success'))
                     <script>
                         Swal.fire({

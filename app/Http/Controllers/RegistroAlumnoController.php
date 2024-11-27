@@ -30,12 +30,32 @@ class RegistroAlumnoController extends Controller
      */
     public function index()
     {
-        $registroAlumnos = RegistroAlumno::paginate();
-        $encargado = Encargado::paginate();
+        $seccion = Seccion::pluck('seccion', 'id');
+        $grado = Grado::pluck('nombre_grado', 'id');
 
-        return view('registro-alumno.index', compact('registroAlumnos', 'encargado'))
+        // Obtener los filtros seleccionados por el usuario
+        $seccions_id = request()->get('seccions_id');
+        $grados_id = request()->get('grados_id');
+
+        // Construir la consulta base
+        $registroAlumnos = RegistroAlumno::with(['encargado', 'inscripcion.grado', 'inscripcion.seccion'])
+            ->whereHas('inscripcion', function ($query) use ($seccions_id, $grados_id) {
+                if ($seccions_id) {
+                    $query->where('seccions_id', $seccions_id);
+                }
+                if ($grados_id) {
+                    $query->where('grados_id', $grados_id);
+                }
+            });
+
+        // Paginación
+        $registroAlumnos = $registroAlumnos->paginate();
+
+        return view('registro-alumno.index', compact('registroAlumnos', 'grado', 'seccion'))
             ->with('i', (request()->input('page', 1) - 1) * $registroAlumnos->perPage());
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -152,15 +172,17 @@ class RegistroAlumnoController extends Controller
      */
     public function edit($id)
     {
-        $registroAlumno = RegistroAlumno::find($id);
+        $registroAlumno = RegistroAlumno::with(['encargado', 'inscripcion.grado', 'inscripcion.seccion'])->findOrFail($id);
         $lugares = Lugar::all();
         $colonias = Colonia::all();
         $grado = Grado::pluck('nombre_grado', 'id');
         $seccion = Seccion::pluck('seccion', 'id');
-        $encargado = Encargado::pluck('nombre_encargado', 'id');
+        $encargado = $registroAlumno->encargado;
+        $inscripcion = $registroAlumno->inscripcion;
 
-        return view('registro-alumno.edit', compact('registroAlumno', 'lugares', 'colonias', 'grado', 'seccion', 'encargado'));
+        return view('registro-alumno.edit', compact('registroAlumno', 'lugares', 'colonias', 'grado', 'seccion', 'encargado', 'inscripcion'));
     }
+
 
 
     /**
@@ -168,29 +190,34 @@ class RegistroAlumnoController extends Controller
      */
     public function update(Request $request, RegistroAlumno $registroAlumno)
     {
-        // Validación de los campos
+        // Validar los datos
         $validated = $request->validate([
-            // Campos de registro_alumnos
-            'codigo_personal' => 'required|unique:registro_alumnos,codigo_personal,' . $registroAlumno->id,
+            // Alumno
+            'codigo_personal' => 'nullable|unique:registro_alumnos,codigo_personal,' . $registroAlumno->id,
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'genero' => 'required|string|in:Masculino,Femenino',
+            'genero' => 'required|in:Masculino,Femenino',
             'edad' => 'required|integer|min:1',
             'fecha_nacimiento' => 'required|date',
 
-            // Campos de encargados
+            // Encargado
             'nombre_encargado' => 'required|string|max:255',
             'edad_encargado' => 'required|integer|min:1|max:120',
-            'estado_civil' => 'required|in:Casado(a),Soltero(a)',
+            'estado_civil' => 'required|string',
             'oficio' => 'required|string|max:255',
             'dpi' => 'required|string',
             'lugars_id' => 'required|exists:lugars,id',
             'colonias_id' => 'required|exists:colonias,id',
             'telefono' => 'required|string',
             'persona_emergencia' => 'required|string',
+
+            // Inscripción
+            'codigo_correlativo' => 'required|unique:inscripcions,codigo_correlativo,' . $registroAlumno->inscripcion->id,
+            'grados_id' => 'required|exists:grados,id',
+            'seccions_id' => 'required|exists:seccions,id',
         ]);
 
-        // Actualización en la tabla registro_alumnos
+        // Actualizar alumno
         $registroAlumno->update([
             'codigo_personal' => $validated['codigo_personal'],
             'nombres' => $validated['nombres'],
@@ -200,8 +227,8 @@ class RegistroAlumnoController extends Controller
             'fecha_nacimiento' => $validated['fecha_nacimiento'],
         ]);
 
-        // Actualización en la tabla encargados
-        $encargado = $registroAlumno->encargado; // Relación con el modelo Encargado
+        // Actualizar encargado
+        $encargado = $registroAlumno->encargado;
         if ($encargado) {
             $encargado->update([
                 'nombre_encargado' => $validated['nombre_encargado'],
@@ -216,9 +243,19 @@ class RegistroAlumnoController extends Controller
             ]);
         }
 
-        // Redirección con mensaje de éxito
+        // Actualizar inscripción
+        $inscripcion = $registroAlumno->inscripcion;
+        if ($inscripcion) {
+            $inscripcion->update([
+                'codigo_correlativo' => $validated['codigo_correlativo'],
+                'grados_id' => $validated['grados_id'],
+                'seccions_id' => $validated['seccions_id'],
+            ]);
+        }
+
         return redirect()->route('registro-alumnos.index')->with('success', 'Registro actualizado correctamente.');
     }
+
 
 
 
@@ -254,7 +291,7 @@ class RegistroAlumnoController extends Controller
     public function buscarEncargado(Request $request)
     {
         $query = $request->input('query');
-        $encargado = Encargado::where('dpi', $query)
+        $encargado = Encargado::where('dpi', 'LIKE', '%' . $query . '%')
             ->orWhere('nombre_encargado', 'LIKE', '%' . $query . '%')
             ->first();
 
