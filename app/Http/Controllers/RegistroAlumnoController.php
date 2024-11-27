@@ -90,18 +90,22 @@ class RegistroAlumnoController extends Controller
             'seccions_id' => 'required|exists:seccions,id',
         ]);
 
-        // Crear el registro del encargado
-        $encargado = Encargado::create([
-            'nombre_encargado' => $request->nombre_encargado,
-            'edad_encargado' => $request->edad_encargado,
-            'estado_civil' => $request->estado_civil,
-            'oficio' => $request->oficio,
-            'dpi' => $request->dpi,
-            'lugars_id' => $request->lugars_id,
-            'colonias_id' => $request->colonias_id,
-            'telefono' => $request->telefono,
-            'persona_emergencia' => $request->persona_emergencia,
-        ]);
+        // Buscar o crear el encargado
+        $encargadoId = $request->input('encargados_id');
+        if (!$encargadoId) {
+            $encargado = Encargado::create([
+                'nombre_encargado' => $request->nombre_encargado,
+                'edad_encargado' => $request->edad_encargado,
+                'estado_civil' => $request->estado_civil,
+                'oficio' => $request->oficio,
+                'dpi' => $request->dpi,
+                'lugars_id' => $request->lugars_id,
+                'colonias_id' => $request->colonias_id,
+                'telefono' => $request->telefono,
+                'persona_emergencia' => $request->persona_emergencia,
+            ]);
+            $encargadoId = $encargado->id;
+        }
 
         // Crear el registro del alumno
         $alumno = RegistroAlumno::create([
@@ -111,7 +115,7 @@ class RegistroAlumnoController extends Controller
             'genero' => $request->genero,
             'edad' => $request->edad,
             'fecha_nacimiento' => $request->fecha_nacimiento,
-            'encargados_id' => $encargado->id, // Asignar automáticamente el ID del encargado
+            'encargados_id' => $encargadoId, // Asignar el ID del encargado
         ]);
 
         // Crear el registro de inscripción
@@ -177,7 +181,7 @@ class RegistroAlumnoController extends Controller
             // Campos de encargados
             'nombre_encargado' => 'required|string|max:255',
             'edad_encargado' => 'required|integer|min:1|max:120',
-            'estado_civil' => 'required|string|max:255',
+            'estado_civil' => 'required|in:Casado(a),Soltero(a)',
             'oficio' => 'required|string|max:255',
             'dpi' => 'required|string',
             'lugars_id' => 'required|exists:lugars,id',
@@ -245,5 +249,35 @@ class RegistroAlumnoController extends Controller
 
         return response()->json(['existe' => $existe]);
     }
+
+
+    public function buscarEncargado(Request $request)
+    {
+        $query = $request->input('query');
+        $encargado = Encargado::where('dpi', $query)
+            ->orWhere('nombre_encargado', 'LIKE', '%' . $query . '%')
+            ->first();
+
+        if ($encargado) {
+            return response()->json([
+                'found' => true,
+                'encargado' => [
+                    'id' => $encargado->id,
+                    'nombre_encargado' => $encargado->nombre_encargado,
+                    'edad_encargado' => $encargado->edad_encargado,
+                    'dpi' => $encargado->dpi,
+                    'oficio' => $encargado->oficio,
+                    'estado_civil' => $encargado->estado_civil === 'Casado' ? 'Casado(a)' : ($encargado->estado_civil === 'Soltero' ? 'Soltero(a)' : $encargado->estado_civil),
+                    'lugars_id' => $encargado->lugars_id,
+                    'colonias_id' => $encargado->colonias_id,
+                    'telefono' => $encargado->telefono,
+                    'persona_emergencia' => $encargado->persona_emergencia,
+                ]
+            ]);
+        }
+
+        return response()->json(['found' => false]);
+    }
+
 
 }

@@ -81,6 +81,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/validar-codigo', [RegistroAlumnoController::class, 'validarCodigo'])->name('validar-codigo');
     Route::post('/validar-codigo-correlativo', [RegistroAlumnoController::class, 'validarCodigoCorrelativo'])->name('validar-codigo-correlativo');
+    Route::post('/buscar-encargado', [RegistroAlumnoController::class, 'buscarEncargado'])->name('buscar.encargado');
 
 
 });

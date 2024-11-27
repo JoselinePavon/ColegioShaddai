@@ -73,9 +73,16 @@
                                     </div>
                                 </div>
                             </div>
-
                             {{-- Datos del Encargado --}}
                             <div class="col-lg-6 col-md-12">
+                                <input type="hidden" name="encargados_id" id="encargados_id">
+
+                                <div class="col-6">
+                                <label for="buscar_encargado" class="form-label">Buscar Encargado (Nombre o DPI)</label>
+                                <input type="text" id="buscar_encargado" class="form-control form-control-sm" placeholder="Ingrese el nombre o DPI del encargado">
+                                <small class="text-muted">Escriba para buscar un encargado.</small>
+                            </div>
+                            <div id="formulario_encargado">
                                 <h6 class="text-primary mb-3 text-center"><i class="bi bi-person-check-fill"></i> Datos del Encargado</h6>
                                 <div class="row g-2">
                                     <div class="col-9">
@@ -107,7 +114,7 @@
                                             Estado Civil <span class="text-danger">*</span>
                                         </label>
                                         <select name="estado_civil" class="form-control form-control-sm" id="estado_civil" required>
-                                            <option value="">Seleccione</option>
+                                            <option value=" ">Seleccione</option>
                                             <option value="Casado(a)">Casado(a)</option>
                                             <option value="Soltero(a)">Soltero(a)</option>
                                         </select>
@@ -145,6 +152,7 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         </div>
                         {{-- Inscripción --}}
                         <h6 class="text-primary mb-3 mt-4 text-center"><i class="bi bi-card-list"></i> Inscripción</h6>
@@ -390,5 +398,66 @@
                 return;
             }
         });
+    </script>
+    <script>
+        document.getElementById('buscar_encargado').addEventListener('input', function () {
+            const query = this.value.trim();
+
+            if (query.length >= 3) {
+                fetch('{{ route('buscar.encargado') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({ query }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.found) {
+                            const encargado = data.encargado;
+
+                            // Llenar los campos del formulario
+                            document.getElementById('nombre_encargado').value = encargado.nombre_encargado;
+                            document.getElementById('edad_encargado').value = encargado.edad_encargado;
+                            document.getElementById('dpi').value = encargado.dpi;
+                            document.getElementById('oficio').value = encargado.oficio;
+                            document.getElementById('telefono').value = encargado.telefono;
+                            document.getElementById('persona_emergencia').value = encargado.persona_emergencia;
+                            document.getElementById('lugars_id').value = encargado.lugars_id;
+                            document.getElementById('estado_civil').value = encargado.estado_civil;
+
+                            // Actualizar las colonias según el lugar
+                            const lugarId = encargado.lugars_id;
+                            const coloniasSelect = document.getElementById('colonias_id');
+                            coloniasSelect.innerHTML = '<option value="">Seleccione una colonia</option>'; // Resetear opciones
+
+                            if (coloniasPorLugar[lugarId]) {
+                                for (const [id, nombre] of Object.entries(coloniasPorLugar[lugarId])) {
+                                    const option = new Option(nombre, id);
+                                    coloniasSelect.add(option);
+                                }
+                                coloniasSelect.disabled = false;
+
+                                // Seleccionar la colonia correspondiente
+                                coloniasSelect.value = encargado.colonias_id || '';
+                            } else {
+                                coloniasSelect.disabled = true;
+                            }
+
+                            // Asignar ID del encargado
+                            document.getElementById('encargados_id').value = encargado.id;
+                        } else {
+                            // Limpiar todos los campos si no se encuentra el encargado
+                            document.querySelectorAll('#formulario_encargado input, #formulario_encargado select').forEach(input => input.value = '');
+                            document.getElementById('encargados_id').value = '';
+                            document.getElementById('colonias_id').innerHTML = '<option value="">Seleccione una colonia</option>';
+                            document.getElementById('colonias_id').disabled = true;
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        });
+
     </script>
 @endsection
