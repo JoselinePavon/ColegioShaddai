@@ -25,7 +25,7 @@
                             <div class="row align-items-end">
                                 <div class="mb-3">
                                     <div class="input-group input-group-ml">
-                                        <input type="text" class="form-control" id="search" name="search" placeholder="Buscar por Nombre o No. Correlativo" value="{{ old('search', request('search')) }}">
+                                        <input type="text" class="form-control" id="search" name="search" placeholder="Buscar por Nombre o No. Correlativo" value="{{ old('search', request('search')) }}"  required>
                                         <div class="input-group-append">
                                             <button class="btn btn-primary btn-ml" type="submit">
                                                 <i class="fas fa-search"></i>
@@ -39,8 +39,8 @@
                             <div class="row align-items-end">
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
-                                        <label for="alumno_id" class="form-label">ID del Alumno</label>
-                                        <input type="text" id="alumno_id" class="form-control" value="{{ old('alumno_id', $alumno->id ?? '') }}" readonly>
+                                        <label for="codigo_personal" class="form-label">Codigo del Alumno</label>
+                                        <input type="text" id="codigo_personal" class="form-control" value="{{ old('codigo_personal', $alumno->codigo_personal ?? 'Sin Codigo Asignado') }}" readonly>
                                         <input type="hidden" name="registro_alumnos_id" value="{{ old('registro_alumnos_id', $alumno->id ?? '') }}">
                                     </div>
                                 </div>
@@ -86,47 +86,49 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <label for="mes_id" class="form-label">{{ __('Mes') }}</label>
-                                    <select name="mes_id" class="form-select @error('mes_id') is-invalid @enderror" id="mes_id">
-                                        <option value="">Seleccione una sección</option>
-                                        @foreach($mes as $id => $mes)
-                                            <option value="{{ $id }}" {{ old('mes_id', $pago->mes_id ?? '') == $id ? 'selected' : '' }}>
-                                                {{ $mes }}
+                                    <label for="tipopagos_id" class="form-label">{{ __('Tipo de Pago') }}</label>
+                                    <select name="tipopagos_id" id="tipopagos_id" class="form-control @error('tipopagos_id') is-invalid @enderror">
+                                        <option value="" disabled selected>Selecciona un tipo de pago</option>
+                                        @if($inscripcionPagada)
+                                            <p class="text-muted">El pago de inscripción ya ha sido realizado.</p>
+                                        @endif
+
+                                        @foreach($tipos as $id => $tipo_pago)
+                                            <option value="{{ $id }}" {{ old('tipopagos_id') == $id ? 'selected' : '' }}>
+                                                {{ $tipo_pago }}
                                             </option>
                                         @endforeach
+                                        <option value="combinado" class="btn btn-sm btn-warning">Pago Combinado</option>
                                     </select>
-                                    @error('seccions_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+
+                                    {!! $errors->first('tipopagos_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                                 </div>
-
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <label for="fecha_pago" class="form-label">{{ __('Fecha Pago') }}</label>
                                         <input type="date" id="fecha_pago" name="fecha_pago" class="form-control" value="{{ old('fecha_pago', now()->toDateString()) }}">
                                     </div>
                                 </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="mes_id" class="form-label">{{ __('Mes') }}</label>
+                                    <select name="mes_id" class="form-select @error('mes_id') is-invalid @enderror" id="mes_id">
+                                        <option value="">Seleccione un mes</option>
+                                        @foreach($mes as $id => $mesNombre)
+                                            <option value="{{ $id }}" {{ old('mes_id', $pago->mes_id ?? '') == $id ? 'selected' : '' }}>
+                                                {{ $mesNombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <input type="hidden" id="hidden_mes_id" name="mes_id" value="{{ old('mes_id', $pago->mes_id ?? '') }}">
+                                    @error('mes_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
                             </div>
 
                             <!-- Selector de tipo de pago -->
                             <div class="row align-items-end">
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group">
-                                        <label for="tipopagos_id" class="form-label">{{ __('Tipo de Pago') }}</label>
-                                        <select name="tipopagos_id" id="tipopagos_id" class="form-control @error('tipopagos_id') is-invalid @enderror">
-                                            <option value="" disabled selected>Selecciona un tipo de pago</option>
-                                            @foreach($tipos as $id => $tipo_pago)
-                                                <option value="{{ $id }}" {{ old('tipopagos_id') == $id ? 'selected' : '' }}>
-                                                    {{ $tipo_pago }}
-                                                </option>
-                                            @endforeach
-                                            <option value="combinado">Pago Combinado</option>
-                                        </select>
-                                        {!! $errors->first('tipopagos_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                                    </div>
-                                </div>
-
                                 <div class="col-md-6 mb-3">
                                     <label for="monto" class="form-label">{{ __('Monto') }}</label>
                                     <input type="text" id="monto" class="form-control" readonly>
@@ -140,7 +142,7 @@
                                 <h5>Seleccione los pagos que desea combinar:</h5>
                                 <div class="d-flex flex-wrap">
                                     @foreach($tipos as $id => $tipo_pago)
-                                        @if($id !== 2) <!-- Excluir inscripción -->
+                                        @if($id !== 1) <!-- Excluir inscripción -->
                                         <div class="form-check me-3 mb-2">
                                             <input class="form-check-input pago-combinado-checkbox" type="checkbox" name="pagos_combinados[]" value="{{ $id }}" id="pago_combinado_{{ $id }}" data-monto="{{ $montos[$id] }}">
                                             <label class="form-check-label" for="pago_combinado_{{ $id }}">
@@ -167,7 +169,7 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Resumen del Pedido</h5>
+                        <h5 class="card-title">Resumen del Pago del Alumno</h5>
                         <ul id="resumen-lista" class="list-group list-group-flush"></ul>
                         <hr>
                         <div class="d-flex justify-content-between">
@@ -282,6 +284,7 @@
             const checkboxes = document.querySelectorAll('.pago-combinado-checkbox');
             const mesSelect = document.getElementById('mes_id');
             const montoInput = document.getElementById('monto');
+            const hiddenMesInput = document.getElementById('hidden_mes_id');
             const resumenLista = document.getElementById('resumen-lista');
             const resumenTotal = document.getElementById('resumen-total');
             const alertContainer = document.createElement('div');
@@ -289,8 +292,29 @@
             const pagosPorMes = @json($pagosPorMes ?? []);
             const montos = @json($montos);
 
+
             formContainer.prepend(alertContainer);
 
+            function toggleMesField() {
+                if (tipoPagosSelect.value === '1') { // Inscripción
+                    hiddenMesInput.value = '13'; // Valor fijo para inscripción
+                    mesSelect.style.display = 'none'; // Ocultar campo select
+                } else {
+                    hiddenMesInput.value = mesSelect.value; // Sincronizar con selección del usuario
+                    mesSelect.style.display = ''; // Mostrar campo select
+                }
+            }
+
+            // Sincronizar al cambiar el tipo de pago
+            tipoPagosSelect.addEventListener('change', toggleMesField);
+
+            // Sincronizar al cambiar la selección de mes
+            mesSelect.addEventListener('change', () => {
+                hiddenMesInput.value = mesSelect.value;
+            });
+
+            // Inicializar el comportamiento
+            toggleMesField();
             // Función para limpiar checkboxes
             function limpiarCheckboxes() {
                 checkboxes.forEach(checkbox => {
@@ -372,16 +396,6 @@
 
                 clearAlert();
 
-                if (selectedTipoPagoId === '2') {
-                    const yaPagoInscripcion = pagosPorMes.some(pago => parseInt(pago.tipopagos_id) === 2);
-                    if (yaPagoInscripcion) {
-                        showAlert('El pago de inscripción ya ha sido realizado y no se puede repetir.');
-                        tipoPagosSelect.value = '';
-                        actualizarMonto();
-                        return;
-                    }
-                }
-
                 const yaPagado = pagosPorMes.some(pago =>
                     parseInt(pago.mes_id) === parseInt(selectedMesId) &&
                     parseInt(pago.tipopagos_id) === parseInt(selectedTipoPagoId)
@@ -431,14 +445,6 @@
 
                 checkboxes.forEach(checkbox => {
                     if (checkbox.checked) {
-                        if (checkbox.value === '2') {
-                            const yaPagoInscripcion = pagosPorMes.some(pago => parseInt(pago.tipopagos_id) === 2);
-                            if (yaPagoInscripcion) {
-                                showAlert('El pago de inscripción ya ha sido realizado y no se puede incluir en pagos combinados.');
-                                checkbox.checked = false;
-                            }
-                        }
-
                         const yaPagado = pagosPorMes.some(pago =>
                             parseInt(pago.mes_id) === parseInt(selectedMesId) &&
                             parseInt(pago.tipopagos_id) === parseInt(checkbox.value)

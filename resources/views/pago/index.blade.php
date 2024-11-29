@@ -71,15 +71,13 @@
                         </thead>
                         <tbody>
                         @foreach ($alumnos as $alumno)
-                            <tr data-meses-pagados="{{ json_encode($alumno['mesesPagados']) }}">
+                            <tr data-meses-pagados="{{ json_encode($alumno['mesesPagados']) }}" data-es-solvente="{{ $alumno['esSolvente'] ? 'true' : 'false' }}">
                                 <td>{{ ++$i }}</td>
                                 <td>{{ $alumno['registroAlumno']->inscripcion->codigo_correlativo ?? 'Sin Correlativo' }}</td>
-                                <td>{{ $alumno['registroAlumno']->nombres}} {{ $alumno['registroAlumno']->apellidos }}</td>
+                                <td>{{ $alumno['registroAlumno']->nombres }} {{ $alumno['registroAlumno']->apellidos }}</td>
                                 <td>{{ $alumno['registroAlumno']->inscripcion->grado->nombre_grado ?? 'Sin Grado' }}</td>
                                 <td>{{ $alumno['registroAlumno']->inscripcion->seccion->seccion ?? 'Sin Sección' }}</td>
                                 <td class="estado">
-                                    <!-- Esto será actualizado por el script -->
-
                                     <span class="badge bg-secondary">● Sin estado</span>
                                 </td>
                                 <td class="text-center">
@@ -90,6 +88,7 @@
                             </tr>
                         @endforeach
                         </tbody>
+
                     </table>
                 </div>
             </div>
@@ -97,33 +96,20 @@
     </div>
 
     <script>
-        // Obtener la fecha actual y mostrarla
-        const fechaActual = new Date();
-        const mesActual = fechaActual.getMonth() + 1; // Los meses van de 0 a 11
-        const hoy = fechaActual.toLocaleDateString('es-ES', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-        });
-        document.getElementById('fecha-actual').innerText = hoy;
-
-        // Actualizar dinámicamente los estados
-        document.querySelectorAll('tr[data-meses-pagados]').forEach(row => {
-            const mesesPagados = JSON.parse(row.getAttribute('data-meses-pagados')); // Obtener los meses pagados como array
+        document.querySelectorAll('tr[data-es-solvente]').forEach(row => {
             const estadoCell = row.querySelector('.estado');
+            const esSolvente = row.getAttribute('data-es-solvente') === 'true'; // Leer el atributo como booleano
 
-            if (mesesPagados.includes(mesActual)) {
-                // Si el mes actual está pagado
+            if (esSolvente) {
                 estadoCell.innerHTML = `<span class="badge bg-success">● Solvente</span>`;
             } else {
-                // Si el mes actual no está pagado
                 estadoCell.innerHTML = `<span class="badge bg-danger">● Insolvente</span>`;
             }
         });
     </script>
 
 
-{{-- SweetAlert para confirmación de eliminación --}}
+    {{-- SweetAlert para confirmación de eliminación --}}
     <script>
         document.querySelectorAll('.delete-button').forEach(button => {
             button.addEventListener('click', function(e) {
