@@ -83,7 +83,13 @@
                                 <td>{{ $pago->fecha_pago }}</td>
                                 <td>{{ $pago->mes->mes ?? 'sin Mes' }}</td>
                                 <td>{{ $pago->tipopago->tipo_pago }}</td>
-                                <td>Q. {{ $pago->tipopago->monto }}.00</td>
+                                <td>
+                                    @if ($pago->tipopagos_id == 3) <!-- ID 3 es Computación -->
+                                    Q. {{ number_format($pago->abono, 2) }}
+                                    @else
+                                        Q. {{ number_format($pago->tipopago->monto, 2) }}
+                                    @endif
+                                </td>
                                 <td>{{ $pago->registroAlumno->nombres }} {{ $pago->registroAlumno->apellidos }}</td>
                                 <td>
                                     @if($pago->estado->id == 1)

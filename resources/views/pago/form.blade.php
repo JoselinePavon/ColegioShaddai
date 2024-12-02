@@ -127,11 +127,20 @@
 
                             </div>
 
-                            <!-- Selector de tipo de pago -->
+
+                            <!-- Campo Monto -->
                             <div class="row align-items-end">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3" id="monto-section">
                                     <label for="monto" class="form-label">{{ __('Monto') }}</label>
-                                    <input type="text" id="monto" class="form-control" readonly>
+                                    <input type="text" id="monto" name="monto" class="form-control" readonly>
+                                </div>
+                            </div>
+
+                            <!-- Campo Abono -->
+                            <div class="row align-items-end" id="abono-section" style="display: none;">
+                                <div class="col-md-6 mb-3">
+                                    <label for="abono" class="form-label">{{ __('Abono') }}</label>
+                                    <input type="text" id="abono" name="abono" class="form-control">
                                 </div>
                             </div>
 
@@ -142,13 +151,15 @@
                                 <h5>Seleccione los pagos que desea combinar:</h5>
                                 <div class="d-flex flex-wrap">
                                     @foreach($tipos as $id => $tipo_pago)
-                                        @if($id !== 1) <!-- Excluir inscripción -->
+                                        @if($id !== 1)
+                                            @if($id !== 3)<!-- Excluir inscripción -->
                                         <div class="form-check me-3 mb-2">
                                             <input class="form-check-input pago-combinado-checkbox" type="checkbox" name="pagos_combinados[]" value="{{ $id }}" id="pago_combinado_{{ $id }}" data-monto="{{ $montos[$id] }}">
                                             <label class="form-check-label" for="pago_combinado_{{ $id }}">
                                                 {{ $tipo_pago }} (Q. {{ number_format($montos[$id], 2) }})
                                             </label>
                                         </div>
+                                        @endif
                                         @endif
                                     @endforeach
                                 </div>
@@ -184,11 +195,27 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tipoPagosSelect = document.getElementById('tipopagos_id');
+            const montoSection = document.getElementById('monto-section');
+            const abonoSection = document.getElementById('abono-section');
+            const abonoInput = document.getElementById('abono');
+            const pagoForm = document.querySelector('form'); // Selecciona el formulario principal
 
-
-
-
+            // Manejar el cambio de selección en el tipo de pago
+            tipoPagosSelect.addEventListener('change', () => {
+                if (tipoPagosSelect.value == '3') { // ID 3 es Computación
+                    montoSection.style.display = 'none'; // Ocultar Monto
+                    abonoSection.style.display = 'block'; // Mostrar Abono
+                } else {
+                    montoSection.style.display = 'block'; // Mostrar Monto
+                    abonoSection.style.display = 'none'; // Ocultar Abono
+                }
+            });
+        });
     </script>
+
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const tipoPagosSelect = document.getElementById('tipopagos_id');

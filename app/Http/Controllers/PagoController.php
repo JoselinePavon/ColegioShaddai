@@ -100,7 +100,14 @@ class PagoController extends Controller
         if ($pagos->isEmpty()) {
             return redirect()->route('pagos.index')->with('error', 'No se encontraron pagos para este alumno.');
         }
-        $totalPagos = $pagos->sum(fn($pago) => $pago->tipopago->monto);
+        $totalPagos = $pagos->sum(function ($pago) {
+            if ($pago->tipopagos_id == 3) {
+                // Si es Computación, sumar el abono
+                return $pago->abono ?? 0;
+            }
+            // Para otros pagos, sumar el monto
+            return $pago->tipopago->monto ?? 0;
+        });
 
         // Retornar la vista con los pagos del alumno
         return view('pago.show', compact('pagos','totalPagos'));
@@ -171,7 +178,14 @@ class PagoController extends Controller
 
         $data = $request->all();
 
-
+        if ($data['tipopagos_id'] == 3) {
+            // Validar que el campo "abono" tenga un valor
+            if (empty($data['abono'])) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Debe ingresar un abono para el pago de Computación.');
+            }
+        }
 
         // Si se selecciona "combinado" pero no se seleccionan pagos en pagos_combinados
         if ($request->input('tipopagos_id') === 'combinado') {
@@ -184,6 +198,8 @@ class PagoController extends Controller
             foreach ($data['pagos_combinados'] as $tipopagos_id) {
                 // Excluir inscripción (ID 2) de pagos combinados
                 if ($tipopagos_id == 1) {
+                    continue;
+                } if ($tipopagos_id == 3) {
                     continue;
                 }
 

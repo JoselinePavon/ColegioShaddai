@@ -161,9 +161,6 @@
 </head>
 
 <body>
-<button id="sidebarToggle" aria-label="Toggle Sidebar">
-    <i class="fas fa-bars"></i>
-</button>
 
 <nav class="navbar-vertical">
     <div class="navbar-brand">
