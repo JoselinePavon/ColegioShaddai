@@ -15,4 +15,5 @@ class ContratoPDFController extends Controller
 
         return $pdf->download('contrato.pdf');
     }
+
 }

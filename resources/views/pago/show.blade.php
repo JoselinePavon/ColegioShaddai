@@ -5,6 +5,8 @@
 @endsection
 
 @section('content')
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
     <div class="container mt-3">
         <div class="card shadow-lg">
             <div class="p-4">
@@ -44,12 +46,18 @@
                 @endif
 
                 <!-- Total Pagado -->
-                <div class="alert alert-info mt-3">
-                    <strong>Total Pagado por el Alumno:</strong>
-                    <span style="color: #006400; font-weight: bold;">
-                        Q. {{ number_format($totalPagos, 2) }}
-                    </span>
+                <div class="alert alert-info mt-3 d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Total Pagado por el Alumno:</strong>
+                        <span style="color: #006400; font-weight: bold;">
+            Q. {{ number_format($totalPagos, 2) }}
+             </span>
+                    </div>
+                    <button id="download-excel" class="btn btn-success btn-sm shadow-sm" style="font-size: 1rem;">
+                        <i class="bi bi-download"></i> Descargar Excel
+                    </button>
                 </div>
+
 
                 <!-- Tabla de Pagos -->
                 <div class="table-responsive">
@@ -136,4 +144,18 @@
             });
         });
     </script>
+
+    <script>
+        document.getElementById('download-excel').addEventListener('click', function () {
+            // Obtener la tabla que quieres exportar
+            var table = document.getElementById('mediciones');
+
+            // Convertir la tabla HTML a un objeto de datos de SheetJS
+            var wb = XLSX.utils.table_to_book(table, { sheet: 'Pagos' });
+
+            // Crear y descargar el archivo Excel
+            XLSX.writeFile(wb, 'Pagos_Alumno.xlsx');
+        });
+    </script>
+
 @endsection

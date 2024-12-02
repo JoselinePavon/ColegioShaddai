@@ -8,31 +8,30 @@
     <div class="contract-container">
         <div class="page-number"></div>
         <div class="contract-header">
-            <h3><strong>CONTRATO DE ADHESIÓN POR PRESTACIÓN DE</strong></h3>
-            <h3><strong>SERVICIOS EDUCATIVOS</strong></h3>
-            <h4><strong>COLEGIO PARTICULAR MIXTO SHADDAI</strong></h4><br>
-            <div style="display: flex; justify-content: flex-start; align-items: center; gap: 3px; width: 100%; margin: 0;">
-                <!-- Texto a la izquierda -->
-                <span style="white-space: nowrap;">Correlativo interno Contrato No.</span>
+            <h5><strong>CONTRATO DE ADHESIÓN POR PRESTACIÓN DE</strong></h5>
+            <h5><strong>SERVICIOS EDUCATIVOS</strong></h5>
+            <h6><strong>COLEGIO PARTICULAR MIXTO SHADDAI</strong></h6><br>
+            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 5px; margin: 0;">
+                <!-- Texto (label) alineado correctamente con el input -->
+                <span style="white-space: nowrap; font-size: 12px;">Correlativo interno Contrato No.</span>
 
-                <!-- Formulario con input y botón alineados a la izquierda -->
-                <form method="POST" action="{{ route('buscar.alumno') }}" style="display: flex; align-items: center; gap: 5px; margin: 0;">
+                <!-- Formulario con input y botón alineados -->
+                <form method="POST" action="{{ route('buscar.alumno') }}" style="display: flex; gap: 0; margin: 0;">
                     @csrf
-                    <!-- Input -->
+                    <!-- Input sin bordes -->
                     <input
                         type="text"
                         id="codigo-correlativo"
                         name="codigo_correlativo"
                         value="{{ old('codigo_correlativo', $codigoCorrelativo ?? '') }}"
                         required
-                        style="padding: 0px; border: 1px solid transparent; border-radius: 4px; outline: none; min-width: 5px; height: 17px;"
-
+                        style="padding: 5px; border: none; border-radius: 4px; outline: none; width: 120px; height: 25px; font-size: 12px; margin-right: 0; box-sizing: border-box;"
                     >
-                    <!-- Botón -->
+                    <!-- Botón con el icono ajustado al tamaño del input -->
                     <button
                         type="submit"
                         class="btn btn-primary"
-                        style="padding: 3px 3px; border: none; background-color: #007bff; color: white; cursor: pointer; font-size: 11px; border-radius: 4px; height: 33px; display: flex; align-items: center; justify-content: center; width: auto; min-width: 25px; max-width: 75px;"
+                        style="padding: 5px; border: none; background-color: #007bff; color: white; cursor: pointer; font-size: 12px; border-radius: 4px; height: 25px; width: 40px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;"
                     >
                         <i class="fa fa-search" aria-hidden="true"></i>
                     </button>
@@ -40,30 +39,44 @@
             </div>
 
 
+
+
+
             <!-- Párrafo alineado a la izquierda -->
-            <p style="text-align: left; margin: 0;">Aprobado y registrado según Resolución DIACO: DDC-342-2022</p>
+            <p style="text-align: right; margin: 0; font-weight: bold;">Aprobado y registrado según Resolución DIACO: DDC-342-2022</p>
 
             <p class="contract-body">
-            <p style="text-align: justify; margin-bottom: 0px;">
-                En el municipio Puerto Barrios, del departamento de Izabal,
+    <span style="text-align: justify; display: inline-block; margin-bottom: 0px;">
+        En el municipio Puerto Barrios, del departamento de Izabal,
+    </span>
 
                 <!-- Campo de fecha sin el icono de calendario (en algunos navegadores) -->
                 <input
                     type="date"
                     name="contract_date"
                     id="contract_date"
-                    style="border: none; outline: none; padding: 0px; width: 105px; background-color: transparent; text-align: center;
-               -webkit-appearance: none; -moz-appearance: none; appearance: none;
-               margin: 0 5px; display: inline-block;"
+                    style="border: none; outline: none; padding: 2px 5px; width: 90px; background-color: transparent;
+        text-align: center; -webkit-appearance: none; -moz-appearance: none; appearance: none;
+        margin: 0; display: inline-block; font-size: 10px; vertical-align: middle;"
                     placeholder="Seleccionar fecha"
                 >
 
-                NOSOTROS: HERLINDO ARTIGA MARROQUÍN de
-                <input type="number" id="edad" name="edad" min="66" max="70" value="66"
-                       style="width: 35px; border: none; background-color: transparent; text-align: center; margin: 0 5px; display: inline-block;"
-                       onchange="actualizarEdad()">
-                <span id="edad-en-letras"> </span> años de edad, casado, guatemalteco, bachiller, de este domicilio, me identifico con Documento Personal de Identificación, Código Único de Identificación –CUI— número 2679 12609 1804, extendido por el Registro Nacional de las Personas de la República de Guatemala, propietario del centro educativo COLEGIO PARTICULAR MIXTO SHADDAI, ubicado en 3ª. Calle 1ª. Avenida, Colonia San Agustín, Santo Tomás de Castilla, municipio de Puerto Barrios, departamento de Izabal; según lo acredito con la Constancia de Inscripción y Actualización de Datos y Registro Tributario Unificado 8319383, emitido por la Superintendencia de Administración Tributaria. Y por la otra parte:
+                <span style="display: inline-block; margin-left: 5px;">
+        NOSOTROS: HERLINDO ARTIGA MARROQUÍN de
+    </span>
+                <input
+                    type="number"
+                    id="edad"
+                    name="edad"
+                    min="66"
+                    max="70"
+                    value="66"
+                    style="width: 35px; border: none; background-color: transparent; text-align: center; margin: 0 5px; display: inline-block; vertical-align: middle;"
+                    onchange="actualizarEdad()"
+                >
+                <span id="edad-en-letras"></span> años de edad, casado, guatemalteco, bachiller, de este domicilio, me identifico con Documento Personal de Identificación, Código Único de Identificación –CUI— número 2679 12609 1804, extendido por el Registro Nacional de las Personas de la República de Guatemala, propietario del centro educativo COLEGIO PARTICULAR MIXTO SHADDAI, ubicado en 3ª. Calle 1ª. Avenida, Colonia San Agustín, Santo Tomás de Castilla, municipio de Puerto Barrios, departamento de Izabal; según lo acredito con la Constancia de Inscripción y Actualización de Datos y Registro Tributario Unificado 8319383, emitido por la Superintendencia de Administración Tributaria. Y por la otra parte:
             </p>
+
 
         </div>
     <div class="contract-header">
@@ -533,7 +546,9 @@
             const printButton = document.getElementById('printButton');
             if (printButton) {
                 printButton.addEventListener('click', function() {
+                    this.textContent = 'Imprimiendo...';
                     window.print();
+                    this.textContent = 'Descargar Contrato';
                 });
             }
 

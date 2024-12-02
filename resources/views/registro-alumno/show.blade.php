@@ -49,6 +49,18 @@
                                 <th><i class="fas fa-calendar-alt text-primary me-2"></i> {{ __('Fecha de Nacimiento') }}</th>
                                 <td>{{ \Carbon\Carbon::parse($registroAlumno->fecha_nacimiento)->format('d/m/Y') }}</td>
                             </tr>
+                            <tr>
+                                <th><i class="fas fa-calendar-alt text-primary me-2"></i> {{ __('Grado') }}</th>
+                                <td>{{ ($registroAlumno->inscripcion->grado->nombre_grado)}}</td>
+                            </tr>
+                            <tr>
+                                <th><i class="fas fa-calendar-alt text-primary me-2"></i> {{ __('Seccion') }}</th>
+                                <td>{{ ($registroAlumno->inscripcion->seccion->seccion)}}</td>
+                            </tr>
+                            <tr>
+                                <th><i class="fas fa-calendar-alt text-primary me-2"></i> {{ __('Seccion') }}</th>
+                                <td>{{ ($registroAlumno->inscripcion->jornada)}}</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>

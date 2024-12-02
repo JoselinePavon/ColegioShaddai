@@ -54,11 +54,7 @@
                             <th scope="col">Codigo Personal</th>
                             <th scope="col">Codigo Correlativo</th>
                             <th scope="col">Alumno</th>
-                            <th scope="col">Género</th>
                             <th scope="col">Edad</th>
-                            <th scope="col">Grado</th>
-                            <th scope="col">Sección</th>
-                            <th scope="col">Jornada</th>
                             <th scope="col">Ciclo Escolar</th>
                             <th scope="col">Nombre del Encargado</th>
                             <th scope="col">Telefono del Encargado</th>
@@ -72,11 +68,7 @@
                                 <td>{{ $registroAlumno->codigo_personal ?? 'Codigo no asignado' }}</td>
                                 <td>{{ $registroAlumno->inscripcion->codigo_correlativo ?? 'Codigo no asignado' }}</td>
                                 <td>{{ $registroAlumno->nombres }} {{ $registroAlumno->apellidos }}</td>
-                                <td>{{ $registroAlumno->genero }}</td>
                                 <td>{{ $registroAlumno->edad }}</td>
-                                <td>{{ $registroAlumno->inscripcion->grado->nombre_grado ?? 'N/A' }}</td>
-                                <td>{{ $registroAlumno->inscripcion->seccion->seccion ?? 'N/A' }}</td>
-                                <td>{{ $registroAlumno->inscripcion->jornada ?? 'N/A' }}</td>
                                 <td>{{ $registroAlumno->inscripcion->updated_at ? $registroAlumno->inscripcion->updated_at->format('Y') : 'N/A' }}</td>
                                 <td>{{ $registroAlumno->encargado->nombre_encargado ?? 'N/A' }}</td>
                                 <td>{{ $registroAlumno->encargado->telefono ?? 'N/A' }}</td>

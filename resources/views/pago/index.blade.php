@@ -6,6 +6,8 @@
 
 
 @section('content')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+
     <div class="container mt-3">
         <div class="card shadow-lg">
             <div class="p-4">
@@ -40,6 +42,10 @@
                         <option value="solvente" {{ request()->get('estado') == 'solvente' ? 'selected' : '' }}>Solvente</option>
                         <option value="insolvente" {{ request()->get('estado') == 'insolvente' ? 'selected' : '' }}>Insolvente</option>
                     </select>
+
+                    <button id="download-excel" class="btn btn-success btn-sm shadow-sm ms-auto" style="font-size: 1rem;">
+                        <i class="bi bi-download"></i> Descargar Excel
+                    </button>
                 </form>
 
 
@@ -160,4 +166,20 @@
             });
         });
     </script>
+
+    <script>
+        document.getElementById('download-excel').addEventListener('click', function() {
+            // Obtén la tabla
+            var table = document.getElementById('mediciones');
+
+            // Convierte la tabla a una hoja de trabajo de Excel
+            var wb = XLSX.utils.table_to_book(table, { sheet: "Solvencia de Alumnos" });
+
+            // Genera el archivo Excel y lo descarga
+            XLSX.writeFile(wb, "solvencia_alumnos.xlsx");
+        });
+    </script>
+
+
+
 @endsection

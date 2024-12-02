@@ -10,21 +10,21 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
+            line-height: 1;
             color: #333;
-            max-width: 1300px;
+            max-width: 1500px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 5px;
         }
-        h1, h2 {
+        h6, h5 {
             color: #2c3e50;
         }
-        h1 {
+        h6 {
             text-align: center;
             border-bottom: 2px solid #2c3e50;
             padding-bottom: 10px;
         }
-        h2 {
+        h6 {
             margin-top: 30px;
             background-color: #f2f2f2;
             padding: 10px;
@@ -32,91 +32,79 @@
         }
         .student-info {
             background-color: #e6f3ff;
-            padding: 15px;
+            padding: 5px;  /* Reducción de padding */
             border-radius: 5px;
-            margin-bottom: 20px;
+            margin-bottom: 5px;  /* Reducción de margen inferior */
         }
         ul, ol {
-            padding-left: 30px;
+            padding-left: 15px;
         }
         li {
             margin-bottom: 10px;
         }
-        .signatures {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 50px;
-        }
-        .signature {
-            text-align: center;
-            width: 45%;
-        }
-        .signature-line {
-            border-top: 1px solid #333;
-            margin-top: 50px;
-            padding-top: 10px;
-        }
+
     </style>
+
     <div class="contract-container">
-        <div class="student-info">
+        <div class="student-info" style="line-height: 1.2; font-size: 13px; margin-bottom: 4px;"> <!-- Reducir interlineado y fuente general -->
             <form method="POST" action="{{ route('buscarreglamento.alumno') }}">
                 @csrf
-                <div class="form-group" style="display: flex; align-items: center; width: 100%; margin-bottom: 20px;">
-                    <label for="codigo-correlativo" style="margin-right: 10px; white-space: nowrap; font-weight: bold; width: 200px;">CORRELATIVO ALUMNO:</label>
+                <div class="form-group" style="display: flex; align-items: center; width: 100%; margin-bottom: 4px;"> <!-- Reducir margen -->
+                    <label for="codigo-correlativo" style="margin-right: 6px; white-space: nowrap; font-weight: bold; width: 140px; font-size: 12px;">CORRELATIVO ALUMNO:</label>
                     <input
                         type="text"
                         id="codigo-correlativo"
                         name="codigo_correlativo"
                         value="{{ old('codigo_correlativo', $codigoCorrelativo ?? '') }}"
                         required
-                        style="flex-grow: 1; padding: 0 10px; height: 30px; border: none; border-bottom: 1px solid #ccc; background-color: transparent; font-size: 14px;">
+                        style="flex-grow: 1; padding: 2px 6px; height: 24px; border: none; border-bottom: 1px solid #ccc; background-color: transparent; font-size: 12px;">
                     <button
                         type="submit"
                         class="btn btn-primary"
-                        style="padding: 0 15px; height: 30px; border: none; background-color: #007bff; color: white; cursor: pointer; margin-left: 10px; font-size: 16px;">
+                        style="padding: 0 10px; height: 24px; border: none; background-color: #007bff; color: white; cursor: pointer; margin-left: 6px; font-size: 12px;">
                         <i class="fa fa-search" aria-hidden="true"></i>
                     </button>
                 </div>
             </form>
 
             <!-- Alumno(a) Info -->
-            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                <p style="margin-right: 10px; font-weight: bold; width: 200px;">ALUMNO(A):</p>
-                <input type="text" value="{{ old('nombre_educando', $nombreEducando ?? '') }}" style="flex-grow: 1; padding: 0 10px; height: 30px; border: none; border-bottom: 1px solid #ccc; background-color: transparent;">
+            <div style="display: flex; align-items: center; margin-bottom: 4px;"> <!-- Reducir margen -->
+                <p style="margin-right: 6px; font-weight: bold; width: 140px; font-size: 12px;">ALUMNO(A):</p>
+                <input type="text" value="{{ old('nombre_educando', $nombreEducando ?? '') }}" style="flex-grow: 1; padding: 2px 6px; height: 24px; border: none; border-bottom: 1px solid #ccc; background-color: transparent; font-size: 12px;">
             </div>
 
             <!-- Grado Info -->
-            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                <p style="margin-right: 10px; font-weight: bold; width: 200px;">GRADO:</p>
-                <input type="text" value="{{ old('grado_nivel', $gradoNivel ?? '') }}" style="flex-grow: 1; padding: 0 10px; height: 30px; border: none; border-bottom: 1px solid #ccc; background-color: transparent;">
+            <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                <p style="margin-right: 6px; font-weight: bold; width: 140px; font-size: 12px;">GRADO:</p>
+                <input type="text" value="{{ old('grado_nivel', $gradoNivel ?? '') }}" style="flex-grow: 1; padding: 2px 6px; height: 24px; border: none; border-bottom: 1px solid #ccc; background-color: transparent; font-size: 12px;">
             </div>
-            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                <p style="margin-right: 10px; font-weight: bold; width: 200px;">JORNADA:</p>
-                <input type="text" value="{{ old('jornada', $jornada ?? '') }}" style="flex-grow: 1; padding: 0 10px; height: 30px; border: none; border-bottom: 1px solid #ccc; background-color: transparent;">
+
+            <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                <p style="margin-right: 6px; font-weight: bold; width: 140px; font-size: 12px;">JORNADA:</p>
+                <input type="text" value="{{ old('jornada', $jornada ?? '') }}" style="flex-grow: 1; padding: 2px 6px; height: 24px; border: none; border-bottom: 1px solid #ccc; background-color: transparent; font-size: 12px;">
             </div>
 
             <!-- Padre, Madre o Encargado Info -->
-            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                <p style="margin-right: 10px; font-weight: bold; width: 200px;">PADRE, MADRE O ENCARGADO:</p>
-                <input type="text" value="{{ old('nombre_completo', $nombreCompleto ?? '') }}" style="flex-grow: 1; padding: 0 10px; height: 30px; border: none; border-bottom: 1px solid #ccc; background-color: transparent;">
+            <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                <p style="margin-right: 6px; font-weight: bold; width: 140px; font-size: 12px;">PADRE, MADRE O ENCARGADO:</p>
+                <input type="text" value="{{ old('nombre_completo', $nombreCompleto ?? '') }}" style="flex-grow: 1; padding: 2px 6px; height: 24px; border: none; border-bottom: 1px solid #ccc; background-color: transparent; font-size: 12px;">
             </div>
 
             <!-- DPI Padre, Madre o Encargado Info -->
-            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                <p style="margin-right: 10px; font-weight: bold; width: 200px;">DPI PADRE, MADRE O ENCARGADO:</p>
-                <input type="text" value="{{ old('identificacion', $identificacion ?? '') }}" style="flex-grow: 1; padding: 0 10px; height: 30px; border: none; border-bottom: 1px solid #ccc; background-color: transparent;">
+            <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                <p style="margin-right: 6px; font-weight: bold; width: 140px; font-size: 12px;">DPI PADRE, MADRE O ENCARGADO:</p>
+                <input type="text" value="{{ old('identificacion', $identificacion ?? '') }}" style="flex-grow: 1; padding: 2px 6px; height: 24px; border: none; border-bottom: 1px solid #ccc; background-color: transparent; font-size: 12px;">
             </div>
         </div>
 
-
-
-        <h1>REGLAMENTO DEL COLEGIO PARTICULAR MIXTO "SHADDAI"</h1>
+        <div style="font-size: 12px;">
+        <h6>REGLAMENTO DEL COLEGIO PARTICULAR MIXTO "SHADDAI"</h6>
     <p style="text-align: center">De conformidad con el Acuerdo Ministerial 01 - 2011</p>
 
 
 
-    <h2>DE LA AGENDA ESCOLAR:</h2>
-<ol>
+    <h6>DE LA AGENDA ESCOLAR:</h6>
+<ol style="text-align: justify;">
     <li>El uso de la presente agenda es obligatorio, para todos los estudiantes, en to dos los grados y niveles.</li>
     <li>La agenda debe llevarse al colegio todos los días de clase, para anotar, en las fechas correspondientes de trabajos, tareas, laboratorios, talleres o actividades a realizar y entregar.</li>
     <li>La agenda es el medio de comunicación entre el colegio y los padres de familia, quienes debe revisar y firmar semanalmente, en el espacio correspondiente.</li>
@@ -124,8 +112,8 @@
     <li>El uso correcto y permanente de la presente agenda, ayudará al estudiante a ser más ordenado, organizado y responsable, y al padre de familia a tener información constante sobre el desempeño de su hijo (a).</li>
 </ol>
 
-<h2>DEL UNIFORME Y APARIENCIA PERSONAL:</h2>
-<ol>
+<h6>DEL UNIFORME Y APARIENCIA PERSONAL:</h6>
+<ol style="text-align: justify;">
     <li>Deberán traer el uniforme de diario completo todos los días y el de educación física cuando le corresponda dicha asignatura.</li>
     <li>Las alumnas deben presentase de la siguiente manera: Falda a la altura de la rodilla, blusa dentro de la falda, calceta y zapatos del uniforme (no tenis), sin ningún tipo de maquillaje, sin aretes exagerados y peinadas adecuadamente.</li>
     <li>Los alumnos deben presentarse de la siguiente forma: pantalón del uniforme (según diseño), camisa dentro del pantalón, cincho negro, calcetines blancos, zapatos del uniforme (no tenis), corte de cabello y peinado de hombre (no colas). Prohibido el uso de aretes, gorras, cejas depiladas.</li>
@@ -136,8 +124,8 @@
     <li>Al ingresar al establecimiento deben portar completo su uniforme del día (según calendario proporcionado por dirección) y portar su gafete o carné de forma visible.</li>
 </ol>
 
-<h2>DE LA ASISTENCIA Y PUNTUALIDAD:</h2>
-<ol>
+<h6>DE LA ASISTENCIA Y PUNTUALIDAD:</h6>
+<ol style="text-align: justify;">
     <li>Las asistencias es uno de los factores más importantes para un buen rendimiento en los estudios, por lo cual los padres deben preocuparse y velar porque sus hijos asistan con puntualidad y regularidad a clases.</li>
     <li>Cualquier inasistencia deberá ser justificada por escrito utilizando los formatos autorizados por el establecimiento, explicando las razones de la misma y con dos días de anticipación en el caso de las actividades planificadas, en caso de emergencia los alumnos tendrán hasta un día después de haber incurrido en la falta para entregar el debido permiso. La acumulación de tres faltas por el mismo motivo se considerará falta mayor y será sancionado por la dirección.</li>
     <li>Los estudiantes tienen la obligación de asistir a las diferentes actividades cívicas, sociales, religiosas que organice el colegio.</li>
@@ -147,8 +135,8 @@
     <li>La hora de salida del colegio es la siguiente: para los alumnos de nivel pre-primario a las 11:30 horas; para los alumnos del nivel primario a las 12:00 horas; para alumnos del básico y diversificado a las 18:00 horas. Los estudiantes no pueden permanecer fuera del establecimiento después de finalizada la jornada. Después de las horas estipuladas el colegio NO se hace responsable de la seguridad de los estudiantes.</li>
 </ol>
 
-<h2>DEL COMPORTAMIENTO EN EL AULA:</h2>
-<ol>
+<h6>DEL COMPORTAMIENTO EN EL AULA:</h6>
+<ol style="text-align: justify;">
     <li>Esperar en silencio y en orden, al profesor (a) o cualquier persona que le corresponda atenderlos en el periodo de clase.</li>
     <li>No distraer la atención de sus compañeros de clase, con pláticas, lecturas aparatos, juguetes y otros objetos.</li>
     <li>Se prohíbe terminantemente jugar dentro del salón de clases.</li>
@@ -163,8 +151,8 @@
     <li>No está permitido que los estudiantes se ausenten del salón de clases sin el debido permiso de su docente, ni de forma injustificada.</li>
 </ol>
 
-<h2>DE LAS OBLIGACIONES Y DEL COMPORTAMIENTO GENERAL DEL ESTUDIANTE:</h2>
-<ol>
+<h6>DE LAS OBLIGACIONES Y DEL COMPORTAMIENTO GENERAL DEL ESTUDIANTE:</h6>
+<ol style="text-align: justify;">
     <li>Ser cortés y atento con todas las personas y compañeros.</li>
     <li>Respetar a los maestros autoridades educativas, estudiantes y a todas las personas que trabajan en el establecimiento.</li>
     <li>Asistir puntual y regularmente a todas las actividades escolares.</li>
@@ -178,8 +166,8 @@
     <li>Respetar y obedecer los horarios y toques del timbre y no quedarse en el patio o en otro salón que no le corresponda después del toque de entrada.</li>
 </ol>
 
-<h2>DE LAS PROHIBICIONES GENERALES DENTRO DEL ESTABLECIMIENTO:</h2>
-<ol>
+<h6>DE LAS PROHIBICIONES GENERALES DENTRO DEL ESTABLECIMIENTO:</h6>
+<ol style="text-align: justify;">
     <li>El uso de teléfonos celulares está prohibido dentro del establecimiento, en caso de emergencia comunicarse a Dirección. En caso de descubrir a un estudiante empleando su teléfono celular: llamando, contestando llamadas, enviando/revisando mensajes de texto, etc. el mismo será retenido en la Dirección y será entregado únicamente al padre de familia, al finalizar el bimestre. La reincidencia será considerada como una falta mayor y será sancionada por la Dirección.</li>
     <li>El ingreso de radios, ipod's, iphone's,  MP3, grabadoras, reproductores de CD's, equipos de sonido, televisores, juegos mecánicos o electrónicos y cualquier otro distractor, salvo con la autorización específica de la Dirección cuando las circunstancias lo ameriten. En caso de descubrir a un estudiante empleando alguno de estos aparatos, el mismo será retenido en la Dirección y devuelto únicamente a los padres. La reincidencia de esta situación será considerada una falta mayor y será sancionada por la dirección.</li>
     <li>La portación de navajas, cuchillos, objetos punzo cortantes, y todo tipo de arma de fuego o mecánica. El incumplimiento de esta norma será considerado por la Dirección.</li>
@@ -195,11 +183,11 @@
     <li>La Dirección no se hará responsable por la pérdida de joyas u otros artículos de valor que el alumno(a) ingrese al establecimiento.</li>
 </ol>
 
-<h2>DE LAS FALTAS, SANCIONES Y AMONESTACIONES:</h2>
-<p>Las faltas se consideran en leves (menores), graves y gravísimas además de las enumeradas y normadas en incisos anteriores.</p>
-    <p style="font-weight: bold;">Se consideran faltas menores las siguientes:</p>
+<h6>DE LAS FALTAS, SANCIONES Y AMONESTACIONES:</h6>
+<p style="text-align: justify"> Las faltas se consideran en leves (menores), graves y gravísimas además de las enumeradas y normadas en incisos anteriores.</p>
+    <p style="font-weight: bold; text-align: justify">Se consideran faltas menores las siguientes:</p>
 
-<ol>
+<ol style="text-align: justify;">
     <li>Llegadas tarde al centro educativo o periodos de clases sin una excusa debidamente comprobada.</li>
     <li>No traer sus libros o materiales el día que le corresponde.</li>
     <li>No realizar tareas asignadas.</li>
@@ -234,7 +222,7 @@
 <p>El cometer tres faltas menores, por la misma circunstancia, constituye una falta mayor y será tratada y sancionada como tal por la Dirección.</p>
 
 <p style="font-weight: bold;">Se consideran faltas mayores las siguientes:</p>
-<ol>
+<ol style="text-align: justify;">
     <li>Acumulación de tres faltas menores.</li>
     <li>Causar daños al mobiliario, equipo e instalaciones educativas.</li>
     <li>Organizar, apoyar y/o participar en inasistencias colectivas.</li>
@@ -247,7 +235,7 @@
 </ol>
 
 <p style="font-weight: bold;">Se consideran faltas gravísimas:</p>
-<ol>
+<ol style="text-align: justify;">
     <li>Faltarle el respeto a cualquier profesor (a) o autoridad del plantel. (Incluye Director General)</li>
     <li>Agredir física o verbalmente a cualquier persona de la comunidad escolar.</li>
     <li>Insultar, calumniar, difamar, amenazar o agredir a las autoridades del establecimiento educativo, catedráticos(a) personal técnico.</li>
@@ -262,9 +250,9 @@
     <li>No se permiten estudiantes en estado de gestación. Si una estudiante resultase embarazada durante el ciclo escolar deberá retirarse del establecimiento.</li>
 </ol>
 
-<h2>SANCIONES:</h2>
+<h6>SANCIONES:</h6>
 <p>Se establece el siguiente régimen de sanciones disciplinarias, el que será aplicado atendiendo las faltas cometidas.</p>
-<ol>
+<ol style="text-align: justify;">
     <li>Amonestación verbal con registro por escrito.</li>
     <li>Amonestación por escrito.</li>
     <li>Asignación de alguna tarea disciplinaria dentro del establecimiento, como barrer algún salón, quitar del piso o de objetos, goma de mascar etc.</li>
@@ -273,8 +261,8 @@
     <li>Las faltas graves ya descritas en las Prohibiciones Generales de esta agenda, y otras no contempladas en la misma, pero que a juicio de la Dirección sean consideradas como tales (gravísimas) serán sancionadas por la dirección.</li>
 </ol>
 
-<h2>Cómo participan los Padres de Familia en el Proceso Educativo</h2>
-<ol>
+<h6>Cómo participan los Padres de Familia en el Proceso Educativo</h6>
+<ol style="text-align: justify;">
     <li>Asistiendo a las reuniones programadas por el establecimiento (generales o individuales).</li>
     <li>Informándose continuamente del comportamiento y rendimiento de sus hijos.</li>
     <li>Revisando agenda escolar.</li>
@@ -295,8 +283,8 @@
     <li>Reforzando los principios y valores morales que su hijo (a) recibe en el colegio, para que su formación sea integral.</li>
 </ol>
 
-<h2>EL PERSONAL ADMINISTRATIVO DEL COLEGIO PARTICULAR MIXTO SHADDAI SE RESERVA EL DERECHO DE:</h2>
-<ol type="a">
+<h6>EL PERSONAL ADMINISTRATIVO DEL COLEGIO PARTICULAR MIXTO SHADDAI SE RESERVA EL DERECHO DE:</h6>
+<ol type="a" style="text-align: justify;">
     <li>Admisión de alumnos y alumnas.</li>
     <li>Sanciones a alumnos y alumnas que participen y organicen desordenes dentro o fuera del plantel, o falten el respeto a las autoridades Directivas, Administrativas y Docentes.</li>
     <li>Autorizar permisos cuando no haya razón justificada.</li>
@@ -306,28 +294,31 @@
 
 <div class="signatures">
     <div class="signature">
-        <div class="signature-line">Padre, Madre o Encargado</div>
+        <div class="signature-line"><input type="text" value="{{ old('nombre_completo', $nombreCompleto ?? '') }}"   style="border: none; border-bottom: 1px solid transparent; background-color: transparent; width: 100%; text-align: center; padding: 2px;"><br>Padre, Madre o Encargado</div>
     </div>
     <div class="signature">
-        <div class="signature-line">Estudiante</div>
+        <div class="signature-line"><input type="text" value="{{ old('nombre_educando', $nombreEducando ?? '') }}"   style="border: none; border-bottom: 1px solid transparent; background-color: transparent; width: 100%; text-align: center; padding: 2px;"><br>Estudiante</div>
     </div>
 </div>
 <div class="signatures">
     <div class="signature">
-        <div class="signature-line">Director (a) Técnico</div>
+        <div class="signature-line">Herlindo Artiga Marroquín<br>Director (a) Técnico</div>
     </div>
+
     <div class="signature">
         <div class="signature-line">Director Administrativo</div>
     </div>
 </div>
+
+    </div>
     </div>
     </div>
 <div class="no-print">
     <button id="printButton" class="print-button">Descargar Contrato</button>
 </div>
 
-<style>
 
+<style>
     @media screen {
         .contract-container {
             max-width: 1300px;
@@ -338,33 +329,60 @@
             color: #333;
         }
     }
+        @media print {
+            /* Asegura márgenes adecuados */
+            @page {
+                margin: 1.5cm;
+            }
+            body {
+                counter-reset: page;
+            }
+            body::after {
+                content: "Página " counter(page);
+                position: fixed;
+                bottom: 1cm;
+                right: 1cm;
+                font-size: 12px;
+            }
 
-    @media print {
-        body * {
-            visibility: hidden;
-        }
-        .contract-container, .contract-container * {
-            visibility: visible;
-        }
-        .contract-container {
+            .contract-container {
+                visibility: visible;
+                margin: 0;
+                padding: 0;
+            }
 
-            position: absolute;
-            left: 1cm;
-            top: 1cm;
-            right: 1cm;
-            bottom: 1cm;
-            width: auto;
-            padding: 0;
-            margin: 0;
+            .no-print {
+                display: none;
+            }
+        }
 
+        .contract-header {
+            text-align: center;
+            margin-bottom: 20px;
         }
-        .no-print {
-            display: none;
+        .contract-body {
+            text-align: justify;
         }
-        input[type="text"] {
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        /* Estilo para el botón de impresión */
+        .print-button {
+            background-color: #EAB308;
+            color: white;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
             border: none;
-            border-bottom: 1px solid #000;
+            cursor: pointer;
         }
+
+        .print-button:hover {
+            background-color: #CA8A04;
+        }
+
     }
 
     .contract-header {
@@ -377,7 +395,7 @@
     .clause {
         margin-bottom: 20px;
     }
-    h3 {
+    h6 {
         color: #2c3e50;
         font-weight: bold;
     }
@@ -409,11 +427,20 @@
         justify-content: space-between;
         margin-top: 40px;
     }
+
     .signature-line {
-        width: 200px;
+        width: 110%;
         border-top: 1px solid #333;
         margin-top: 20px;
         text-align: center;
+    }
+
+    .signature-line input {
+        width: 100%; /* Asegura que el input ocupe todo el ancho disponible dentro de su contenedor */
+        border: none;
+        border-bottom: 1px solid transparent;
+        background-color: transparent;
+        padding: 2px;
     }
     .print-button {
         background-color: #EAB308;
@@ -449,5 +476,6 @@
         window.print();
         this.textContent = 'Descargar Contrato';
     });
+
 </script>
 @endsection
