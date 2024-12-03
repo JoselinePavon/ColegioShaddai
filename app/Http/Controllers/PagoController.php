@@ -131,8 +131,8 @@ class PagoController extends Controller
 
 
         if ($alumnoId) {
-            $inscripcionPagada = Pago::where('registro_alumnos_id', $alumnoId)
-                ->where('tipopagos_id', 1) // ID 1 corresponde a inscripción
+            $inscripcionPagada = Pago::where('registro_alumnos_id', $alumno->id ?? null)
+                ->where('tipopagos_id', 1) // ID 1 es Inscripción
                 ->exists();
 
             // Si inscripción ya fue pagada, exclúyela de los tipos de pago
@@ -162,7 +162,7 @@ class PagoController extends Controller
     {
         // Validación de los campos
         $request->validate([
-            'num_serie' => 'required|unique:pagos,num_serie',
+            'num_serie' => 'required|unique:pagos,num_serie,' . ($request->input('tipopagos_id') === 'combinado' ? '' : 'NULL') . ',id',
             'registro_alumnos_id' => 'required',
             'tipopagos_id' => 'nullable', // Puede ser nulo si es pago combinado
             'fecha_pago' => 'required|date',
@@ -197,9 +197,8 @@ class PagoController extends Controller
 
             foreach ($data['pagos_combinados'] as $tipopagos_id) {
                 // Excluir inscripción (ID 2) de pagos combinados
-                if ($tipopagos_id == 1) {
-                    continue;
-                } if ($tipopagos_id == 3) {
+                $mesId = ($tipopagos_id == 1) ? 13 : $data['mes_id'];
+            if ($tipopagos_id == 3) {
                     continue;
                 }
 
@@ -212,7 +211,7 @@ class PagoController extends Controller
                     'registro_alumnos_id' => $data['registro_alumnos_id'],
                     'tipopagos_id' => $tipopagos_id,
                     'fecha_pago' => $data['fecha_pago'],
-                    'mes_id' => $data['mes_id'], // Tomar el mes seleccionado en el formulario
+                    'mes_id' => $mesId, // Tomar el mes seleccionado en el formulario
                     'estados_id' => $estado_id,
                 ]);
             }
@@ -353,8 +352,8 @@ class PagoController extends Controller
                 ->get()
                 ->toArray();
             // Verificar si la inscripción ya fue pagada
-            $inscripcionPagada = Pago::where('registro_alumnos_id', $alumno->id)
-                ->where('tipopagos_id', 1) // ID 1 corresponde a inscripción
+            $inscripcionPagada = Pago::where('registro_alumnos_id', $alumno->id ?? null)
+                ->where('tipopagos_id', 1) // ID 1 es Inscripción
                 ->exists();
 
             // Si inscripción ya fue pagada, excluirla de los tipos de pago

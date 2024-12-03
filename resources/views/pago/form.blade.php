@@ -151,8 +151,7 @@
                                 <h5>Seleccione los pagos que desea combinar:</h5>
                                 <div class="d-flex flex-wrap">
                                     @foreach($tipos as $id => $tipo_pago)
-                                        @if($id !== 1)
-                                            @if($id !== 3)<!-- Excluir inscripción -->
+                                        @if($id !== 3 && ($id !== 1 || !$inscripcionPagada)) <!-- Excluir inscripción si ya fue pagada -->
                                         <div class="form-check me-3 mb-2">
                                             <input class="form-check-input pago-combinado-checkbox" type="checkbox" name="pagos_combinados[]" value="{{ $id }}" id="pago_combinado_{{ $id }}" data-monto="{{ $montos[$id] }}">
                                             <label class="form-check-label" for="pago_combinado_{{ $id }}">
@@ -160,10 +159,10 @@
                                             </label>
                                         </div>
                                         @endif
-                                        @endif
                                     @endforeach
                                 </div>
                             </div>
+
                             <!-- Campo de monto para mostrar el valor del tipo de pago seleccionado -->
 
 
