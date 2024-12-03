@@ -11,10 +11,7 @@ class ContratoController extends Controller
     {
         return view('contrato.contrato');
     }
-    public function reglamento()
-    {
-        return view('contrato.reglamento');
-    }
+
     public function buscar(Request $request)
     {
         // Buscar la inscripción por el código correlativo

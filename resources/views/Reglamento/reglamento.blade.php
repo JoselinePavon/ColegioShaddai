@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    Contrato
+    Reglamento Interno
 @endsection
 
 @section('content')
@@ -292,23 +292,30 @@
     <li>Considerar los asuntos no previstos en el presente reglamento, quien está facultado para tomar las determinaciones que ayuden a solucionar situaciones dadas.</li>
 </ol>
 
-<div class="signatures">
-    <div class="signature">
-        <div class="signature-line"><input type="text" value="{{ old('nombre_completo', $nombreCompleto ?? '') }}"   style="border: none; border-bottom: 1px solid transparent; background-color: transparent; width: 100%; text-align: center; padding: 2px;"><br>Padre, Madre o Encargado</div>
-    </div>
-    <div class="signature">
-        <div class="signature-line"><input type="text" value="{{ old('nombre_educando', $nombreEducando ?? '') }}"   style="border: none; border-bottom: 1px solid transparent; background-color: transparent; width: 100%; text-align: center; padding: 2px;"><br>Estudiante</div>
-    </div>
-</div>
-<div class="signatures">
-    <div class="signature">
-        <div class="signature-line">Herlindo Artiga Marroquín<br>Director (a) Técnico</div>
-    </div>
+            <div class="signatures" style="display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px;">
+                <div class="signature">
+                    <div class="signature-line">
+                        <input type="text" value="{{ old('nombre_completo', $nombreCompleto ?? '') }}"
+                               style="border: none; border-bottom: 1px solid transparent; background-color: transparent; width: 100%; text-align: center; padding: 2px;">
+                        <br>Padre, Madre o Encargado
+                    </div>
+                </div>
+                <div class="signature">
+                    <div class="signature-line">
+                        <input type="text" value="{{ old('nombre_educando', $nombreEducando ?? '') }}"
+                               style="border: none; border-bottom: 1px solid transparent; background-color: transparent; width: 100%; text-align: center; padding: 2px;">
+                        <br>Estudiante
+                    </div>
+                </div>
+            </div>
+            <div class="signatures" style="display: flex; justify-content: center; align-items: center;">
+                <div class="signature">
+                    <div class="signature-line" style="text-align: center;">
+                        Herlindo Artiga Marroquín<br>Director Administrativo
+                    </div>
+                </div>
+            </div>
 
-    <div class="signature">
-        <div class="signature-line">Director Administrativo</div>
-    </div>
-</div>
 
     </div>
     </div>
@@ -317,38 +324,43 @@
     <button id="printButton" class="print-button">Descargar Contrato</button>
 </div>
 
-
-<style>
-    @media screen {
-        .contract-container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
+    <style>
+        @media screen {
+            .contract-container {
+                max-width: 1300px;
+                margin: 0 auto;
+                padding: 20px;
+                font-family: Arial, sans-serif;
+                line-height: 1; /* Interlineado de 1 */
+                color: #333;
+            }
+            /* Aplica el interlineado en otros elementos de texto */
+            .contract-container p, .contract-container span, .contract-container h1, .contract-container h2, .contract-container h3, .contract-container h4, .contract-container h5, .contract-container h6 {
+                line-height: 1.2; /* Interlineado de 1.2 */
+            }
         }
-    }
+
         @media print {
             /* Asegura márgenes adecuados */
             @page {
-                margin: 1.5cm;
+                margin: 1cm;
             }
             body {
                 counter-reset: page;
             }
-            body::after {
-                content: "Página " counter(page);
-                position: fixed;
-                bottom: 1cm;
-                right: 1cm;
-                font-size: 12px;
+            .btn i {
+                display: none;
             }
 
             .contract-container {
                 visibility: visible;
                 margin: 0;
                 padding: 0;
+                line-height: 1.2; /* Interlineado de 1.2 en impresión */
+            }
+
+            .contract-container p, .contract-container span, .contract-container h1, .contract-container h2, .contract-container h3, .contract-container h4, .contract-container h5, .contract-container h6 {
+                line-height: 1.2; /* Interlineado de 1.2 en impresión */
             }
 
             .no-print {
@@ -363,9 +375,55 @@
         .contract-body {
             text-align: justify;
         }
-
+        .clause {
+            margin-bottom: 20px;
+        }
+        h6 {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .form-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
         .form-group {
             margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        .signature-line {
+            width: 110%;
+            border-top: 1px solid #333;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .signature-line input {
+            width: 100%; /* Asegura que el input ocupe todo el ancho disponible dentro de su contenedor */
+            border: none;
+            border-bottom: 1px solid transparent;
+            background-color: transparent;
+            padding: 2px;
         }
 
         /* Estilo para el botón de impresión */
@@ -378,98 +436,24 @@
             border: none;
             cursor: pointer;
         }
-
         .print-button:hover {
             background-color: #CA8A04;
         }
 
-    }
-
-    .contract-header {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .contract-body {
-        text-align: justify;
-    }
-    .clause {
-        margin-bottom: 20px;
-    }
-    h6 {
-        color: #2c3e50;
-        font-weight: bold;
-    }
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-    }
-    .form-grid-3 {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-    }
-    .form-group {
-        margin-bottom: 15px;
-    }
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-    }
-    .form-group input {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-    }
-    .signatures {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 40px;
-    }
-
-    .signature-line {
-        width: 110%;
-        border-top: 1px solid #333;
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    .signature-line input {
-        width: 100%; /* Asegura que el input ocupe todo el ancho disponible dentro de su contenedor */
-        border: none;
-        border-bottom: 1px solid transparent;
-        background-color: transparent;
-        padding: 2px;
-    }
-    .print-button {
-        background-color: #EAB308;
-        color: white;
-        font-weight: bold;
-        padding: 0.5rem 1rem;
-        border-radius: 0.25rem;
-        border: none;
-        cursor: pointer;
-    }
-    .print-button:hover {
-        background-color: #CA8A04;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
-    th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
-    th {
-        background-color: #f2f2f2;
-    }
-</style>
-
-
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 <script>
     document.getElementById('printButton').addEventListener('click', function() {
         this.textContent = 'Imprimiendo...';

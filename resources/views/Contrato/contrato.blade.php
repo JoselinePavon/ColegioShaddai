@@ -11,9 +11,9 @@
             <h5><strong>CONTRATO DE ADHESIÓN POR PRESTACIÓN DE</strong></h5>
             <h5><strong>SERVICIOS EDUCATIVOS</strong></h5>
             <h6><strong>COLEGIO PARTICULAR MIXTO SHADDAI</strong></h6><br>
-            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 5px; margin: 0;">
+            <div style="display: flex; align-items: center; justify-content: flex-start; gap: 5px; margin: 0;">
                 <!-- Texto (label) alineado correctamente con el input -->
-                <span style="white-space: nowrap; font-size: 12px;">Correlativo interno Contrato No.</span>
+                <span style="white-space: nowrap; font-size: 12px;">Correlativo Interno Contrato No.</span>
 
                 <!-- Formulario con input y botón alineados -->
                 <form method="POST" action="{{ route('buscar.alumno') }}" style="display: flex; gap: 0; margin: 0;">
@@ -25,61 +25,24 @@
                         name="codigo_correlativo"
                         value="{{ old('codigo_correlativo', $codigoCorrelativo ?? '') }}"
                         required
-                        style="padding: 5px; border: none; border-radius: 4px; outline: none; width: 120px; height: 25px; font-size: 12px; margin-right: 0; box-sizing: border-box;"
+                        style="padding: 5px; border: 1px solid transparent; border-radius: 4px; outline: none; width: 120px; height: 25px; font-size: 12px; box-sizing: border-box;"
                     >
                     <!-- Botón con el icono ajustado al tamaño del input -->
                     <button
                         type="submit"
                         class="btn btn-primary"
-                        style="padding: 5px; border: none; background-color: #007bff; color: white; cursor: pointer; font-size: 12px; border-radius: 4px; height: 25px; width: 40px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;"
+                        style="padding: 0; border: 1px solid transparent; background-color: #007bff; color: white; cursor: pointer; font-size: 12px; border-radius: 4px; height: 27px; width: 40px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;"
                     >
                         <i class="fa fa-search" aria-hidden="true"></i>
                     </button>
                 </form>
             </div>
-
-
-
-
-
             <!-- Párrafo alineado a la izquierda -->
-            <p style="text-align: right; margin: 0; font-weight: bold;">Aprobado y registrado según Resolución DIACO: DDC-342-2022</p>
+            <p style="text-align: left; margin: 0; font-weight: bold;">Aprobado y registrado según Resolución DIACO: DDC-342-2022 </p><br>
 
-            <p class="contract-body">
-    <span style="text-align: justify; display: inline-block; margin-bottom: 0px;">
-        En el municipio Puerto Barrios, del departamento de Izabal,
-    </span>
+            <p class="contract-body">En el municipio Puerto Barrios, del departamento de Izabal,  <input type="date" name="contract_date" id="contract_date" style="width: 65px; border: none; background: transparent; font-family: inherit; font-size: inherit;"><strong>NOSOTROS:HERLINDO ARTIGA MARROQUÍN</strong> de <input type="number" id="edad" name="edad" min="66" max="75" value="66" style="width: 15px; -moz-appearance: textfield; appearance: textfield;">años de edad, casado, guatemalteco, bachiller, de este domicilio, me identifico con Documento Personal de Identificación, Código Único de Identificación –CUI— número 2679 12609 1804, extendido por el Registro Nacional de las Personas de la República de Guatemala, propietario del centro educativo COLEGIO PARTICULAR MIXTO SHADDAI, ubicado en 3ª. Calle 1ª. Avenida, Colonia San Agustín, Santo Tomás de Castilla, municipio de Puerto Barrios, departamento de Izabal; según lo acredito con la Constancia de Inscripción y Actualización de Datos y Registro Tributario Unificado 8319383, emitido por la Superintendencia de Administración Tributaria. Y por la otra parte:</p>
 
-                <!-- Campo de fecha sin el icono de calendario (en algunos navegadores) -->
-                <input
-                    type="date"
-                    name="contract_date"
-                    id="contract_date"
-                    style="border: none; outline: none; padding: 2px 5px; width: 90px; background-color: transparent;
-        text-align: center; -webkit-appearance: none; -moz-appearance: none; appearance: none;
-        margin: 0; display: inline-block; font-size: 10px; vertical-align: middle;"
-                    placeholder="Seleccionar fecha"
-                >
-
-                <span style="display: inline-block; margin-left: 5px;">
-        NOSOTROS: HERLINDO ARTIGA MARROQUÍN de
-    </span>
-                <input
-                    type="number"
-                    id="edad"
-                    name="edad"
-                    min="66"
-                    max="70"
-                    value="66"
-                    style="width: 35px; border: none; background-color: transparent; text-align: center; margin: 0 5px; display: inline-block; vertical-align: middle;"
-                    onchange="actualizarEdad()"
-                >
-                <span id="edad-en-letras"></span> años de edad, casado, guatemalteco, bachiller, de este domicilio, me identifico con Documento Personal de Identificación, Código Único de Identificación –CUI— número 2679 12609 1804, extendido por el Registro Nacional de las Personas de la República de Guatemala, propietario del centro educativo COLEGIO PARTICULAR MIXTO SHADDAI, ubicado en 3ª. Calle 1ª. Avenida, Colonia San Agustín, Santo Tomás de Castilla, municipio de Puerto Barrios, departamento de Izabal; según lo acredito con la Constancia de Inscripción y Actualización de Datos y Registro Tributario Unificado 8319383, emitido por la Superintendencia de Administración Tributaria. Y por la otra parte:
-            </p>
-
-
-        </div>
-    <div class="contract-header">
+            <div class="contract-header">
         <div class="contract-body">
             <h6><strong>DATOS DEL REPRESENTANTE DEL EDUCANDO</strong></h6>
             <div class="form-grid-3">
@@ -282,26 +245,7 @@
                 <td>Q. 345.00</td>
             </tr>
         </table>
-        <table>
-            <tr>
-                <th colspan="3">Plan fin de semana</th>
-            </tr>
-            <tr>
-                <th>NIVEL DE EDUCACIÓN</th>
-                <th>Inscripción</th>
-                <th>Colegiatura mensual</th>
-            </tr>
-            <tr>
-                <td>Bachillerato en Ciencias y Letras con Orientación Comercial</td>
-                <td>Q. 375.00</td>
-                <td>Q. 300.00</td>
-            </tr>
-            <tr>
-                <td>Perito Contador con Orientación en Computación</td>
-                <td>Q. 375.00</td>
-                <td>Q. 300.00</td>
-            </tr>
-        </table>
+
         <p style="text-align: justify;">Para el pago de las cuotas, ambas partes acordamos que sea en forma anticipada, debiendo efectuar el pago durante los últimos cinco días hábiles del mes al cual corresponde el servicio educativo brindado.</p>
     </div>
 
@@ -356,13 +300,16 @@
         <p style="text-align: justify;">Nosotros los comparecientes, damos lectura íntegra al presente contrato, enterados de su contenido, objeto, validez y demás efectos legales, lo ratificamos, aceptamos y firmamos.</p>
     </div>
 
-        <div class="signatures">
+        <div class="signatures" style="display: flex; justify-content: center; align-items: center; gap: 5cm; text-align: center;">
             <div>
-                <div class="signature-line">Herlindo Artiga Marroquín<br>Propietario</div>
+                <div class="signature-line">
+                    Herlindo Artiga Marroquín<br>Propietario
+                </div>
             </div>
             <div>
                 <div class="signature-line">
-                    <input type="text" id="nombre-completo" name="nombre_completo" value="{{ old('nombre_completo', $nombreCompleto ?? '') }}"
+                    <input type="text" id="nombre-completo" name="nombre_completo"
+                           value="{{ old('nombre_completo', $nombreCompleto ?? '') }}"
                            style="border: none; border-bottom: 1px solid transparent; background-color: transparent; width: 100%; padding: 2px;">
                     <br>Representante del Educando
                 </div>
@@ -371,13 +318,9 @@
     </div>
     </div>
     </div>
-
-
-
         <div class="no-print">
         <button id="printButton" class="print-button">Imprimir Contrato</button>
     </div>
-
     <style>
         @media screen {
             .contract-container {
@@ -391,65 +334,108 @@
         }
 
         @media print {
-            body, html {
-                width: 100%;
-                height: 100%;
+            body {
                 margin: 0;
                 padding: 0;
             }
-            body * {
-                visibility: hidden;
-            }
-            .contract-container, .contract-container * {
-                visibility: visible;
-            }
+
             .contract-container {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: auto;
-                margin: 0;
-                padding: 15px;
-                font-size: 10px; /* Ajusté el tamaño de la fuente a 10px */
-                line-height: 1.3;
+                font-family: Arial, sans-serif;
+                font-size: 10px;
+                line-height: 1.4;
                 color: #000;
                 background-color: #fff;
+                padding: 15px;
             }
-            .no-print, .no-print * {
-                display: none !important;
+
+            .contract-body {
+                text-align: justify;
             }
-            input[type="text"], input[type="date"], input[type="number"] {
+
+            .contract-body span,
+            .contract-body input[type="date"],
+            .contract-body input[type="number"] {
+                display: inline;
+                margin: 0;
+            }
+
+            input[type="date"],
+            input[type="number"] {
                 border: none;
                 border-bottom: 1px solid #000;
-                background-color: transparent !important;
-                -webkit-print-color-adjust: exact;
-                color-adjust: exact;
+                background-color: transparent;
+                font-size: 10px;
+                padding: 0;
             }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .btn i {
+                display: none;
+            }
+
             table {
-                page-break-inside: avoid;
-                border-collapse: collapse;
                 width: 100%;
+                border-collapse: collapse;
+                page-break-inside: avoid;
             }
+
             th, td {
                 border: 1px solid #000;
                 padding: 5px;
                 text-align: left;
             }
+
             h5 {
                 page-break-after: avoid;
+                text-align: left;
             }
+
+            h6 {
+                text-align: left;
+            }
+
             p, ol, ul {
                 page-break-inside: avoid;
             }
+
             .signatures {
                 page-break-inside: avoid;
             }
 
-            /* El número de página no se muestra en pantalla */
             .page-number {
                 display: none;
             }
+
+            /* Estilos específicos para el input de edad */
+            #edad {
+                width: 15px !important;
+                -moz-appearance: textfield;
+                appearance: textfield;
+                margin: 0;
+                padding: 0;
+                text-align: center;
+            }
+
+            /* Ocultar las flechas del input number en todos los navegadores */
+            #edad::-webkit-inner-spin-button,
+            #edad::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                appearance: none;
+                margin: 0;
+            }
+
+            /* Específicamente para el input de fecha */
+            .contract-body input[type="date"] {
+                width: 60px;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+            }
+
+
         }
 
         @page {
@@ -460,39 +446,48 @@
             text-align: center;
             margin-bottom: 20px;
         }
+
         .contract-body {
             text-align: justify;
         }
+
         .clause {
             margin-bottom: 20px;
         }
+
         h5 {
             color: #2c3e50;
             font-weight: bold;
         }
+
         .form-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
         }
+
         .form-grid-3 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
         }
+
         .form-group {
             margin-bottom: 15px;
         }
+
         .form-group label {
             display: block;
             margin-bottom: 5px;
         }
+
         .form-group input {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+
         .signatures {
             display: flex;
             justify-content: space-between;
@@ -507,7 +502,7 @@
         }
 
         .signature-line input {
-            width: 100%; /* Asegura que el input ocupe todo el ancho disponible dentro de su contenedor */
+            width: 100%;
             border: none;
             border-bottom: 1px solid transparent;
             background-color: transparent;
@@ -523,21 +518,77 @@
             border: none;
             cursor: pointer;
         }
+
         .print-button:hover {
             background-color: #CA8A04;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
+
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
+        }
+
+        /* Estilos para inputs en línea dentro del texto */
+        .contract-body input[type="date"],
+        .contract-body input[type="number"] {
+            display: inline-block;
+            vertical-align: baseline;
+            margin: 0;
+            padding: 0 2px;
+            height: auto;
+            font-size: inherit;
+            line-height: inherit;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+        }
+
+        /* Específicamente para el input de fecha */
+        .contract-body input[type="date"] {
+            width: 85px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        /* Ocultar el ícono del calendario en WebKit */
+        .contract-body input[type="date"]::-webkit-calendar-picker-indicator {
+            display: none;
+            -webkit-appearance: none;
+        }
+
+        /* Específicamente para el input de edad */
+        .contract-body input[type="number"]#edad {
+            width: 30px;
+            min-width: 30px;
+            max-width: 30px;
+            -moz-appearance: textfield;
+            appearance: textfield;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Ocultar los controles de incremento/decremento en Chrome, Safari, Edge, Opera */
+        .contract-body input[type="number"]::-webkit-inner-spin-button,
+        .contract-body input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .contract-body span,
+        .contract-body input {
+            line-height: inherit;
         }
     </style>
 

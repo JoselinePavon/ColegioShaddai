@@ -5,6 +5,7 @@ use App\Http\Controllers\EncargadoController;
 use App\Http\Controllers\GradoController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\PagoController;
+use App\Http\Controllers\ReglamentoController;
 use App\Http\Controllers\TipopagoController;
 use App\Http\Controllers\RegistroAlumnoController;
 use App\Http\Controllers\SeccionController;
@@ -69,15 +70,15 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('mes', App\Http\Controllers\MeController::class);
 
     Route::get('/contrato', [ContratoController::class, 'contrato'])->name('contrato');
-    Route::get('/reglamento', [ContratoController::class, 'reglamento'])->name('reglamento');
+    Route::get('/reglamento', [ReglamentoController::class, 'reglamento'])->name('reglamento');
 
     Route::get('pagos/{id}', [PagoController::class, 'show'])->name('pagos.show');
 
     Route::get('/buscar-alumno', [ContratoController::class, 'buscarAlumno'])->name('buscar.alumno');
-    Route::get('/buscarreglamento-alumno', [ContratoController::class, 'buscarreglamento'])->name('buscarreglamento.alumno');
+    Route::get('/buscarreglamento-alumno', [ReglamentoController::class, 'buscarreglamento'])->name('buscarreglamento.alumno');
 
     Route::post('/buscar', [ContratoController::class, 'buscar'])->name('buscar.alumno');
-    Route::post('/buscarreglamento', [ContratoController::class, 'buscarreglamento'])->name('buscarreglamento.alumno');
+    Route::post('/buscarreglamento', [ReglamentoController::class, 'buscarreglamento'])->name('buscarreglamento.alumno');
 
     Route::get('/pagos/{registro_alumnos_id}/show', [PagoController::class, 'show'])->name('pagos.show');
 
