@@ -67,7 +67,7 @@
                 </div>
             </div>
         </div>
-        {!! $grados->links() !!}
+        
     </div>
 
     {{-- SweetAlert para confirmación de eliminación --}}
