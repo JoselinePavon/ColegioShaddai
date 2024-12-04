@@ -92,7 +92,6 @@
                                         @if($inscripcionPagada)
                                             <p class="text-muted">El pago de inscripción ya ha sido realizado.</p>
                                         @endif
-
                                         @foreach($tipos as $id => $tipo_pago)
                                             <option value="{{ $id }}" {{ old('tipopagos_id') == $id ? 'selected' : '' }}>
                                                 {{ $tipo_pago }}
@@ -103,6 +102,8 @@
 
                                     {!! $errors->first('tipopagos_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                                 </div>
+
+
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <label for="fecha_pago" class="form-label">{{ __('Fecha Pago') }}</label>
@@ -153,7 +154,7 @@
                                 <h5>Seleccione los pagos que desea combinar:</h5>
                                 <div class="d-flex flex-wrap">
                                     @foreach($tipos as $id => $tipo_pago)
-                                        @if($id !== 3 && ($id !== 1 || !$inscripcionPagada)) <!-- Excluir inscripción si ya fue pagada -->
+                                        @if(!in_array($id, [3, 5]) && ($id !== 1 || !$inscripcionPagada)) <!-- Excluir inscripción si ya fue pagada -->
                                         <div class="form-check me-3 mb-2">
                                             <input class="form-check-input pago-combinado-checkbox" type="checkbox" name="pagos_combinados[]" value="{{ $id }}" id="pago_combinado_{{ $id }}" data-monto="{{ $montos[$id] }}">
                                             <label class="form-check-label" for="pago_combinado_{{ $id }}">
@@ -205,7 +206,9 @@
 
             // Manejar el cambio de selección en el tipo de pago
             tipoPagosSelect.addEventListener('change', () => {
-                if (tipoPagosSelect.value == '3') { // ID 3 es Computación
+                const tiposConAbono = ['3', '5'];
+
+                if (tiposConAbono.includes(tipoPagosSelect.value)) {
                     montoSection.style.display = 'none'; // Ocultar Monto
                     abonoSection.style.display = 'block'; // Mostrar Abono
                 } else {

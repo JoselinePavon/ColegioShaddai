@@ -54,7 +54,7 @@
 
                 <div class="form-group">
                     <label for="edad">Edad:</label>
-                    <input type="text" id="edad" name="edad" value="{{ old('edad_encargado', $edad_encargado ?? '') }}" style="border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
+                    <input type="text" id="edad_encargado" name="edad" value="{{ old('edad_encargado', $edad_encargado ?? '') }}" style="border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
                 </div>
 
                 <div class="form-group">
@@ -176,7 +176,12 @@
             </tr>
             <tr>
                 <td>b) COLEGIATURA MENSUAL: (10 CUOTAS EN LOS MESES DE ENERO A OCTUBRE)</td>
-                <td>Q 330.00</td>
+                <td>
+                    <select style="border: none; background: transparent; font-size: 1em; padding: 0; appearance: none; -moz-appearance: none; -webkit-appearance: none; cursor: pointer;">
+                        <option value="310">Q. 310.00</option>
+                        <option value="345">Q. 345.00</option>
+                    </select>
+                </td>
             </tr>
         </table>
         <p style="text-align: justify;">Cuotas debidamente autorizadas por el Ministerio de Educación, según la siguiente resolución: a) No. AMP/DESPACHO/006-2020, de fecha 30 de diciembre de 2020, y b) DTP No. 093-2021, de fecha 10 de mayo de 2021; emitida por la Dirección Departamental de Educación de Izabal, valores que se informan a continuación:</p>
