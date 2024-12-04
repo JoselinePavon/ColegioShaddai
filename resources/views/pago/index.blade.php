@@ -102,7 +102,11 @@
     </div>
 
     <script>
-        document.querySelectorAll('tr[data-es-solvente]').forEach(row => {
+        document.addEventListener('DOMContentLoaded', () => {
+            let insolventesCount = 0;
+
+            document.querySelectorAll('tr[data-es-solvente]').forEach(row => {
+
             const estadoCell = row.querySelector('.estado');
             const esSolvente = row.getAttribute('data-es-solvente') === 'true'; // Leer el atributo como booleano
 
@@ -110,7 +114,17 @@
                 estadoCell.innerHTML = `<span class="badge bg-success">● Solvente</span>`;
             } else {
                 estadoCell.innerHTML = `<span class="badge bg-danger">● Insolvente</span>`;
+                insolventesCount++; // Incrementar contador si el alumno es insolvente
+
             }
+        });
+            // Guardar el total en localStorage
+            localStorage.setItem('insolventesCount', insolventesCount);
+
+            const insolventesContainer = document.createElement('div');
+            insolventesContainer.classList.add('alert', 'alert-danger', 'mt-3');
+            insolventesContainer.innerHTML = `<strong>Total de Alumnos Insolventes:</strong> ${insolventesCount}`;
+            document.querySelector('.card.shadow-lg .p-4').prepend(insolventesContainer); // Insertar al inicio del contenido
         });
     </script>
 

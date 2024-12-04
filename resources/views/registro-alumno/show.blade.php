@@ -50,15 +50,15 @@
                                 <td>{{ \Carbon\Carbon::parse($registroAlumno->fecha_nacimiento)->format('d/m/Y') }}</td>
                             </tr>
                             <tr>
-                                <th><i class="fas fa-calendar-alt text-primary me-2"></i> {{ __('Grado') }}</th>
+                                <th><i class="fas fa-graduation-cap text-primary me-2"></i> {{ __('Grado') }}</th>
                                 <td>{{ ($registroAlumno->inscripcion->grado->nombre_grado)}}</td>
                             </tr>
                             <tr>
-                                <th><i class="fas fa-calendar-alt text-primary me-2"></i> {{ __('Seccion') }}</th>
+                                <th><i class="fas fa-chalkboard-teacher text-primary me-2"></i> {{ __('Seccion') }}</th>
                                 <td>{{ ($registroAlumno->inscripcion->seccion->seccion)}}</td>
                             </tr>
                             <tr>
-                                <th><i class="fas fa-calendar-alt text-primary me-2"></i> {{ __('Seccion') }}</th>
+                                <th><i class="fas fa-clock text-primary me-2"></i> {{ __('Jornada') }}</th>
                                 <td>{{ ($registroAlumno->inscripcion->jornada)}}</td>
                             </tr>
                             </tbody>
@@ -85,7 +85,7 @@
                                 </tr>
                                 <tr>
                                     <th><i class="bi bi-person-badge text-secondary me-2"></i>{{ __('Edad') }}</th>
-                                    <td>{{ $registroAlumno->encargado->edad_encargado }}</td>
+                                    <td>{{ $registroAlumno->encargado->edad_encargado }} años</td>
                                 </tr>
                                 <tr>
                                     <th><i class="bi bi-people-fill text-secondary me-2"></i>{{ __('Estado Civil') }}</th>

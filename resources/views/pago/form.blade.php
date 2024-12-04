@@ -137,15 +137,16 @@
                                 </div>
                             </div>
 
-
-
                             <!-- Campo Abono -->
                             <div class="row align-items-end" id="abono-section" style="display: none;">
                                 <div class="col-md-6 mb-3">
                                     <label for="abono" class="form-label">{{ __('Abono') }}</label>
-                                    <input type="text" id="abono" name="abono" class="form-control">
+                                    <input type="text" id="abono" name="abono" class="form-control"
+                                           pattern="^\d+(\.\d{1,2})?$"
+                                           title="Ingrese un número válido, por ejemplo: 250.50">
                                 </div>
                             </div>
+
 
 
                             <!-- Pagos Combinados -->
@@ -202,6 +203,7 @@
             const montoSection = document.getElementById('monto-section');
             const abonoSection = document.getElementById('abono-section');
             const abonoInput = document.getElementById('abono');
+            const montoInput = document.getElementById('monto');
             const pagoForm = document.querySelector('form'); // Selecciona el formulario principal
 
             // Manejar el cambio de selección en el tipo de pago
@@ -214,6 +216,16 @@
                 } else {
                     montoSection.style.display = 'block'; // Mostrar Monto
                     abonoSection.style.display = 'none'; // Ocultar Abono
+                }
+            });
+
+
+            // Validar entrada numérica en Abono
+            abonoInput.addEventListener('input', () => {
+                if (!/^\d*(\.\d{0,2})?$/.test(abonoInput.value)) {
+                    abonoInput.setCustomValidity("Ingrese un número válido, por ejemplo: 250.50");
+                } else {
+                    abonoInput.setCustomValidity("");
                 }
             });
         });

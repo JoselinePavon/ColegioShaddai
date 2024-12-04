@@ -62,8 +62,10 @@ class GradoController extends Controller
     public function edit($id)
     {
         $grado = Grado::find($id);
+        $nivel = Nivel::pluck('nivel', 'id');
 
-        return view('grado.edit', compact('grado'));
+
+        return view('grado.edit', compact('grado','nivel'));
     }
 
     /**

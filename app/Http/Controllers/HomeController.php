@@ -28,8 +28,13 @@ class HomeController extends Controller
     public function index()
     {
 
+        $totalAlumnos = Inscripcion::count();
 
-        return view('home');
+        $totalIngresos = Pago::join('tipopagos', 'pagos.tipopagos_id', '=', 'tipopagos.id')
+            ->selectRaw('SUM(tipopagos.monto) + SUM(pagos.abono) as total')
+            ->value('total');
+
+        return view('home', compact('totalAlumnos', 'totalIngresos'));
     }
 
 }
