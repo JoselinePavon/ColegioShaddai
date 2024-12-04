@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class PagoController
@@ -177,6 +178,8 @@ class PagoController extends Controller
         ]);
 
         $data = $request->all();
+        $montoOriginal = Tipopago::find($data['tipopagos_id'])->monto ?? 0;
+
 
         if ($data['tipopagos_id'] == 3) {
             // Validar que el campo "abono" tenga un valor
@@ -185,6 +188,8 @@ class PagoController extends Controller
                     ->withInput()
                     ->with('error', 'Debe ingresar un abono para el pago de Computación.');
             }
+            $data['estados_id'] = 3; // Estado para computación
+
         }
 
         // Si se selecciona "combinado" pero no se seleccionan pagos en pagos_combinados
@@ -235,10 +240,19 @@ class PagoController extends Controller
                     ->with('error', 'El alumno ya ha realizado el pago de inscripción.');
             }
             $data['mes_id'] = 13; // Asignar el valor 13 para inscripción
+            $data['estados_id'] = 2; // Estado solvente
 
         }
 
         if ($data['tipopagos_id'] == 2) {
+
+            if ((float)$data['monto'] != $montoOriginal) {
+                $data['abono'] = $data['monto']; // Guarda el monto modificado en abono
+                unset($data['monto']); // Elimina el campo 'monto' para que no interfiera
+                $data['estados_id'] = 4; // Estado 4 para monto diferente
+            } else {
+                $data['estados_id'] = 1; // Estado 1 para solvente
+            }
             // Verificar si ya existe un pago de colegiatura para el mes seleccionado
             $pagoExistente = Pago::where('registro_alumnos_id', $data['registro_alumnos_id'])
                 ->where('tipopagos_id', 2)
@@ -251,10 +265,10 @@ class PagoController extends Controller
                     ->with('error', 'El alumno ya ha realizado un pago para el mes seleccionado.');
             }
 
-            // Asignar estado "solvente" para colegiatura
-            $data['estados_id'] = 1;
-        } else {
-            // Estado 3 para otros tipos de pago
+
+
+        }
+        if (!isset($data['estados_id'])) {
             $data['estados_id'] = 3;
         }
 
@@ -303,10 +317,16 @@ class PagoController extends Controller
 
     public function destroy($id)
     {
+        try {
         Pago::find($id)->delete();
 
         return redirect()->route('pagos.index')
-            ->with('success', 'Pago deleted successfully');
+            ->with('success', 'Pago Eliminado Exitosamente');
+        }catch (\Exception $exception) {
+                // Manejar errores y registrar en el log
+                Log::debug($exception->getMessage());
+                return redirect()->route('pagos.index')->with('alerta', 'no');
+            }
     }
 
     public function buscar()

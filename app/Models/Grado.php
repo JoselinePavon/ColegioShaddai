@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property $id
  * @property $nombre_grado
+ * @property $nivels_id
  * @property $created_at
  * @property $updated_at
  *
@@ -26,12 +27,15 @@ class Grado extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre_grado'];
+    protected $fillable = ['nombre_grado','nivels_id'];
 
     public function inscripciones()
     {
         return $this->hasMany(Inscripcion::class, 'grados_id', 'id');
     }
 
-
+    public function nivel()
+    {
+        return $this->belongsTo(\App\Models\Nivel::class, 'nivels_id', 'id');
+    }
 }

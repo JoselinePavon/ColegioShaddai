@@ -31,6 +31,7 @@
                                     @enderror
                                 </div>
 
+
                                 <div class="col-md-6 mb-3">
                                     <label for="seccions_id" class="form-label">{{ __('Sección') }}</label>
                                     <select name="seccions_id" class="form-select @error('seccions_id') is-invalid @enderror" id="seccions_id">

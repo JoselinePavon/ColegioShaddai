@@ -84,12 +84,19 @@
                                 <td>{{ $pago->mes->mes ?? 'sin Mes' }}</td>
                                 <td>{{ $pago->tipopago->tipo_pago }}</td>
                                 <td>
-                                    @if ($pago->tipopagos_id == 3) <!-- ID 3 es Computación -->
+                                    @if ($pago->tipopagos_id == 2) <!-- ID 2 es Colegiatura -->
+                                    @if (!empty($pago->abono)) <!-- Si existe un abono -->
                                     Q. {{ number_format($pago->abono, 2) }}
-                                    @else
-                                        Q. {{ number_format($pago->tipopago->monto, 2) }}
+                                    @else <!-- Si no existe un abono, mostrar el monto -->
+                                    Q. {{ number_format($pago->tipopago->monto, 2) }}
+                                    @endif
+                                    @elseif ($pago->tipopagos_id == 3) <!-- ID 3 es Computación -->
+                                    Q. {{ number_format($pago->abono, 2) }}
+                                    @else <!-- Para otros tipos de pago -->
+                                    Q. {{ number_format($pago->tipopago->monto, 2) }}
                                     @endif
                                 </td>
+
                                 <td>{{ $pago->registroAlumno->nombres }} {{ $pago->registroAlumno->apellidos }}</td>
                                 <td>
                                     @if($pago->estado->id == 1)
@@ -98,14 +105,13 @@
                                         <span class="badge bg-danger">● Insolvente</span>
                                     @elseif($pago->estado->id == 3)
                                         <span class="badge bg-warning">● Cancelado</span>
+                                    @elseif($pago->estado->id == 4)
+                                        <span class="badge bg-dark">● Pago Incompleto</span>
                                     @else
                                         <span class="badge bg-secondary">● Sin estado</span>
                                     @endif
                                 </td>
                                 <td class="text-center d-flex gap-1 justify-content-center">
-                                    <a class="btn btn-sm btn-warning" href="{{ route('pagos.edit', $pago->id) }}">
-                                        <i class="fa fa-fw fa-edit"></i>
-                                    </a>
                                     <form action="{{ route('pagos.destroy', $pago->id) }}" method="POST" class="delete-form d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -161,6 +167,30 @@
 
             // Crear y descargar el archivo Excel
             XLSX.writeFile(wb, 'Pagos_Alumno.xlsx');
+        });
+    </script>
+
+    <script>
+        document.querySelectorAll('.delete-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "No podrás revertir esta acción",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
         });
     </script>
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Grado;
 use App\Http\Requests\GradoRequest;
+use App\Models\Nivel;
 
 /**
  * Class GradoController
@@ -17,8 +18,9 @@ class GradoController extends Controller
     public function index()
     {
         $grados = Grado::paginate();
+        $nivel = Nivel::pluck('nivel', 'id');
 
-        return view('grado.index', compact('grados'))
+        return view('grado.index', compact('grados','nivel'))
             ->with('i', (request()->input('page', 1) - 1) * $grados->perPage());
     }
 
@@ -28,7 +30,8 @@ class GradoController extends Controller
     public function create()
     {
         $grado = new Grado();
-        return view('grado.create', compact('grado'));
+        $nivel = Nivel::pluck('nivel', 'id');
+        return view('grado.create', compact('grado','nivel'));
     }
 
     /**
@@ -37,6 +40,7 @@ class GradoController extends Controller
     public function store(GradoRequest $request)
     {
         Grado::create($request->validated());
+
 
         return redirect()->route('grados.index')
             ->with('success', 'Grado created successfully.');

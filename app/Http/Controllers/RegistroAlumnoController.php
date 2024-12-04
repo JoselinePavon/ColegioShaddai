@@ -7,6 +7,7 @@ use App\Models\Encargado;
 use App\Models\Grado;
 use App\Models\Inscripcion;
 use App\Models\Lugar;
+use App\Models\Nivel;
 use App\Models\RegistroAlumno;
 use App\Http\Requests\RegistroAlumnoRequest;
 use App\Models\Seccion;
@@ -67,13 +68,17 @@ class RegistroAlumnoController extends Controller
 
         $lugares = Lugar::all();
         $colonias = Colonia::all();
-        $grado = Grado::pluck('nombre_grado', 'id');
         $seccion = Seccion::pluck('seccion', 'id');
+        $grado = Grado::with('nivel')->get()->mapWithKeys(function ($grado) {
+            return [$grado->id => "{$grado->nombre_grado} - {$grado->nivel->nivel}"];
+        });
+
+        $nivel = Nivel::pluck('nivel', 'id');
 
         $ultimosAlumnos = RegistroAlumno::latest()->take(2)->get();
         $ultimasInscripciones = Inscripcion::with('registroAlumno', 'grado', 'seccion')->latest()->take(2)->get();
 
-        return view('registro-alumno.create', compact('existingCorrelativos','ultimosAlumnos', 'ultimasInscripciones','lugares','colonias','grado','seccion','existingCodes'));
+        return view('registro-alumno.create', compact('nivel','existingCorrelativos','ultimosAlumnos', 'ultimasInscripciones','lugares','colonias','grado','seccion','existingCodes'));
     }
 
 
@@ -173,9 +178,11 @@ class RegistroAlumnoController extends Controller
     public function edit($id)
     {
         $registroAlumno = RegistroAlumno::with(['encargado', 'inscripcion.grado', 'inscripcion.seccion'])->findOrFail($id);
+        $grado = Grado::with('nivel')->get()->mapWithKeys(function ($grado) {
+            return [$grado->id => "{$grado->nombre_grado} - {$grado->nivel->nivel}"];
+        });
         $lugares = Lugar::all();
         $colonias = Colonia::all();
-        $grado = Grado::pluck('nombre_grado', 'id');
         $seccion = Seccion::pluck('seccion', 'id');
         $encargado = $registroAlumno->encargado;
         $inscripcion = $registroAlumno->inscripcion;
@@ -259,17 +266,40 @@ class RegistroAlumnoController extends Controller
 
 
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         try {
-        RegistroAlumno::find($id)->delete();
+            // Obtener el registro del alumno
+            $registroAlumno = RegistroAlumno::findOrFail($id);
 
-        return redirect()->route('registro-alumnos.index')
-            ->with('success', 'RegistroAlumno deleted successfully');
-    }catch (\Exception $exception){
+            // Obtener al encargado asociado al alumno
+            $encargado = $registroAlumno->encargado;
+
+            // Verificar cuántos alumnos tiene asignados el encargado
+            $alumnosRelacionados = RegistroAlumno::where('encargados_id', $encargado->id)->count();
+
+            // Eliminar el alumno
+            $registroAlumno->delete();
+
+            // Variable para el mensaje
+            $mensaje = 'El alumno fue eliminado.';
+
+            // Si el encargado no tiene otros alumnos asignados, eliminarlo
+            if ($alumnosRelacionados <= 1 && $encargado) {
+                $encargado->delete();
+                $mensaje = 'El alumno y el encargado fueron eliminados exitosamente.';
+            }
+
+            return redirect()->route('registro-alumnos.index')
+                ->with('success', $mensaje);
+        } catch (\Exception $exception) {
+            // Manejar errores y registrar en el log
             Log::debug($exception->getMessage());
-            return redirect()->route('registro-alumnos.index')->with('alerta','no');
+            return redirect()->route('registro-alumnos.index')->with('alerta', 'no');
         }
     }
+
+
 
     public function validarCodigo(Request $request)
     {

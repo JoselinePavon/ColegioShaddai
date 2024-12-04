@@ -54,6 +54,8 @@ Route::middleware(['auth'])->group(function () {
     // Rutas para pagos
     Route::resource('pagos', App\Http\Controllers\PagoController::class);
 
+    Route::resource('nivels', App\Http\Controllers\NivelController::class);
+
     Route::get('/buscar', [App\Http\Controllers\PagoController::class, 'buscar'])->name('buscar');
     Route::get('/resultadosp', [App\Http\Controllers\PagoController::class, 'resultadosp'])->name('resultadosp');
 

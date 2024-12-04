@@ -87,7 +87,7 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label for="tipopagos_id" class="form-label">{{ __('Tipo de Pago') }}</label>
-                                    <select name="tipopagos_id" id="tipopagos_id" class="form-control @error('tipopagos_id') is-invalid @enderror">
+                                    <select name="tipopagos_id" id="tipopagos_id" class="form-select @error('tipopagos_id') is-invalid @enderror">
                                         <option value="" disabled selected>Selecciona un tipo de pago</option>
                                         @if($inscripcionPagada)
                                             <p class="text-muted">El pago de inscripción ya ha sido realizado.</p>
@@ -132,9 +132,11 @@
                             <div class="row align-items-end">
                                 <div class="col-md-6 mb-3" id="monto-section">
                                     <label for="monto" class="form-label">{{ __('Monto') }}</label>
-                                    <input type="text" id="monto" name="monto" class="form-control" readonly>
+                                    <input type="text" id="monto" name="monto" class="form-control">
                                 </div>
                             </div>
+
+
 
                             <!-- Campo Abono -->
                             <div class="row align-items-end" id="abono-section" style="display: none;">
@@ -452,7 +454,7 @@
                     }
                 }
 
-                montoInput.value = total > 0 ? `Q. ${total.toFixed(2)}` : '';
+                montoInput.value = total > 0 ? ` ${total.toFixed(2)}` : '';
             }
 
 // Evento para limpiar checkboxes y validar al cambiar el mes

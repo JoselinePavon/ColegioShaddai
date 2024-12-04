@@ -34,6 +34,7 @@
                         <tr>
                             <th scope="col">No.</th>
                             <th scope="col">Nombre Grado</th>
+                            <th scope="col">Nivel</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                         </thead>
@@ -42,6 +43,7 @@
                             <tr>
                                 <td>{{ ++$i }}</td>
                                 <td>{{ $grado->nombre_grado }}</td>
+                                <td>{{ $grado->nivel->nivel ?? 'N/A' }}</td>
                                 <td class="text-center d-flex gap-1 justify-content-center">
                                     <a class="btn btn-sm btn-primary" href="{{ route('grados.show', $grado->id) }}">
                                         <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
