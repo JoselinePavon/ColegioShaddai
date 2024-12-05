@@ -84,15 +84,11 @@
                                 <td>{{ $pago->mes->mes ?? 'sin Mes' }}</td>
                                 <td>{{ $pago->tipopago->tipo_pago }}</td>
                                 <td>
-                                    @if ($pago->tipopagos_id == 2) <!-- ID 2 es Colegiatura -->
-                                    @if (!empty($pago->abono)) <!-- Si existe un abono -->
+                                    @if (in_array($pago->tipopagos_id, [2, 4])) <!-- Colegiatura Regular y Diversificado -->
+                                    {{ $pago->abono ? 'Q. ' . number_format($pago->abono, 2) : 'Q. ' . number_format($pago->tipopago->monto, 2) }}
+                                    @elseif (in_array($pago->tipopagos_id, [3, 5])) <!-- Computación -->
                                     Q. {{ number_format($pago->abono, 2) }}
-                                    @else <!-- Si no existe un abono, mostrar el monto -->
-                                    Q. {{ number_format($pago->tipopago->monto, 2) }}
-                                    @endif
-                                    @elseif ($pago->tipopagos_id == 3) <!-- ID 3 es Computación -->
-                                    Q. {{ number_format($pago->abono, 2) }}
-                                    @else <!-- Para otros tipos de pago -->
+                                    @else <!-- Otros Tipos de Pago -->
                                     Q. {{ number_format($pago->tipopago->monto, 2) }}
                                     @endif
                                 </td>

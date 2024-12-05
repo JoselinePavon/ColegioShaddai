@@ -183,6 +183,9 @@
                         <option value="345">Q. 345.00</option>
                     </select>
                 </td>
+                        <option value="345">Q. 345.00</option>
+                    </select>
+                </td>
 
             </tr>
         </table>
@@ -655,8 +658,6 @@
                 fechaContratoElement.valueAsDate = new Date();
             }
         });
-
-
 
     </script>
 @endsection

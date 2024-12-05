@@ -56,7 +56,7 @@ class PagoController extends Controller
 
         // Agrupar los pagos por alumno y determinar los meses pagados
         $alumnos = $pagos->groupBy('registro_alumnos_id')->map(function ($pagosAlumno) use ($mesActual, $mesLimite) {
-            $mesesPagados = $pagosAlumno->where('tipopagos_id', 2)->pluck('mes_id')->toArray(); // Solo colegiaturas
+            $mesesPagados = $pagosAlumno->whereIn('tipopagos_id', [2 , 4] )->pluck('mes_id')->toArray(); // Solo colegiaturas
             $mesesRequeridos = range(1, min($mesActual, $mesLimite)); // Meses requeridos hasta el mes actual o límite
             $esSolvente = empty(array_diff($mesesRequeridos, $mesesPagados)); // Solvente si pagó todos los meses requeridos
 
@@ -102,7 +102,7 @@ class PagoController extends Controller
             return redirect()->route('pagos.index')->with('error', 'No se encontraron pagos para este alumno.');
         }
         $totalPagos = $pagos->sum(function ($pago) {
-            if ($pago->tipopagos_id == 3) {
+            if (in_array($pago->tipopagos_id, [3, 5])) { // Verificar si tipopagos_id es 3 o 5
                 // Si es Computación, sumar el abono
                 return $pago->abono ?? 0;
             }
@@ -159,8 +159,8 @@ class PagoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PagoRequest $request)
-    {
+    public function store(PagoRequest $request){
+
         // Validación de los campos
         $request->validate([
             'num_serie' => 'required|unique:pagos,num_serie,' . ($request->input('tipopagos_id') === 'combinado' ? '' : 'NULL') . ',id',
@@ -181,7 +181,7 @@ class PagoController extends Controller
         $montoOriginal = Tipopago::find($data['tipopagos_id'])->monto ?? 0;
 
 
-        if ($data['tipopagos_id'] == 3) {
+        if (in_array($data['tipopagos_id'], [3, 5])) {
             // Validar que el campo "abono" tenga un valor
             if (empty($data['abono'])) {
                 return redirect()->back()
@@ -203,12 +203,12 @@ class PagoController extends Controller
             foreach ($data['pagos_combinados'] as $tipopagos_id) {
                 // Excluir inscripción (ID 2) de pagos combinados
                 $mesId = ($tipopagos_id == 1) ? 13 : $data['mes_id'];
-            if ($tipopagos_id == 3) {
+            if ($tipopagos_id == [3 , 5]) {
                     continue;
                 }
 
                 // Determinar el estado del pago
-                $estado_id = ($tipopagos_id == 2) ? 1 : 3; // 1 = solvente para colegiatura, 3 = cancelado para otros
+                $estado_id = in_array($tipopagos_id, [2 , 4]) ? 1 : 3; // 1 = solvente para colegiatura, 3 = cancelado para otros
 
                 // Crear el pago combinado con el mes seleccionado
                 Pago::create([
@@ -240,11 +240,10 @@ class PagoController extends Controller
                     ->with('error', 'El alumno ya ha realizado el pago de inscripción.');
             }
             $data['mes_id'] = 13; // Asignar el valor 13 para inscripción
-            $data['estados_id'] = 2; // Estado solvente
+            $data['estados_id'] = 3; // Estado solvente
 
         }
-
-        if ($data['tipopagos_id'] == 2) {
+        if (in_array($data['tipopagos_id'], [2 , 4])) {
 
             if ((float)$data['monto'] != $montoOriginal) {
                 $data['abono'] = $data['monto']; // Guarda el monto modificado en abono
@@ -255,7 +254,7 @@ class PagoController extends Controller
             }
             // Verificar si ya existe un pago de colegiatura para el mes seleccionado
             $pagoExistente = Pago::where('registro_alumnos_id', $data['registro_alumnos_id'])
-                ->where('tipopagos_id', 2)
+                ->where('tipopagos_id', $data['tipopagos_id'])
                 ->where('mes_id', $data['mes_id'])
                 ->first();
 
@@ -360,12 +359,22 @@ class PagoController extends Controller
         $grado = null;
         $seccion = null;
         $pagosPorMes = [];
+        $tipos = Tipopago::pluck('tipo_pago', 'id'); // Obtener todos los tipos de pago
 
         if ($alumno) {
             // Obtener información de inscripción (grado y sección)
             $inscripcion = Inscripcion::where('registro_alumnos_id', $alumno->id)->first();
             $grado = $inscripcion ? $inscripcion->grado : null;
             $seccion = $inscripcion ? $inscripcion->seccion : null;
+
+            if ($grado && $grado->nivels_id) {
+                // Filtrar el tipo de colegiatura según el nivel
+                if ($grado->nivels_id == 4) { // Nivel Diversificado
+                    $tipos = $tipos->except(2); // Excluir "Coleg. Regular" (ID 2)
+                } else {
+                    $tipos = $tipos->except(4); // Excluir "Coleg. Diversificado" (ID 4)
+                }
+            }
 
             $pagosPorMes = Pago::where('registro_alumnos_id', $alumno->id)
                 ->select('mes_id', 'tipopagos_id')
@@ -396,7 +405,8 @@ class PagoController extends Controller
             'error',
             'pagosPorMes',
             'mes',
-            'inscripcionPagada'
+            'inscripcionPagada',
+            'tipos'
         ));
     }
 

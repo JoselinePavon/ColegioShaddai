@@ -32,7 +32,9 @@ class RegistroAlumnoController extends Controller
     public function index()
     {
         $seccion = Seccion::pluck('seccion', 'id');
-        $grado = Grado::pluck('nombre_grado', 'id');
+        $grado = Grado::with('nivel')->get()->mapWithKeys(function ($grado) {
+            return [$grado->id => "{$grado->nombre_grado} - {$grado->nivel->nivel}"];
+        });
 
         // Obtener los filtros seleccionados por el usuario
         $seccions_id = request()->get('seccions_id');

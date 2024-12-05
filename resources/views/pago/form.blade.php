@@ -92,7 +92,6 @@
                                         @if($inscripcionPagada)
                                             <p class="text-muted">El pago de inscripción ya ha sido realizado.</p>
                                         @endif
-
                                         @foreach($tipos as $id => $tipo_pago)
                                             <option value="{{ $id }}" {{ old('tipopagos_id') == $id ? 'selected' : '' }}>
                                                 {{ $tipo_pago }}
@@ -103,6 +102,8 @@
 
                                     {!! $errors->first('tipopagos_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                                 </div>
+
+
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <label for="fecha_pago" class="form-label">{{ __('Fecha Pago') }}</label>
@@ -136,15 +137,16 @@
                                 </div>
                             </div>
 
-
-
                             <!-- Campo Abono -->
                             <div class="row align-items-end" id="abono-section" style="display: none;">
                                 <div class="col-md-6 mb-3">
                                     <label for="abono" class="form-label">{{ __('Abono') }}</label>
-                                    <input type="text" id="abono" name="abono" class="form-control">
+                                    <input type="text" id="abono" name="abono" class="form-control"
+                                           pattern="^\d+(\.\d{1,2})?$"
+                                           title="Ingrese un número válido, por ejemplo: 250.50">
                                 </div>
                             </div>
+
 
 
                             <!-- Pagos Combinados -->
@@ -153,7 +155,7 @@
                                 <h5>Seleccione los pagos que desea combinar:</h5>
                                 <div class="d-flex flex-wrap">
                                     @foreach($tipos as $id => $tipo_pago)
-                                        @if($id !== 3 && ($id !== 1 || !$inscripcionPagada)) <!-- Excluir inscripción si ya fue pagada -->
+                                        @if(!in_array($id, [3, 5]) && ($id !== 1 || !$inscripcionPagada)) <!-- Excluir inscripción si ya fue pagada -->
                                         <div class="form-check me-3 mb-2">
                                             <input class="form-check-input pago-combinado-checkbox" type="checkbox" name="pagos_combinados[]" value="{{ $id }}" id="pago_combinado_{{ $id }}" data-monto="{{ $montos[$id] }}">
                                             <label class="form-check-label" for="pago_combinado_{{ $id }}">
@@ -201,16 +203,29 @@
             const montoSection = document.getElementById('monto-section');
             const abonoSection = document.getElementById('abono-section');
             const abonoInput = document.getElementById('abono');
+            const montoInput = document.getElementById('monto');
             const pagoForm = document.querySelector('form'); // Selecciona el formulario principal
 
             // Manejar el cambio de selección en el tipo de pago
             tipoPagosSelect.addEventListener('change', () => {
-                if (tipoPagosSelect.value == '3') { // ID 3 es Computación
+                const tiposConAbono = ['3', '5'];
+
+                if (tiposConAbono.includes(tipoPagosSelect.value)) {
                     montoSection.style.display = 'none'; // Ocultar Monto
                     abonoSection.style.display = 'block'; // Mostrar Abono
                 } else {
                     montoSection.style.display = 'block'; // Mostrar Monto
                     abonoSection.style.display = 'none'; // Ocultar Abono
+                }
+            });
+
+
+            // Validar entrada numérica en Abono
+            abonoInput.addEventListener('input', () => {
+                if (!/^\d*(\.\d{0,2})?$/.test(abonoInput.value)) {
+                    abonoInput.setCustomValidity("Ingrese un número válido, por ejemplo: 250.50");
+                } else {
+                    abonoInput.setCustomValidity("");
                 }
             });
         });

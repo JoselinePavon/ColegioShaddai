@@ -44,7 +44,7 @@
                             <tr>
                                 <td>{{ ++$i }}</td>
                                 <td>{{ $tipopago->tipo_pago }}</td>
-                                <td>Q. {{ $tipopago->monto }}</td>
+                                <td>Q. {{ $tipopago->monto }} </td>
                                 <td class="text-center d-flex gap-1 justify-content-center">
                                     <a class="btn btn-sm btn-primary" href="{{ route('tipopagos.show', $tipopago->id) }}">
                                         <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}

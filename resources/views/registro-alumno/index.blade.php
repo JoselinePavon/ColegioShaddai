@@ -16,10 +16,10 @@
                 </div>
                 <form action="{{ route('filtro.index') }}" method="GET" class="d-flex align-items-center gap-2 mb-4">
                     <select name="grados_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
-                        <option value="">Todos los Grados</option>
-                        @foreach($grado as $id => $nombre_grado)
+                        <option value="">Todos los Grados y Niveles</option>
+                        @foreach($grado as $id => $nombre_grado_nivel)
                             <option value="{{ $id }}" {{ request()->get('grados_id') == $id ? 'selected' : '' }}>
-                                {{ $nombre_grado }}
+                                {{ $nombre_grado_nivel }}
                             </option>
                         @endforeach
                     </select>
