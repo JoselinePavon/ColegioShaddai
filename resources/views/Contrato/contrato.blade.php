@@ -54,7 +54,7 @@
 
                 <div class="form-group">
                     <label for="edad">Edad:</label>
-                    <input type="text" id="edad" name="edad" value="{{ old('edad_encargado', $edad_encargado ?? '') }}" style="border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
+                    <input type="text" id="edad_encargado" name="edad" value="{{ old('edad_encargado', $edad_encargado ?? '') }}" style="border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
                 </div>
 
                 <div class="form-group">
@@ -97,16 +97,16 @@
         <h6><strong>PRIMERA: INFORMACIÓN DEL EDUCANDO Y SERVICIO EDUCATIVO CONTRATADO.</strong></h6>
         <div class="form-grid-3">
             <div class="form-group">
-                <label for="nombre-educando">Nombre del Educando:</label>
+                <label for="nombre-educando" style="text-align: left;">Nombre del Educando:</label>
                 <input
                     type="text"
                     id="nombre-educando"
                     name="nombre_educando"
                     value="{{ old('nombre_educando', $nombreEducando ?? '') }}"
-                    style="width: 135%; border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
+                    style="width: 180%; border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
             </div>
             <div class="form-group">
-                <label for="grado-nivel" style="margin-left: 80px;">Grado y Nivel:</label>
+                <label for="grado-nivel" style="margin-left: 5px;">Grado y Nivel:</label>
                 <input
                     type="text"
                     id="grado-nivel"
@@ -115,7 +115,7 @@
                     style="width: 100%; margin-left: 80px; border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
             </div>
             <div class="form-group">
-                <label for="jornada" style="margin-left: 90px;">Jornada:</label>
+                <label for="jornada" style="margin-left: 5px;">Jornada:</label>
                 <input
                     type="text"
                     id="jornada"
@@ -176,7 +176,14 @@
             </tr>
             <tr>
                 <td>b) COLEGIATURA MENSUAL: (10 CUOTAS EN LOS MESES DE ENERO A OCTUBRE)</td>
-                <td>Q 330.00</td>
+                <td>
+                    <select style="border: none; background: transparent; font-size: 1em; padding: 0; appearance: none; -moz-appearance: none; -webkit-appearance: none; cursor: pointer;">
+                        <option value="310">Q. 310.00</option>
+                        <option value="330">Q. 330.00</option>
+                        <option value="345">Q. 345.00</option>
+                    </select>
+                </td>
+
             </tr>
         </table>
         <p style="text-align: justify;">Cuotas debidamente autorizadas por el Ministerio de Educación, según la siguiente resolución: a) No. AMP/DESPACHO/006-2020, de fecha 30 de diciembre de 2020, y b) DTP No. 093-2021, de fecha 10 de mayo de 2021; emitida por la Dirección Departamental de Educación de Izabal, valores que se informan a continuación:</p>
@@ -302,16 +309,18 @@
 
         <div class="signatures" style="display: flex; justify-content: center; align-items: center; gap: 5cm; text-align: center;">
             <div>
-                <div class="signature-line">
-                    Herlindo Artiga Marroquín<br>Propietario
+                <div class="signature-line" style="text-align: center; border-bottom: 1px solid rgba(0,0,0,0); width: 100%; position: relative; padding-bottom: 10px;">
+                Herlindo Artiga Marroquín<br>Propietario
                 </div>
             </div>
             <div>
-                <div class="signature-line">
-                    <input type="text" id="nombre-completo" name="nombre_completo"
+               <center><div class="signature-line" style="border-bottom: 1px solid rgba(0,0,0,0); width: 50%;"></center>
+                <input type="text" id="nombre-completo" name="nombre_completo"
                            value="{{ old('nombre_completo', $nombreCompleto ?? '') }}"
-                           style="border: none; border-bottom: 1px solid transparent; background-color: transparent; width: 100%; padding: 2px;">
+                           style="border: none; outline: none; background-color: transparent; width: auto; padding: 2px; min-width: 48ch; text-align: center;"
+                           oninput="this.style.width = (this.value.length + 1) + 'ch';">
                     <br>Representante del Educando
+                </div>
                 </div>
             </div>
         </div>
@@ -402,7 +411,26 @@
             }
 
             .signatures {
-                page-break-inside: avoid;
+                display: flex;
+                justify-content: space-between;
+                font-size: 12px; /* Reduce font size for signatures */
+                margin-top: 10px; /* Reduce top margin */
+            }
+
+            .signature-line {
+                width: 80%; /* Reduce width of signature line */
+                margin-top: 10px; /* Reduce top margin of signature line */
+                border-top: 1px solid #333;
+                text-align: center;
+            }
+
+            .signature-line input {
+                width: 100%; /* Asegura que el input ocupe todo el ancho disponible dentro de su contenedor */
+                border: none;
+                border-bottom: 1px solid transparent;
+                background-color: transparent;
+                padding: 2px;
+                font-size: 20px;
             }
 
             .page-number {
@@ -627,6 +655,8 @@
                 fechaContratoElement.valueAsDate = new Date();
             }
         });
+
+
 
     </script>
 @endsection
