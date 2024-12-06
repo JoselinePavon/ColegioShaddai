@@ -51,7 +51,7 @@
                             </tr>
                             <tr>
                                 <th><i class="fas fa-graduation-cap text-primary me-2"></i> {{ __('Grado') }}</th>
-                                <td>{{ ($registroAlumno->inscripcion->grado->nombre_grado)}}</td>
+                                <td>{{ ($registroAlumno->inscripcion->grado->nombre_grado)}} - {{ $registroAlumno->inscripcion->grado->nivel->nivel }} </td>
                             </tr>
                             <tr>
                                 <th><i class="fas fa-chalkboard-teacher text-primary me-2"></i> {{ __('Seccion') }}</th>

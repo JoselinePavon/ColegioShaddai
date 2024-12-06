@@ -102,7 +102,7 @@ class PagoController extends Controller
             return redirect()->route('pagos.index')->with('error', 'No se encontraron pagos para este alumno.');
         }
         $totalPagos = $pagos->sum(function ($pago) {
-            if (in_array($pago->tipopagos_id, [3, 5])) { // Verificar si tipopagos_id es 3 o 5
+            if (in_array($pago->tipopagos_id, [5, 6])) { // Verificar si tipopagos_id es 3 o 5
                 // Si es Computación, sumar el abono
                 return $pago->abono ?? 0;
             }
@@ -181,7 +181,7 @@ class PagoController extends Controller
         $montoOriginal = Tipopago::find($data['tipopagos_id'])->monto ?? 0;
 
 
-        if (in_array($data['tipopagos_id'], [3, 5])) {
+        if (in_array($data['tipopagos_id'], [5, 6])) {
             // Validar que el campo "abono" tenga un valor
             if (empty($data['abono'])) {
                 return redirect()->back()
@@ -203,12 +203,12 @@ class PagoController extends Controller
             foreach ($data['pagos_combinados'] as $tipopagos_id) {
                 // Excluir inscripción (ID 2) de pagos combinados
                 $mesId = ($tipopagos_id == 1) ? 13 : $data['mes_id'];
-            if ($tipopagos_id == [3 , 5]) {
+            if ($tipopagos_id == [5, 6]) {
                     continue;
                 }
 
                 // Determinar el estado del pago
-                $estado_id = in_array($tipopagos_id, [2 , 4]) ? 1 : 3; // 1 = solvente para colegiatura, 3 = cancelado para otros
+                $estado_id = in_array($tipopagos_id, [2, 3, 4]) ? 1 : 3; // 1 = solvente para colegiatura, 3 = cancelado para otros
 
                 // Crear el pago combinado con el mes seleccionado
                 Pago::create([
@@ -243,7 +243,7 @@ class PagoController extends Controller
             $data['estados_id'] = 3; // Estado solvente
 
         }
-        if (in_array($data['tipopagos_id'], [2 , 4])) {
+        if (in_array($data['tipopagos_id'], [2, 3, 4])) {
 
             if ((float)$data['monto'] != $montoOriginal) {
                 $data['abono'] = $data['monto']; // Guarda el monto modificado en abono
@@ -368,11 +368,18 @@ class PagoController extends Controller
             $seccion = $inscripcion ? $inscripcion->seccion : null;
 
             if ($grado && $grado->nivels_id) {
-                // Filtrar el tipo de colegiatura según el nivel
-                if ($grado->nivels_id == 4) { // Nivel Diversificado
-                    $tipos = $tipos->except(2); // Excluir "Coleg. Regular" (ID 2)
-                } else {
-                    $tipos = $tipos->except(4); // Excluir "Coleg. Diversificado" (ID 4)
+                // Filtrar tipos de pago según el nivel del alumno
+                switch ($grado->nivels_id) {
+                    case 1: // Preprimaria
+                    case 2: // Primaria
+                        $tipos = $tipos->except([3, 4]); // Excluir colegiatura diversificado (ID 4) y colegiatura básico (ID 6)
+                        break;
+                    case 3: // Básico
+                        $tipos = $tipos->except([2, 4]); // Excluir colegiatura regular (ID 2) y colegiatura diversificado (ID 4)
+                        break;
+                    case 4: // Diversificado
+                        $tipos = $tipos->except([2, 3]); // Excluir colegiatura regular (ID 2) y colegiatura básico (ID 6)
+                        break;
                 }
             }
 

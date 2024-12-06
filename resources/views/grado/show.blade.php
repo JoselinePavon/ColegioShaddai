@@ -26,7 +26,7 @@
                     </tr>
                     <tr>
                         <th class="text-dark"><i class="fas fa-layer-group text-muted mr-2"></i> {{ __('Nivel') }}</th>
-                        <td class="text-secondary">{{ $grado->nivels }}</td>
+                        <td class="text-secondary">{{ $grado->nivel->nivel }}</td>
                     </tr>
                     </tbody>
                 </table>

@@ -84,9 +84,9 @@
                                 <td>{{ $pago->mes->mes ?? 'sin Mes' }}</td>
                                 <td>{{ $pago->tipopago->tipo_pago }}</td>
                                 <td>
-                                    @if (in_array($pago->tipopagos_id, [2, 4])) <!-- Colegiatura Regular y Diversificado -->
+                                    @if (in_array($pago->tipopagos_id, [2, 3, 4])) <!-- Colegiatura Regular y Diversificado -->
                                     {{ $pago->abono ? 'Q. ' . number_format($pago->abono, 2) : 'Q. ' . number_format($pago->tipopago->monto, 2) }}
-                                    @elseif (in_array($pago->tipopagos_id, [3, 5])) <!-- Computación -->
+                                    @elseif (in_array($pago->tipopagos_id, [5, 6])) <!-- Computación -->
                                     Q. {{ number_format($pago->abono, 2) }}
                                     @else <!-- Otros Tipos de Pago -->
                                     Q. {{ number_format($pago->tipopago->monto, 2) }}

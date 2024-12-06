@@ -73,6 +73,25 @@
                                         </select>
                                         @error('estado_civil') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                     </div>
+                                    <div class="col">
+                                        <label for="parentesco" class="form-label"><i class="bi bi-people-fill"></i> Parentesco</label>
+                                        <select name="parentesco" class="form-select @error('parentesco') is-invalid @enderror" id="parentesco">
+                                            <option value="">Seleccione</option>
+                                            <option value="Padre" {{ old('parentesco', $encargado->parentesco ?? '') == 'Padre' ? 'selected' : '' }}>Padre</option>
+                                            <option value="Madre" {{ old('parentesco', $encargado->parentesco ?? '') == 'Madre' ? 'selected' : '' }}>Madre</option>
+                                            <option value="Tío(a)" {{ old('parentesco', $encargado->parentesco ?? '') == 'Tío(a)' ? 'selected' : '' }}>Tío(a)</option>
+                                            <option value="Abuelo(a)" {{ old('parentesco', $encargado->parentesco ?? '') == 'Abuelo(a)' ? 'selected' : '' }}>Abuelo(a)</option>
+                                            <option value="Hermano(a)" {{ old('parentesco', $encargado->parentesco ?? '') == 'Hermano(a)' ? 'selected' : '' }}>Hermano(a)</option>
+                                            <option value="Primo(a)" {{ old('parentesco', $encargado->parentesco ?? '') == 'Primo(a)' ? 'selected' : '' }}>Primo(a)</option>
+                                            <option value="Tutor Legal" {{ old('parentesco', $encargado->parentesco ?? '') == 'Tutor Legal' ? 'selected' : '' }}>Tutor Legal</option>
+                                            <option value="Padrastro" {{ old('parentesco', $encargado->parentesco ?? '') == 'Padrastro' ? 'selected' : '' }}>Padrastro</option>
+                                            <option value="Madrastra" {{ old('parentesco', $encargado->parentesco ?? '') == 'Madrastra' ? 'selected' : '' }}>Madrastra</option>
+                                            <option value="Otro" {{ old('parentesco', $encargado->parentesco ?? '') == 'Otro' ? 'selected' : '' }}>Otro</option>
+
+
+                                        </select>
+                                        @error('parentesco') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
 
                                     <div class="col">
                                         <label for="oficio" class="form-label"><i class="fas fa-briefcase"></i> Oficio</label>
@@ -86,7 +105,7 @@
                                     </div>
                                     <div class="col">
                                         <label for="lugars_id" class="form-label"><i class="bi bi-geo-alt-fill"></i> Lugar</label>
-                                        <select name="lugars_id" id="lugars_id" class="form-control @error('lugars_id') is-invalid @enderror">
+                                        <select name="lugars_id" id="lugars_id" class="form-select @error('lugars_id') is-invalid @enderror">
                                             <option value="">Seleccione un lugar</option>
                                             @foreach($lugares as $lugar)
                                                 <option value="{{ $lugar->id }}" {{ old('lugars_id', $encargado?->lugars_id) == $lugar->id ? 'selected' : '' }}>
@@ -98,7 +117,7 @@
                                     </div>
                                     <div class="col">
                                         <label for="colonias_id" class="form-label"><i class="bi bi-map-fill"></i> Colonia</label>
-                                        <select name="colonias_id" id="colonias_id" class="form-control @error('colonias_id') is-invalid @enderror" {{ old('colonias_id', $encargado?->colonias_id) ? '' : 'disabled' }}>
+                                        <select name="colonias_id" id="colonias_id" class="form-select @error('colonias_id') is-invalid @enderror" {{ old('colonias_id', $encargado?->colonias_id) ? '' : 'disabled' }}>
                                             <option value="">Seleccione una colonia</option>
                                             @if (old('colonias_id', $encargado?->colonias_id))
                                                 @foreach($colonias->where('lugars_id', old('lugars_id', $encargado?->lugars_id)) as $colonia)
@@ -147,6 +166,15 @@
                                 @error('grados_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="jornada" class="form-label">Jornada</label>
+                                <select name="jornada" class="form-select @error('jornada') is-invalid @enderror" id="jornada">
+                                    <option value="">Selecciona Jornada</option>
+                                    <option value="Matutina" {{ old('jornada', $inscripcion?->jornada) == 'Matutina' ? 'selected' : '' }}>Matutina</option>
+                                    <option value="Vespertina" {{ old('jornada', $inscripcion?->jornada) == 'Vespertina' ? 'selected' : '' }}>Vespertina</option>
+                                </select>
+                                @error('jornada') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">

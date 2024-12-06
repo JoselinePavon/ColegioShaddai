@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nombres');
             $table->string('apellidos');
             $table->string('genero');
+            $table->string('parentesco');
             $table->Integer('edad');
             $table->date('fecha_nacimiento');
             $table->timestamps();

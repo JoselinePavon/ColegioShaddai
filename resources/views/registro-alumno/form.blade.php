@@ -103,13 +103,32 @@
                                         </label>
                                         <input type="number" name="edad_encargado" class="form-control form-control-sm" id="edad_encargado" placeholder="Edad" required>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-4">
                                         <label for="dpi" class="form-label">
                                             DPI <span class="text-danger">*</span>
                                         </label>
                                         <input type="text" name="dpi" class="form-control form-control-sm" id="dpi" placeholder="Número de DPI" required>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-4">
+                                        <label for="parentesco" class="form-label">
+                                            Parentesco <span class="text-danger">*</span>
+                                        </label>
+                                        <select name="parentesco" class="form-control form-control-sm" id="parentesco" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="Padre">Padre</option>
+                                            <option value="Madre">Madre</option>
+                                            <option value="Tío(a)">Tío(a)</option>
+                                            <option value="Abuelo(a)">Abuelo(a)</option>
+                                            <option value="Hermano(a)">Hermano(a)</option>
+                                            <option value="Primo(a)">Primo(a)</option>
+                                            <option value="Tutor Legal">Tutor Legal</option>
+                                            <option value="Padrastro">Padrastro</option>
+                                            <option value="Madrastra">Madrastra</option>
+                                            <option value="Otro">Otro</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-4">
                                         <label for="oficio" class="form-label">
                                             Oficio <span class="text-danger">*</span>
                                         </label>
@@ -427,6 +446,7 @@
                             document.getElementById('nombre_encargado').value = encargado.nombre_encargado;
                             document.getElementById('edad_encargado').value = encargado.edad_encargado;
                             document.getElementById('dpi').value = encargado.dpi;
+                            document.getElementById('parentesco').value = encargado.parentesco;
                             document.getElementById('oficio').value = encargado.oficio;
                             document.getElementById('telefono').value = encargado.telefono;
                             document.getElementById('persona_emergencia').value = encargado.persona_emergencia;

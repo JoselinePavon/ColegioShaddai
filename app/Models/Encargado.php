@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property $oficio
  * @property $dpi
  * @property $telefono
+ * @property $parentesco
  * @property $num_encargado2
  * @property $persona_emergencia
  * @property $lugars_id
@@ -47,6 +48,7 @@ class Encargado extends Model
         'persona_emergencia',
         'lugars_id',
         'colonias_id',
+        'parentesco',
     ];
 
     /**

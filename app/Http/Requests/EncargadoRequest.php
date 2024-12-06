@@ -28,6 +28,7 @@ class EncargadoRequest extends FormRequest
             'oficio' => 'required|string',
 			'dpi' => 'required|string',
 			'telefono' => 'required',
+            'parentesco' => 'required',
 			'persona_emergencia' => 'required|string',
             'registro_alumnos_id' => 'required|string',
             'lugars_id' => 'required|string',

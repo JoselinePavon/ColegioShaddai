@@ -105,6 +105,7 @@ class RegistroAlumnoController extends Controller
             'edad_encargado' => 'required|integer|min:1|max:120',
             'estado_civil' => 'required|string|max:255',
             'oficio' => 'required|string|max:255',
+            'parentesco' => 'required|string|max:255',
             'dpi' => 'required|numeric',
             'lugars_id' => 'required|exists:lugars,id',
             'colonias_id' => 'required|exists:colonias,id',
@@ -126,6 +127,7 @@ class RegistroAlumnoController extends Controller
                 'estado_civil' => $request->estado_civil,
                 'oficio' => $request->oficio,
                 'dpi' => $request->dpi,
+                'parentesco' => $request->parentesco,
                 'lugars_id' => $request->lugars_id,
                 'colonias_id' => $request->colonias_id,
                 'telefono' => $request->telefono,
@@ -219,11 +221,13 @@ class RegistroAlumnoController extends Controller
             'colonias_id' => 'required|exists:colonias,id',
             'telefono' => 'required|string',
             'persona_emergencia' => 'required|string',
+            'parentesco' => 'required|string',
 
             // Inscripción
             'codigo_correlativo' => 'required|unique:inscripcions,codigo_correlativo,' . $registroAlumno->inscripcion->id,
             'grados_id' => 'required|exists:grados,id',
             'seccions_id' => 'required|exists:seccions,id',
+            'jornada' => 'required|string',
         ]);
 
         // Actualizar alumno
@@ -249,6 +253,7 @@ class RegistroAlumnoController extends Controller
                 'persona_emergencia' => $validated['persona_emergencia'],
                 'lugars_id' => $validated['lugars_id'],
                 'colonias_id' => $validated['colonias_id'],
+                'parentesco' => $validated['parentesco'],
             ]);
         }
 
@@ -259,6 +264,7 @@ class RegistroAlumnoController extends Controller
                 'codigo_correlativo' => $validated['codigo_correlativo'],
                 'grados_id' => $validated['grados_id'],
                 'seccions_id' => $validated['seccions_id'],
+                'jornada' => $validated['jornada'],
             ]);
         }
 
@@ -336,6 +342,7 @@ class RegistroAlumnoController extends Controller
                     'edad_encargado' => $encargado->edad_encargado,
                     'dpi' => $encargado->dpi,
                     'oficio' => $encargado->oficio,
+                    'parentesco' => $encargado->parentesco,
                     'estado_civil' => $encargado->estado_civil === 'Casado' ? 'Casado(a)' : ($encargado->estado_civil === 'Soltero' ? 'Soltero(a)' : $encargado->estado_civil),
                     'lugars_id' => $encargado->lugars_id,
                     'colonias_id' => $encargado->colonias_id,

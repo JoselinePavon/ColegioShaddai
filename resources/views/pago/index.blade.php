@@ -81,7 +81,9 @@
                                 <td>{{ ++$i }}</td>
                                 <td>{{ $alumno['registroAlumno']->inscripcion->codigo_correlativo ?? 'Sin Correlativo' }}</td>
                                 <td>{{ $alumno['registroAlumno']->nombres }} {{ $alumno['registroAlumno']->apellidos }}</td>
-                                <td>{{ $alumno['registroAlumno']->inscripcion->grado->nombre_grado ?? 'Sin Grado' }}</td>
+                                <td>{{ $alumno['registroAlumno']->inscripcion->grado->nombre_grado }} -
+                                    {{ $alumno['registroAlumno']->inscripcion->grado->nivel->nivel }}
+                                </td>
                                 <td>{{ $alumno['registroAlumno']->inscripcion->seccion->seccion ?? 'Sin Sección' }}</td>
                                 <td class="estado">
                                     <span class="badge bg-secondary">● Sin estado</span>
