@@ -16,7 +16,7 @@ class ContratoController extends Controller
     {
         // Buscar la inscripción por el código correlativo
         $inscripcion = Inscripcion::where('codigo_correlativo', $request->input('codigo_correlativo'))
-            ->with(['registroAlumno', 'registroAlumno.encargado', 'grado', 'seccion'])
+            ->with(['registroAlumno', 'registroAlumno.encargado', 'grado.nivel','seccion'])
             ->first();
 
         // Si no se encuentra, devolver un mensaje de error
@@ -41,7 +41,8 @@ class ContratoController extends Controller
             'telefonoCelular' => $encargado->persona_emergencia ?? '',
             'correo' => '', // Agrega este campo si tienes un correo asociado
             'nombreEducando' => $inscripcion->registroAlumno->nombres . ' ' . $inscripcion->registroAlumno->apellidos,
-            'gradoNivel' => $inscripcion->grado->nombre_grado ?? '',
+            'grado' => $inscripcion->grado->nombre_grado ?? '',
+            'nivel' => $inscripcion->grado->nivel->nivel ?? '',
             'jornada' => $inscripcion->jornada ?? '',
         ]);
     }
@@ -50,7 +51,7 @@ class ContratoController extends Controller
     {
         // Buscar la inscripción por el código correlativo
         $inscripcion = Inscripcion::where('codigo_correlativo', $request->input('codigo_correlativo'))
-            ->with(['registroAlumno', 'registroAlumno.encargado', 'grado', 'seccion'])
+            ->with(['registroAlumno', 'registroAlumno.encargado', 'grado.nivel', 'seccion'])
             ->first();
 
         // Si no se encuentra, devolver un mensaje de error

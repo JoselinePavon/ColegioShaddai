@@ -100,6 +100,10 @@
                                     <td>{{ $registroAlumno->encargado->dpi }}</td>
                                 </tr>
                                 <tr>
+                                    <th><i class="fas fa-user text-secondary me-2"></i>{{ __('Parentesco') }}</th>
+                                    <td>{{ $registroAlumno->encargado->parentesco }}</td>
+                                </tr>
+                                <tr>
                                     <th><i class="fas fa-map-marker-alt text-secondary me-2"></i> {{ __('Lugar') }}</th>
                                     <td>{{ $registroAlumno->encargado->lugar->lugar ?? 'No asignado' }}</td>
                                 </tr>

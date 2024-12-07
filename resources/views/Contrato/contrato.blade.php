@@ -111,7 +111,7 @@
                     type="text"
                     id="grado-nivel"
                     name="grado_nivel"
-                    value="{{ old('grado_nivel', $gradoNivel ?? '') }}"
+                    value="{{ old('grado_nivel', ($grado ?? '') . ' ' . ($nivel ?? '')) }}"
                     style="width: 100%; margin-left: 80px; border: none; border-bottom: 1px solid #ccc; background-color: #f5f5f5;">
             </div>
             <div class="form-group">
@@ -183,8 +183,6 @@
                         <option value="345">Q. 345.00</option>
                     </select>
                 </td>
-                        <option value="345">Q. 345.00</option>
-                    </select>
                 </td>
 
             </tr>
