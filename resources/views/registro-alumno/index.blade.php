@@ -62,6 +62,11 @@
                         </tr>
                         </thead>
                         <tbody>
+                        @php
+                            $i = 0; // Inicializar el contador
+                        @endphp
+
+
                         @foreach ($registroAlumnos as $registroAlumno)
                             <tr>
                                 <td>{{ ++$i }}</td>
@@ -91,6 +96,7 @@
                         @endforeach
                         </tbody>
                     </table>
+
                 </div>
 
             </div>

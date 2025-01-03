@@ -49,13 +49,11 @@ class RegistroAlumnoController extends Controller
                 if ($grados_id) {
                     $query->where('grados_id', $grados_id);
                 }
-            });
+            })->get();
 
         // Paginación
-        $registroAlumnos = $registroAlumnos->paginate();
 
-        return view('registro-alumno.index', compact('registroAlumnos', 'grado', 'seccion'))
-            ->with('i', (request()->input('page', 1) - 1) * $registroAlumnos->perPage());
+        return view('registro-alumno.index', compact('registroAlumnos', 'grado', 'seccion'));
     }
 
 
