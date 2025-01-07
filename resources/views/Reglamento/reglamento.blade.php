@@ -76,7 +76,7 @@
             <!-- Grado Info -->
             <div style="display: flex; align-items: center; margin-bottom: 4px;">
                 <p style="margin-right: 6px; font-weight: bold; width: 140px; font-size: 12px;">GRADO:</p>
-                <input type="text" value="{{ old('grado_nivel', $gradoNivel ?? '') }}" style="flex-grow: 1; padding: 2px 6px; height: 24px; border: none; border-bottom: 1px solid #ccc; background-color: transparent; font-size: 12px;">
+                <input type="text" value="{{ old('grado_nivel', ($gradoNivel ?? '') . ' ' . ($nivel ?? '')) }}" style="flex-grow: 1; padding: 2px 6px; height: 24px; border: none; border-bottom: 1px solid #ccc; background-color: transparent; font-size: 12px;">
             </div>
 
             <div style="display: flex; align-items: center; margin-bottom: 4px;">

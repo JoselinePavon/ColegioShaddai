@@ -44,6 +44,7 @@ class ReglamentoController extends Controller
             'correo' => '', // Agrega este campo si tienes un correo asociado
             'nombreEducando' => $inscripcion->registroAlumno->nombres . ' ' . $inscripcion->registroAlumno->apellidos,
             'gradoNivel' => $inscripcion->grado->nombre_grado ?? '',
+            'nivel' => $inscripcion->grado->nivel->nivel ?? '',
             'jornada' => $inscripcion->jornada ?? '',
         ]);
     }
