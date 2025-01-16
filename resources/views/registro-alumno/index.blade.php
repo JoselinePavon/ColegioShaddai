@@ -55,9 +55,9 @@
                             <th scope="col">Codigo Correlativo</th>
                             <th scope="col">Alumno</th>
                             <th scope="col">Edad</th>
-                            <th scope="col">Ciclo Escolar</th>
                             <th scope="col">Nombre del Encargado</th>
                             <th scope="col">Telefono del Encargado</th>
+                            <th scope="col">Telefono de Emergencia</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                         </thead>
@@ -74,9 +74,9 @@
                                 <td>{{ $registroAlumno->inscripcion->codigo_correlativo ?? 'Codigo no asignado' }}</td>
                                 <td>{{ $registroAlumno->nombres }} {{ $registroAlumno->apellidos }}</td>
                                 <td>{{ $registroAlumno->edad }}</td>
-                                <td>{{ $registroAlumno->inscripcion->updated_at ? $registroAlumno->inscripcion->updated_at->format('Y') : 'N/A' }}</td>
                                 <td>{{ $registroAlumno->encargado->nombre_encargado ?? 'N/A' }}</td>
                                 <td>{{ $registroAlumno->encargado->telefono ?? 'N/A' }}</td>
+                                <td>{{ $registroAlumno->encargado->persona_emergencia ?? 'N/A' }}</td>
                                 <td class="text-center d-flex gap-1">
                                     <a class="btn btn-sm btn-primary" href="{{ route('registro-alumnos.show', $registroAlumno->id) }}">
                                         <i class="fa fa-fw fa-eye"></i>
@@ -104,8 +104,6 @@
         </div>
 
     </div>
-
-
     <script>
         $(document).ready(function() {
             $('#mediciones').DataTable({
@@ -124,6 +122,7 @@
                         "previous": "Anterior"
                     }
                 },
+                "lengthMenu": [[50, 100, 200, 300], [50, 100, 200, 300]], // Cambia los valores del menú
                 "drawCallback": function(settings) {
                     if (settings.fnRecordsTotal() == 0) {
                         $(this).find('.dataTables_empty').addClass('alert-style');

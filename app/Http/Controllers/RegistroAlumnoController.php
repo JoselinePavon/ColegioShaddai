@@ -49,7 +49,9 @@ class RegistroAlumnoController extends Controller
                 if ($grados_id) {
                     $query->where('grados_id', $grados_id);
                 }
-            })->get();
+            })
+            ->orderBy('created_at','desc')
+            ->get();
 
         // Paginación
 
