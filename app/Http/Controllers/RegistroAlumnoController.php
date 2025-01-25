@@ -11,6 +11,7 @@ use App\Models\Nivel;
 use App\Models\RegistroAlumno;
 use App\Http\Requests\RegistroAlumnoRequest;
 use App\Models\Seccion;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
@@ -51,7 +52,11 @@ class RegistroAlumnoController extends Controller
                 }
             })
             ->orderBy('created_at','desc')
-            ->get();
+            ->get()
+            ->map(function ($alumno) {
+                $alumno->fecha_nacimiento = Carbon::parse($alumno->fecha_nacimiento)->format('m-d-Y');
+                return $alumno;
+            });
 
         // Paginación
 

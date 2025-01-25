@@ -53,8 +53,9 @@
                             <th>No</th>
                             <th scope="col">Codigo Personal</th>
                             <th scope="col">Codigo Correlativo</th>
-                            <th scope="col">Alumno</th>
+                            <th scope="col">Nombre del Alumno</th>
                             <th scope="col">Edad</th>
+                            <th scope="col">Fecha de Nacimiento</th>
                             <th scope="col">Nombre del Encargado</th>
                             <th scope="col">Telefono del Encargado</th>
                             <th scope="col">Telefono de Emergencia</th>
@@ -72,8 +73,9 @@
                                 <td>{{ ++$i }}</td>
                                 <td>{{ $registroAlumno->codigo_personal ?? 'Codigo no asignado' }}</td>
                                 <td>{{ $registroAlumno->inscripcion->codigo_correlativo ?? 'Codigo no asignado' }}</td>
-                                <td>{{ $registroAlumno->nombres }} {{ $registroAlumno->apellidos }}</td>
+                                <td>{{ $registroAlumno->apellidos }} {{ $registroAlumno->nombres }} </td>
                                 <td>{{ $registroAlumno->edad }}</td>
+                                <td>{{ $registroAlumno->fecha_nacimiento }}</td>
                                 <td>{{ $registroAlumno->encargado->nombre_encargado ?? 'N/A' }}</td>
                                 <td>{{ $registroAlumno->encargado->telefono ?? 'N/A' }}</td>
                                 <td>{{ $registroAlumno->encargado->persona_emergencia ?? 'N/A' }}</td>
