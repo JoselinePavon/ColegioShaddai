@@ -5,6 +5,8 @@
 @endsection
 
 @section('content')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+
     <div class="container mt-3">
         <div class="card shadow-lg">
             <div class="p-4">
@@ -32,6 +34,10 @@
                             </option>
                         @endforeach
                     </select>
+
+                    <button id="download-excel" class="btn btn-success btn-sm shadow-sm ms-auto" style="font-size: 1rem;">
+                        <i class="bi bi-download"></i> Descargar Excel
+                    </button>
                 </form>
 
                 {{-- SweetAlert para mensajes de éxito --}}
@@ -54,7 +60,6 @@
                             <th scope="col">Codigo Personal</th>
                             <th scope="col">Codigo Correlativo</th>
                             <th scope="col">Nombre del Alumno</th>
-                            <th scope="col">Edad</th>
                             <th scope="col">Fecha de Nacimiento</th>
                             <th scope="col">Nombre del Encargado</th>
                             <th scope="col">Telefono del Encargado</th>
@@ -74,7 +79,6 @@
                                 <td>{{ $registroAlumno->codigo_personal ?? 'Codigo no asignado' }}</td>
                                 <td>{{ $registroAlumno->inscripcion->codigo_correlativo ?? 'Codigo no asignado' }}</td>
                                 <td>{{ $registroAlumno->apellidos }} {{ $registroAlumno->nombres }} </td>
-                                <td>{{ $registroAlumno->edad }}</td>
                                 <td>{{ $registroAlumno->fecha_nacimiento }}</td>
                                 <td>{{ $registroAlumno->encargado->nombre_encargado ?? 'N/A' }}</td>
                                 <td>{{ $registroAlumno->encargado->telefono ?? 'N/A' }}</td>
@@ -171,6 +175,19 @@
             })
         </script>
     @endif
+    <script>
+        document.getElementById('download-excel').addEventListener('click', function() {
+            // Obtén la tabla
+            var table = document.getElementById('mediciones');
+
+            // Convierte la tabla a una hoja de trabajo de Excel
+            var wb = XLSX.utils.table_to_book(table, { sheet: "Listado de alumnos" });
+
+            // Genera el archivo Excel y lo descarga
+            XLSX.writeFile(wb, "listado_alumnos.xlsx");
+        });
+    </script>
+
 
     <style>
         .dataTables_empty {
@@ -181,7 +198,5 @@
             text-align: center;
         }
     </style>
-
-
 
 @endsection
