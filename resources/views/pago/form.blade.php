@@ -47,7 +47,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <label for="alumno_nombre" class="form-label">Nombre del Alumno</label>
-                                        <input type="text" id="alumno_nombre" class="form-control" value="{{ old('alumno_nombre', $alumno->nombres ?? '') }}" readonly>
+                                        <input type="text" id="alumno_nombre" class="form-control"  value="{{ old('alumno_nombre', ($alumno->nombres ?? '') . ' ' . ($alumno->apellidos ?? '')) }}" readonly>
                                     </div>
                                 </div>
                             </div>
