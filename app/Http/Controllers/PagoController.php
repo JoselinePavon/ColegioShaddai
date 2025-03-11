@@ -163,11 +163,11 @@ class PagoController extends Controller
 
         // Validación de los campos
         $request->validate([
-            'num_serie' => 'required|unique:pagos,num_serie,' . ($request->input('tipopagos_id') === 'combinado' ? '' : 'NULL') . ',id',
+            'num_serie' => 'required',
             'registro_alumnos_id' => 'required',
             'tipopagos_id' => 'nullable', // Puede ser nulo si es pago combinado
             'fecha_pago' => 'required|date',
-            'mes_id' => 'required|exists:mes,id',
+            'mes_id' => $request->input('tipopagos_id') == 6 ? 'nullable|exists:mes,id' : 'required|exists:mes,id',
             'pagos_combinados' => 'nullable|array', // Aceptar array de pagos combinados
             'pagos_combinados.*' => 'exists:tipopagos,id', // Validar que los IDs existan en la BD
         ], [
@@ -180,6 +180,44 @@ class PagoController extends Controller
         $data = $request->all();
         $montoOriginal = Tipopago::find($data['tipopagos_id'])->monto ?? 0;
 
+        // Limitar el monto de computación
+        if ($data['tipopagos_id'] == 6) {
+            // Primero verifica que el monto individual no exceda los 500 quetzales
+            if ((float)$data['abono'] > 500) {  // Nota: Uso 'abono' en lugar de 'monto' según tu código anterior
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'El pago de computación no puede exceder los 500 quetzales.');
+            }
+
+            // Obtener el total de pagos de computación ya realizados por el alumno
+            $totalComputacion = Pago::where('registro_alumnos_id', $data['registro_alumnos_id'])
+                ->where('tipopagos_id', 6)
+                ->sum('abono');  // Suma el campo 'abono' de todos los pagos de computación
+
+            // Verificar si el nuevo pago más el total acumulado excede los 500 quetzales
+            if ($totalComputacion + (float)$data['abono'] > 500) {
+                $montoDisponible = 500 - $totalComputacion;
+
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', "El total de pagos de computación no puede exceder los 500 quetzales.
+                            Total actual: Q." . number_format($totalComputacion, 2) . ".
+                            Monto disponible: Q." . number_format($montoDisponible, 2) . ".");
+            }
+        }
+
+        // Obtén el monto desde la tabla `tipopagos`
+        $montoOriginal = Tipopago::find($data['tipopagos_id'])->monto ?? 0;
+
+        // Verifica si el pago es de computación (tipopagos_id 6)
+        if ($data['tipopagos_id'] == 6) {
+            // Si el monto es mayor a 500, muestra la alerta
+            if ((float)$data['monto'] > 500) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'El pago de computación no puede exceder los 500 quetzales.');
+            }
+        }
 
         if (in_array($data['tipopagos_id'], [5, 6])) {
             // Validar que el campo "abono" tenga un valor

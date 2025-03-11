@@ -26,7 +26,7 @@ class PagoRequest extends FormRequest
 			'fecha_pago' => 'required|string',
 			'tipopagos_id' => 'required',
 			'registro_alumnos_id' => 'required',
-            'mes_id' => 'required',
+            'mes_id' => $this->input('tipopagos_id') == 6 ? 'nullable|exists:mes,id' : 'required|exists:mes,id',
             'abono' => ' ',
         ];
     }

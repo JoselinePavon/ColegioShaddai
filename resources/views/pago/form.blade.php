@@ -20,6 +20,12 @@
                             </div>
                         @endif
 
+                        @if(session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+
                         <!-- Formulario de búsqueda del alumno -->
                         <form method="GET" action="{{ route('resultadosp') }}" class="mb-3">
                             <div class="row align-items-end">
@@ -341,12 +347,20 @@
             formContainer.prepend(alertContainer);
 
             function toggleMesField() {
+                console.log("Tipo de pago seleccionado:", tipoPagosSelect.value);
+
                 if (tipoPagosSelect.value === '1') { // Inscripción
                     hiddenMesInput.value = '13'; // Valor fijo para inscripción
                     mesSelect.style.display = 'none'; // Ocultar campo select
+                    mesSelect.removeAttribute('required'); // Eliminar atributo required
+                } else if (tipoPagosSelect.value === '6') { // Computación
+                    hiddenMesInput.value = ''; // Limpiar el valor del mes
+                    mesSelect.style.display = 'none'; // Ocultar campo select
+                    mesSelect.removeAttribute('required'); // Eliminar atributo required
                 } else {
                     hiddenMesInput.value = mesSelect.value; // Sincronizar con selección del usuario
                     mesSelect.style.display = ''; // Mostrar campo select
+                    mesSelect.setAttribute('required', 'required'); // Hacer el campo requerido
                 }
             }
 
