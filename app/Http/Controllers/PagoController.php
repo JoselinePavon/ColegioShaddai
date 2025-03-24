@@ -27,19 +27,23 @@ class PagoController extends Controller
     public function index(Request $request)
     {
         $mesActual = Carbon::now()->month;
-        $mesLimite = 10; // Límite del ciclo escolar (octubre)
+        $añoActual = Carbon::now()->year;
+        $mesLimite = 10; // Octubre
+
         $grados_id = $request->get('grados_id');
         $seccions_id = $request->get('seccions_id');
         $estado = $request->get('estado');
 
-        // Construir la consulta inicial
+        // Consulta con relaciones
         $query = Pago::with([
-            'registroAlumno.inscripcion.grado',
+            'registroAlumno.inscripcion.grado.nivel',
             'registroAlumno.inscripcion.seccion',
             'estado',
             'mes'
-        ])->orderBy('created_at', 'desc');
+        ])->whereYear('fecha_pago', $añoActual)
+            ->orderBy('created_at', 'desc');
 
+        // Filtros por grado y sección
         if ($grados_id) {
             $query->whereHas('registroAlumno.inscripcion.grado', function ($q) use ($grados_id) {
                 $q->where('id', $grados_id);
@@ -54,15 +58,51 @@ class PagoController extends Controller
 
         $pagos = $query->get();
 
-        // Agrupar los pagos por alumno y determinar los meses pagados
-        $alumnos = $pagos->groupBy('registro_alumnos_id')->map(function ($pagosAlumno) use ($mesActual, $mesLimite) {
-            $mesesPagados = $pagosAlumno->whereIn('tipopagos_id', [2 , 4] )->pluck('mes_id')->toArray(); // Solo colegiaturas
-            $mesesRequeridos = range(1, min($mesActual, $mesLimite)); // Meses requeridos hasta el mes actual o límite
-            $esSolvente = empty(array_diff($mesesRequeridos, $mesesPagados)); // Solvente si pagó todos los meses requeridos
+        // Agrupación por alumno y lógica de solvencia
+        $alumnos = $pagos->groupBy('registro_alumnos_id')->map(function ($pagosAlumno) use ($mesActual, $mesLimite, $añoActual) {
+            // Determinar el nivel del alumno y los tipos de pago correspondientes
+            $nivelId = $pagosAlumno->first()->registroAlumno->inscripcion->grado->nivel->id ?? null;
+            $tiposPagoPorNivel = [];
 
-            // Si ya pagó hasta el mes límite (octubre), siempre será solvente
-            if (empty(array_diff(range(1, $mesLimite), $mesesPagados))) {
-                $esSolvente = true;
+            switch ($nivelId) {
+                case 1: // Preprimaria
+                case 2: // Primaria
+                    $tiposPagoPorNivel = [2]; // Solo colegiatura regular
+                    break;
+                case 3: // Básico
+                    $tiposPagoPorNivel = [3]; // Solo colegiatura básico
+                    break;
+                case 4: // Diversificado
+                    $tiposPagoPorNivel = [4]; // Solo colegiatura diversificado
+                    break;
+                default:
+                    $tiposPagoPorNivel = [2, 3, 4]; // Considerar todos por si acaso
+            }
+
+            // Obtener meses pagados según el nivel del alumno
+            $mesesPagados = $pagosAlumno->whereIn('tipopagos_id', $tiposPagoPorNivel)
+                ->pluck('mes_id')
+                ->unique()
+                ->toArray();
+
+            // Lógica de solvencia según el mes actual
+            $esSolvente = false;
+
+            // Caso 1: Enero (mes 1) - Reinicio de contador
+            if ($mesActual == 1) {
+                // En enero todos empiezan como insolventes hasta que paguen enero
+                $esSolvente = in_array(1, $mesesPagados);
+            }
+            // Caso 2: Febrero a Octubre (meses 2-10) - Verificar pagos hasta el mes actual
+            else if ($mesActual >= 2 && $mesActual <= 10) {
+                $mesesRequeridos = range(1, $mesActual);
+                $esSolvente = empty(array_diff($mesesRequeridos, $mesesPagados));
+            }
+            // Caso 3: Noviembre y Diciembre (meses 11-12) - Solvente si pagó hasta octubre
+            else if ($mesActual == 11 || $mesActual == 12) {
+                // Si pagó hasta octubre (todos los meses del 1 al 10), está solvente
+                $mesesCompletos = range(1, 10);
+                $esSolvente = empty(array_diff($mesesCompletos, $mesesPagados));
             }
 
             return [
@@ -72,21 +112,24 @@ class PagoController extends Controller
             ];
         });
 
+        // Filtro por estado solvente/insolvente
         if ($estado) {
             $alumnos = $alumnos->filter(function ($alumno) use ($estado) {
                 return ($estado === 'solvente') ? $alumno['esSolvente'] : !$alumno['esSolvente'];
             });
         }
 
+        // Grados y secciones para los filtros de la vista
         $grado = \App\Models\Grado::pluck('nombre_grado', 'id');
         $seccion = \App\Models\Seccion::pluck('seccion', 'id');
+
+        // Agregar información de depuración si es necesario
+        // Log::debug("Mes actual: $mesActual, Año: $añoActual");
+        // Log::debug("Total alumnos: " . count($alumnos) . ", Solventes: " . $alumnos->where('esSolvente', true)->count() . ", Insolventes: " . $alumnos->where('esSolvente', false)->count());
 
         return view('pago.index', compact('pagos', 'grado', 'seccion', 'alumnos', 'mesActual'))
             ->with('i', 0);
     }
-
-
-
 
     public function show($registro_alumnos_id)
     {
