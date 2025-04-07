@@ -93,9 +93,9 @@ class PagoController extends Controller
                 // En enero todos empiezan como insolventes hasta que paguen enero
                 $esSolvente = in_array(1, $mesesPagados);
             }
-            // Caso 2: Febrero a Octubre (meses 2-10) - Verificar pagos hasta el mes actual
+            // Caso 2: Febrero a Octubre (meses 2-10) - Verificar pagos hasta el mes anterior
             else if ($mesActual >= 2 && $mesActual <= 10) {
-                $mesesRequeridos = range(1, $mesActual);
+                $mesesRequeridos = range(1, $mesActual - 1); // Solo verificar hasta el mes anterior
                 $esSolvente = empty(array_diff($mesesRequeridos, $mesesPagados));
             }
             // Caso 3: Noviembre y Diciembre (meses 11-12) - Solvente si pagó hasta octubre
