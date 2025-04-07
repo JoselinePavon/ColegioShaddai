@@ -30,6 +30,11 @@ class PagoController extends Controller
         $añoActual = Carbon::now()->year;
         $mesLimite = 10; // Octubre
 
+
+        // Habilitar registro de depuración
+        Log::debug("======= INICIO DE PROCESAMIENTO DE SOLVENCIA =======");
+        Log::debug("Mes actual: $mesActual, Año: $añoActual");
+
         $grados_id = $request->get('grados_id');
         $seccions_id = $request->get('seccions_id');
         $estado = $request->get('estado');
@@ -39,7 +44,8 @@ class PagoController extends Controller
             'registroAlumno.inscripcion.grado.nivel',
             'registroAlumno.inscripcion.seccion',
             'estado',
-            'mes'
+            'mes',
+            'tipopago'
         ])->whereYear('fecha_pago', $añoActual)
             ->orderBy('created_at', 'desc');
 
@@ -57,9 +63,14 @@ class PagoController extends Controller
         }
 
         $pagos = $query->get();
+        Log::debug("Total de pagos encontrados: " . $pagos->count());
 
         // Agrupación por alumno y lógica de solvencia
         $alumnos = $pagos->groupBy('registro_alumnos_id')->map(function ($pagosAlumno) use ($mesActual, $mesLimite, $añoActual) {
+            $alumnoNombre = $pagosAlumno->first()->registroAlumno->nombres ?? 'Desconocido';
+            $alumnoId = $pagosAlumno->first()->registro_alumnos_id ?? 'Desconocido';
+            Log::debug("======= PROCESANDO ALUMNO: $alumnoNombre (ID: $alumnoId) =======");
+
             // Determinar el nivel del alumno y los tipos de pago correspondientes
             $nivelId = $pagosAlumno->first()->registroAlumno->inscripcion->grado->nivel->id ?? null;
             $tiposPagoPorNivel = [];
@@ -79,11 +90,69 @@ class PagoController extends Controller
                     $tiposPagoPorNivel = [2, 3, 4]; // Considerar todos por si acaso
             }
 
-            // Obtener meses pagados según el nivel del alumno
-            $mesesPagados = $pagosAlumno->whereIn('tipopagos_id', $tiposPagoPorNivel)
-                ->pluck('mes_id')
-                ->unique()
-                ->toArray();
+            Log::debug("Nivel: $nivelId, Tipos de pago: " . implode(', ', $tiposPagoPorNivel));
+
+            // Filtrar pagos por tipo de pago según el nivel
+            $pagosFiltrados = $pagosAlumno->whereIn('tipopagos_id', $tiposPagoPorNivel);
+            Log::debug("Total de pagos filtrados por tipo: " . $pagosFiltrados->count());
+
+            // Agrupar pagos por mes
+            $pagosPorMes = [];
+
+            foreach ($pagosFiltrados as $pago) {
+                $mesPago = $pago->mes_id;
+
+                // Inicializar el array para este mes si no existe
+                if (!isset($pagosPorMes[$mesPago])) {
+                    $pagosPorMes[$mesPago] = [
+                        'total_abonado' => 0,
+                        'monto_esperado' => $pago->tipopago->monto ?? 0,
+                        'pagos' => []
+                    ];
+                }
+
+                // Agregar este pago al mes correspondiente
+                $pagosPorMes[$mesPago]['pagos'][] = $pago;
+
+                // Obtener el abono o monto según corresponda
+                $montoActual = 0;
+
+                if (isset($pago->abono) && $pago->abono > 0) {
+                    $montoActual = $pago->abono;
+                    Log::debug("Sumando abono de $montoActual para el mes $mesPago");
+                } else if ($pago->estados_id == 1 || $pago->estados_id == 3) {
+                    $montoActual = $pago->tipopago->monto ?? 0;
+                    Log::debug("Sumando monto completo de $montoActual para el mes $mesPago (estado: {$pago->estados_id})");
+                } else {
+                    Log::debug("No se suma nada para el pago del mes $mesPago (estado: {$pago->estados_id}, abono: {$pago->abono})");
+                }
+
+                // Sumar al total abonado para este mes
+                $pagosPorMes[$mesPago]['total_abonado'] += $montoActual;
+
+                Log::debug("Total acumulado para el mes $mesPago: {$pagosPorMes[$mesPago]['total_abonado']}");
+            }
+
+            // Verificar cada mes para determinar si está completamente pagado
+            $mesesPagados = [];
+
+            foreach ($pagosPorMes as $mes => $datosPago) {
+                $totalAbonado = $datosPago['total_abonado'];
+                $montoEsperado = $datosPago['monto_esperado'];
+
+                Log::debug("Verificando mes $mes: Total abonado=$totalAbonado, Monto esperado=$montoEsperado");
+
+                if ($totalAbonado >= $montoEsperado) {
+                    $mesesPagados[] = $mes;
+                    Log::debug("Mes $mes COMPLETAMENTE PAGADO");
+                } else {
+                    Log::debug("Mes $mes NO completamente pagado");
+                }
+            }
+
+            // Ordenar los meses pagados
+            sort($mesesPagados);
+            Log::debug("Meses pagados completamente: " . implode(', ', $mesesPagados));
 
             // Lógica de solvencia según el mes actual
             $esSolvente = false;
@@ -96,14 +165,26 @@ class PagoController extends Controller
             // Caso 2: Febrero a Octubre (meses 2-10) - Verificar pagos hasta el mes anterior
             else if ($mesActual >= 2 && $mesActual <= 10) {
                 $mesesRequeridos = range(1, $mesActual - 1); // Solo verificar hasta el mes anterior
-                $esSolvente = empty(array_diff($mesesRequeridos, $mesesPagados));
+                $mesesFaltantes = array_diff($mesesRequeridos, $mesesPagados);
+                $esSolvente = empty($mesesFaltantes);
+
+                if (!$esSolvente) {
+                    Log::debug("Meses faltantes: " . implode(', ', $mesesFaltantes));
+                }
             }
             // Caso 3: Noviembre y Diciembre (meses 11-12) - Solvente si pagó hasta octubre
             else if ($mesActual == 11 || $mesActual == 12) {
                 // Si pagó hasta octubre (todos los meses del 1 al 10), está solvente
                 $mesesCompletos = range(1, 10);
-                $esSolvente = empty(array_diff($mesesCompletos, $mesesPagados));
+                $mesesFaltantes = array_diff($mesesCompletos, $mesesPagados);
+                $esSolvente = empty($mesesFaltantes);
+
+                if (!$esSolvente) {
+                    Log::debug("Meses faltantes: " . implode(', ', $mesesFaltantes));
+                }
             }
+
+            Log::debug("¿Es solvente? " . ($esSolvente ? 'SÍ' : 'NO'));
 
             return [
                 'registroAlumno' => $pagosAlumno->first()->registroAlumno,
@@ -123,13 +204,15 @@ class PagoController extends Controller
         $grado = \App\Models\Grado::pluck('nombre_grado', 'id');
         $seccion = \App\Models\Seccion::pluck('seccion', 'id');
 
-        // Agregar información de depuración si es necesario
-        // Log::debug("Mes actual: $mesActual, Año: $añoActual");
-        // Log::debug("Total alumnos: " . count($alumnos) . ", Solventes: " . $alumnos->where('esSolvente', true)->count() . ", Insolventes: " . $alumnos->where('esSolvente', false)->count());
+        Log::debug("Total alumnos: " . count($alumnos) .
+            ", Solventes: " . $alumnos->where('esSolvente', true)->count() .
+            ", Insolventes: " . $alumnos->where('esSolvente', false)->count());
+        Log::debug("======= FIN DE PROCESAMIENTO DE SOLVENCIA =======");
 
         return view('pago.index', compact('pagos', 'grado', 'seccion', 'alumnos', 'mesActual'))
             ->with('i', 0);
     }
+
 
     public function show($registro_alumnos_id)
     {
