@@ -46,8 +46,7 @@ class PagoController extends Controller
             'estado',
             'mes',
             'tipopago'
-        ])->whereYear('fecha_pago', $añoActual)
-            ->orderBy('created_at', 'desc');
+        ])->orderBy('created_at', 'desc');
 
         // Filtros por grado y sección
         if ($grados_id) {

@@ -167,7 +167,7 @@
                                         <div class="form-check me-3 mb-2">
                                             <input class="form-check-input pago-combinado-checkbox" type="checkbox" name="pagos_combinados[]" value="{{ $id }}" id="pago_combinado_{{ $id }}" data-monto="{{ $montos[$id] }}">
                                             <label class="form-check-label" for="pago_combinado_{{ $id }}">
-                                                {{ $tipo_pago }} (Q. {{ number_format($montos[$id], 2) }})
+                                                {{ $tipo_pago }} (Q. {{ isset($montos[$id]) && is_numeric($montos[$id]) ? number_format(floatval($montos[$id]), 2) : '0.00' }})
                                             </label>
                                         </div>
                                         @endif
