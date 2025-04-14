@@ -107,7 +107,7 @@
             <div class="dashboard">
                 <div class="card blue">
                     <i class="fas fa-users" style="font-size: 50px; color: #333; margin-bottom: 15px;"></i>
-                    <h2>Total Alumnos Inscritos</h2>
+                    <h2>Total Alumnos Registrados</h2>
                     <p>{{ $totalAlumnos }}</p> <!-- Mostrar el total de alumnos -->
 
                 </div>

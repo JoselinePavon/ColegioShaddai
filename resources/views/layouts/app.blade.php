@@ -184,12 +184,14 @@
             </a>
         </li>
 
+
         <li class="nav-item {{ request()->is('registro-alumnos') ? 'active' : '' }}">
             <a class="nav-link" href="/registro-alumnos">
                 <i class="fas fa-list"></i>
                 <span>Lista de Alumnos</span>
             </a>
         </li>
+
 
         <li class="nav-item {{ request()->is('grados') ? 'active' : '' }}">
             <a class="nav-link" href="/grados">
@@ -202,6 +204,13 @@
             <a class="nav-link" href="/pagos/create">
                 <i class="fas fa-money-bill-wave"></i>
                 <span>Pagos</span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ request()->is('/') ? 'active' : '' }}">
+            <a class="nav-link" href="/">
+                <i class="fas fa-user-check"></i>
+                <span>Pagos de inscripcion</span>
             </a>
         </li>
 

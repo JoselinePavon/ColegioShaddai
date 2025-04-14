@@ -46,8 +46,7 @@ class PagoController extends Controller
             'estado',
             'mes',
             'tipopago'
-        ])->whereYear('fecha_pago', $añoActual)
-            ->orderBy('created_at', 'desc');
+        ])->orderBy('created_at', 'desc');
 
         // Filtros por grado y sección
         if ($grados_id) {
@@ -93,7 +92,21 @@ class PagoController extends Controller
             Log::debug("Nivel: $nivelId, Tipos de pago: " . implode(', ', $tiposPagoPorNivel));
 
             // Filtrar pagos por tipo de pago según el nivel
-            $pagosFiltrados = $pagosAlumno->whereIn('tipopagos_id', $tiposPagoPorNivel);
+            $pagosFiltrados = $pagosAlumno->filter(function ($pago) use ($tiposPagoPorNivel) {
+                // Incluir pagos regulares según el nivel
+                if (in_array($pago->tipopagos_id, $tiposPagoPorNivel)) {
+                    return true;
+                }
+
+                // Incluir pagos de tipo "Completar Pago" que contengan "Colegiatura" en su descripción
+                if ($pago->tipopago && stripos($pago->tipopago->tipo_pago, 'Completar Pago') !== false
+                    && stripos($pago->tipopago->tipo_pago, 'Colegiatura') !== false) {
+                    return true;
+                }
+
+                return false;
+            });
+
             Log::debug("Total de pagos filtrados por tipo: " . $pagosFiltrados->count());
 
             // Agrupar pagos por mes
@@ -117,14 +130,21 @@ class PagoController extends Controller
                 // Obtener el abono o monto según corresponda
                 $montoActual = 0;
 
+                // Si es un pago con abono específico (como pagos parciales o complementarios)
                 if (isset($pago->abono) && $pago->abono > 0) {
                     $montoActual = $pago->abono;
-                    Log::debug("Sumando abono de $montoActual para el mes $mesPago");
-                } else if ($pago->estados_id == 1 || $pago->estados_id == 3) {
+                    Log::debug("Sumando abono de $montoActual para el mes $mesPago (ID: {$pago->id}, Tipo: {$pago->tipopagos_id})");
+                }
+                // Si es un pago completo (estados 1 o 3)
+                else if ($pago->estados_id == 1 || $pago->estados_id == 3) {
                     $montoActual = $pago->tipopago->monto ?? 0;
-                    Log::debug("Sumando monto completo de $montoActual para el mes $mesPago (estado: {$pago->estados_id})");
-                } else {
-                    Log::debug("No se suma nada para el pago del mes $mesPago (estado: {$pago->estados_id}, abono: {$pago->abono})");
+                    Log::debug("Sumando monto completo de $montoActual para el mes $mesPago (ID: {$pago->id}, Tipo: {$pago->tipopagos_id}, Estado: {$pago->estados_id})");
+                }
+                // Si es un pago incompleto (estado 4 o cualquier otro)
+                else {
+                    // Para pagos incompletos, usar el monto del pago o el abono, lo que esté disponible
+                    $montoActual = $pago->monto ?? $pago->abono ?? 0;
+                    Log::debug("Sumando monto parcial de $montoActual para el mes $mesPago (ID: {$pago->id}, Tipo: {$pago->tipopagos_id}, Estado: {$pago->estados_id})");
                 }
 
                 // Sumar al total abonado para este mes
