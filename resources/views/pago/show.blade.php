@@ -47,17 +47,31 @@
 
                 <!-- Total Pagado -->
                 <div class="alert alert-info mt-3 d-flex justify-content-between align-items-center">
+                    <!-- Lado izquierdo: Total pagado -->
                     <div>
                         <strong>Total Pagado por el Alumno:</strong>
                         <span style="color: #006400; font-weight: bold;">
-            Q. {{ number_format($totalPagos, 2) }}
-             </span>
+            Q. {{ number_format($totalPagos, 2) }} </span>
                     </div>
-                    <button id="download-excel" class="btn btn-success btn-sm shadow-sm" style="font-size: 1rem;">
-                        <i class="bi bi-download"></i> Descargar Excel
-                    </button>
-                </div>
 
+                    <!-- Lado derecho: Filtro de año y botón Excel juntos -->
+                    <div class="d-flex gap-2 align-items-center">
+                        <form method="GET" action="{{ route('pagos.show', $pagos->first()->registroAlumno->id ?? $registro_alumnos_id) }}" class="mb-0">
+                            <select name="anio" class="form-select btn btn-outline-dark btn-sm" style="width: 180px;" onchange="this.form.submit()">
+                                <option value="">Todos los Años</option>
+                                @for($year = 2024; $year <= 2030; $year++)
+                                    <option value="{{ $year }}" {{ $anio == $year ? 'selected' : '' }}>
+                                        {{ $year }}
+                                    </option>
+                                @endfor
+                            </select>
+                        </form>
+
+                        <button id="download-excel" class="btn btn-success btn-sm shadow-sm" style="font-size: 1rem;">
+                            <i class="bi bi-download"></i> Descargar Excel
+                        </button>
+                    </div>
+                </div>
 
                 <!-- Tabla de Pagos -->
                 <div class="table-responsive">
@@ -131,8 +145,8 @@
             $('#mediciones').DataTable({
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ por página",
-                    "zeroRecords": "<i class='fas fa-info-circle'></i> No se encontraron resultados para la búsqueda.",
-                    "emptyTable": "<i class='fas fa-info-circle'></i> No hay datos disponibles en la tabla",
+                    "zeroRecords": "<i class='fas fa-info-circle'></i> No se encontraron datos para el año seleccionado",
+                    "emptyTable": "<i class='fas fa-info-circle'></i> No se encontraron datos para el año seleccionado.",
                     "info": "Mostrando _PAGE_ de _PAGES_",
                     "infoEmpty": "No hay registros disponibles",
                     "infoFiltered": "(filtrado de _MAX_ registros totales)",

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    Alumnos Registrados
+    Pago de inscripcion
 @endsection
 
 @section('content')
@@ -11,8 +11,40 @@
         <div class="card shadow-lg">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 id="card_title" class="font-weight-bold"> <i class="bi bi-person-circle"></i> {{ __('Listado de Alumnos Registrados, Inscritos') }}</h4>
+                    <h4 id="card_title" class="font-weight-bold"> <i class="bi bi-person-circle"></i> {{ __('Listado de Alumnos Inscritos, Pagos de inscripción') }}</h4>
+
                 </div>
+
+                <form action="{{ route('pagos.indexp') }}" method="GET" class="d-flex align-items-center gap-2 mb-4">
+                    <select name="grados_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
+                        <option value="">Todos los Grados</option>
+                        @foreach($grado as $id => $nombre_grado)
+                            <option value="{{ $id }}" {{ request()->get('grados_id') == $id ? 'selected' : '' }}>
+                                {{ $nombre_grado }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <select name="seccions_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
+                        <option value="">Todas las secciones</option>
+                        @foreach($seccion as $id => $nombre)
+                            <option value="{{ $id }}" {{ request()->get('seccions_id') == $id ? 'selected' : '' }}>
+                                {{ $nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <select name="anio" class="form-select btn btn-outline-dark btn-sm" style="width: 180px;" onchange="this.form.submit()">
+                        <option value="">Todos los Años</option>
+                        @for($year = 2024; $year <= 2030; $year++)
+                            <option value="{{ $year }}" {{ request()->get('anio') == $year ? 'selected' : '' }}>
+                                {{ $year }}
+                            </option>
+                        @endfor
+                    </select>
+
+                    <a href="{{ route('pagos.indexp') }}" class="btn btn-secondary btn-sm">Limpiar</a>
+                </form>
 
                 {{-- SweetAlert para mensajes de éxito --}}
                 @if ($message = Session::get('success'))
@@ -46,7 +78,6 @@
                             $i = 0; // Inicializar el contador
                         @endphp
 
-
                         @foreach ($registroAlumnos as $registroAlumno)
                             @php
                                 // Verificar si el alumno tiene pago de inscripción (tipopagos_id = 1)
@@ -62,31 +93,26 @@
                                 <td>{{ $registroAlumno->encargado->nombre_encargado ?? 'N/A' }}</td>
                                 <td>{{ $registroAlumno->encargado->telefono ?? 'N/A' }}</td>
                                 <td>{{ $registroAlumno->encargado->persona_emergencia ?? 'N/A' }}</td>
-
-
-                                <td class="text-center d-flex gap-1">
+                                <td class="text-center">
                                     @if($tieneInscripcionPagada)
-                                        <button class="btn btn-success btn-sm" disabled>
+                                        <button class="btn btn-success btn-sm" >
                                             <i class="fas fa-check-circle"></i> Pagado
                                         </button>
                                     @else
                                         <a href="{{ route('pagos.create', ['registro_alumnos_id' => $registroAlumno->id, 'tipopagos_id' => 1]) }}"
-                                           class="btn btn-primary btn-sm"
+                                           class="btn btn-warning btn-sm"
                                            title="Registrar pago de inscripción">
                                             <i class="fas fa-money-bill-wave"></i> Pagar
                                         </a>
-                                @endif
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
     <script>
         $(document).ready(function() {
@@ -128,7 +154,6 @@
         });
     </script>
 
-
     <style>
         .dataTables_empty {
             background-color: #cff4fc;
@@ -138,5 +163,4 @@
             text-align: center;
         }
     </style>
-
 @endsection

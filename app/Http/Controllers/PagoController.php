@@ -236,32 +236,55 @@ class PagoController extends Controller
     }
 
 
-    public function show($registro_alumnos_id)
-    {
+    public function show(Request $request, $registro_alumnos_id) {
+        // Obtener el valor del año desde el request (si viene)
+        $anio = $request->get('anio');
 
-        // Obtener todos los pagos realizados por el alumno con el registro_alumnos_id
-        $pagos = Pago::where('registro_alumnos_id', $registro_alumnos_id)
-            ->with(['registroAlumno.inscripcion', 'tipopago', 'mes', 'estado'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Consulta base sin filtro para verificar si el alumno tiene pagos en general
+        $verificarPagos = Pago::where('registro_alumnos_id', $registro_alumnos_id)->exists();
 
-        // Verificar si el alumno tiene pagos registrados
-        if ($pagos->isEmpty()) {
+        // Si el alumno no tiene pagos en general, redirigir
+        if (!$verificarPagos) {
             return redirect()->route('pagos.index')->with('error', 'No se encontraron pagos para este alumno.');
         }
-        $totalPagos = $pagos->sum(function ($pago) {
-            if (in_array($pago->tipopagos_id, [5, 6])) { // Verificar si tipopagos_id es 3 o 5
-                // Si es Computación, sumar el abono
-                return $pago->abono ?? 0;
-            }
-            // Para otros pagos, sumar el monto
-            return $pago->tipopago->monto ?? 0;
-        });
 
-        // Retornar la vista con los pagos del alumno
-        return view('pago.show', compact('pagos','totalPagos'));
+        // Consulta con filtros
+        $pagosQuery = Pago::where('registro_alumnos_id', $registro_alumnos_id)
+            ->with(['registroAlumno.inscripcion', 'tipopago', 'mes', 'estado'])
+            ->orderBy('created_at', 'desc');
+
+        // Aplicar filtro por año si se selecciona uno
+        if ($anio) {
+            $pagosQuery->whereYear('fecha_pago', $anio);
+        }
+
+        $pagos = $pagosQuery->get();
+
+        // Variable para controlar si hay pagos con el filtro aplicado
+        $sinPagos = $pagos->isEmpty();
+
+        // Calcular total de pagos según tipo
+        $totalPagos = 0;
+        if (!$sinPagos) {
+            $totalPagos = $pagos->sum(function ($pago) {
+                if (in_array($pago->tipopagos_id, [5, 6])) {
+                    return $pago->abono ?? 0;
+                }
+                return $pago->tipopago->monto ?? 0;
+            });
+        }
+
+        // Obtener años disponibles para el selector
+        $aniosDisponibles = Pago::where('registro_alumnos_id', $registro_alumnos_id)
+            ->selectRaw('YEAR(fecha_pago) as anio')
+            ->distinct()
+            ->orderBy('anio', 'desc')
+            ->pluck('anio')
+            ->toArray();
+
+        // Retornar vista con datos, incluido el registro_alumnos_id
+        return view('pago.show', compact('pagos', 'totalPagos', 'anio', 'sinPagos', 'aniosDisponibles', 'registro_alumnos_id'));
     }
-
 
 
     /**
@@ -604,12 +627,40 @@ class PagoController extends Controller
     }
 
 
-    public function indexp()
+    public function indexp(Request $request)
     {
-        $registroAlumnos = RegistroAlumno::with(['pagos', 'inscripcion', 'encargado'])->get();
-        return view('pago.pagoinscripcion', compact('registroAlumnos'));
+        // Obtener los grados y secciones para los filtros
+        $grado = Grado::pluck('nombre_grado', 'id');
+        $seccion = Seccion::pluck('seccion', 'id');
+
+        // Iniciar la consulta base
+        $query = RegistroAlumno::with(['pagos', 'inscripcion', 'encargado']);
+
+
+
+        // Verificar si hay filtros y si la relación inscripcion existe
+        if ($request->filled('grados_id')) {
+            $query->whereHas('inscripcion', function($q) use ($request) {
+                $q->where('grados_id', $request->grados_id);
+            });
+        }
+
+        if ($request->filled('seccions_id')) {
+            $query->whereHas('inscripcion', function($q) use ($request) {
+                $q->where('seccions_id', $request->seccions_id);
+            });
+        }
+        // Filtro por año usando YEAR() en la columna fecha_pago
+        if ($request->filled('anio')) {
+            $query->whereHas('pagos', function($q) use ($request) {
+                $q->whereYear('fecha_pago', $request->anio)
+                    ->where('tipopagos_id', 1); // Asumiendo que tipopagos_id = 1 es para inscripción
+            });
+        }
+
+        $registroAlumnos = $query->get();
+
+        return view('pago.pagoinscripcion', compact('registroAlumnos', 'grado', 'seccion'));
     }
-
-
 
 }
