@@ -47,4 +47,10 @@ class RegistroAlumno extends Model
     {
         return $this->hasOne(\App\Models\Inscripcion::class, 'registro_alumnos_id', 'id');
     }
+
+    public function pagos()
+    {
+        return $this->hasMany(Pago::class, 'registro_alumnos_id');
+    }
+
 }

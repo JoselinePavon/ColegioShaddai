@@ -207,10 +207,10 @@
             </a>
         </li>
 
-        <li class="nav-item {{ request()->is('/') ? 'active' : '' }}">
-            <a class="nav-link" href="/">
+        <li class="nav-item {{ request()->is('pagos/inscripcion*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('pagos.indexp') }}">
                 <i class="fas fa-user-check"></i>
-                <span>Pagos de inscripcion</span>
+                <span>Pagos de inscripción</span>
             </a>
         </li>
 

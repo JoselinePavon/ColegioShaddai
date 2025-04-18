@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Grado;
 use App\Models\Me;
 use App\Models\Pago;
 use App\Models\RegistroAlumno;
+use App\Models\Seccion;
 use App\Models\Tipopago;
 use App\Models\estado;
 use App\Models\Inscripcion;
@@ -600,6 +602,14 @@ class PagoController extends Controller
             'tipos'
         ));
     }
+
+
+    public function indexp()
+    {
+        $registroAlumnos = RegistroAlumno::with(['pagos', 'inscripcion', 'encargado'])->get();
+        return view('pago.pagoinscripcion', compact('registroAlumnos'));
+    }
+
 
 
 }
