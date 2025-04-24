@@ -29,191 +29,231 @@ class PagoController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-{
-    $mesActual = Carbon::now()->month;
-    $añoActual = Carbon::now()->year;
-    $mesLimite = 10;
-
-    Log::debug("======= INICIO DE PROCESAMIENTO DE SOLVENCIA =======");
-    Log::debug("Mes actual: $mesActual, Año: $añoActual");
-
-    $grados_id = $request->get('grados_id');
-    $seccions_id = $request->get('seccions_id');
-    $estado = $request->get('estado');
-    $anioEscolarId = $request->get('anio_escolar_id');
-
-    $query = Pago::with([
-        'registroAlumno.inscripcion.grado.nivel',
-        'registroAlumno.inscripcion.seccion',
-        'estado',
-        'mes',
-        'tipopago'
-    ]);
-
-    $anioEscolarId = $request->get('anio_escolar_id');
-
-    if (!$anioEscolarId) {
-$anioEscolarId = AnioEscolar::orderByDesc('created_at')->value('id');
-    }
-    
-    if ($anioEscolarId) {
-        $query->whereHas('registroAlumno.inscripcion', function ($q) use ($anioEscolarId) {
-            $q->where('anio_escolar_id', $anioEscolarId);
-        });
-    }
-    
-
-    $query->orderBy('created_at', 'desc');
-
-    if ($grados_id) {
-        $query->whereHas('registroAlumno.inscripcion.grado', function ($q) use ($grados_id) {
-            $q->where('id', $grados_id);
-        });
-    }
-
-    if ($seccions_id) {
-        $query->whereHas('registroAlumno.inscripcion.seccion', function ($q) use ($seccions_id) {
-            $q->where('id', $seccions_id);
-        });
-    }
-
-    $pagos = $query->get();
-    Log::debug("Total de pagos encontrados: " . $pagos->count());
-
-    $alumnos = $pagos->groupBy('registro_alumnos_id')->map(function ($pagosAlumno) use ($mesActual, $mesLimite, $añoActual) {
-        $alumnoNombre = $pagosAlumno->first()->registroAlumno->nombres ?? 'Desconocido';
-        $alumnoId = $pagosAlumno->first()->registro_alumnos_id ?? 'Desconocido';
-        Log::debug("======= PROCESANDO ALUMNO: $alumnoNombre (ID: $alumnoId) =======");
-
-        $nivelId = $pagosAlumno->first()->registroAlumno->inscripcion->grado->nivel->id ?? null;
-        $tiposPagoPorNivel = [];
-
-        switch ($nivelId) {
-            case 1: case 2:
-                $tiposPagoPorNivel = [2]; break;
-            case 3:
-                $tiposPagoPorNivel = [3]; break;
-            case 4:
-                $tiposPagoPorNivel = [4]; break;
-            default:
-                $tiposPagoPorNivel = [2, 3, 4];
-        }
-
-        Log::debug("Nivel: $nivelId, Tipos de pago: " . implode(', ', $tiposPagoPorNivel));
-
-        $pagosFiltrados = $pagosAlumno->whereIn('tipopagos_id', $tiposPagoPorNivel);
-        Log::debug("Total de pagos filtrados por tipo: " . $pagosFiltrados->count());
-
-        $pagosPorMes = [];
-
-        foreach ($pagosFiltrados as $pago) {
-            $mesPago = $pago->mes_id;
-
-            if (!isset($pagosPorMes[$mesPago])) {
-                $pagosPorMes[$mesPago] = [
-                    'total_abonado' => 0,
-                    'monto_esperado' => $pago->tipopago->monto ?? 0,
-                    'pagos' => []
-                ];
-            }
-
-            $pagosPorMes[$mesPago]['pagos'][] = $pago;
-
-            $montoActual = 0;
-
-            if (isset($pago->abono) && $pago->abono > 0) {
-                $montoActual = $pago->abono;
-                Log::debug("Sumando abono de $montoActual para el mes $mesPago");
-            } else if ($pago->estados_id == 1 || $pago->estados_id == 3) {
-                $montoActual = $pago->tipopago->monto ?? 0;
-                Log::debug("Sumando monto completo de $montoActual para el mes $mesPago (estado: {$pago->estados_id})");
-            }
-
-            $pagosPorMes[$mesPago]['total_abonado'] += $montoActual;
-        }
-
-        $mesesPagados = [];
-
-        foreach ($pagosPorMes as $mes => $datosPago) {
-            $totalAbonado = $datosPago['total_abonado'];
-            $montoEsperado = $datosPago['monto_esperado'];
-
-            if ($totalAbonado >= $montoEsperado) {
-                $mesesPagados[] = $mes;
-            }
-        }
-
-        sort($mesesPagados);
-
-        $esSolvente = false;
-
-        if ($mesActual == 1) {
-            $esSolvente = in_array(1, $mesesPagados);
-        } else if ($mesActual >= 2 && $mesActual <= 10) {
-            $mesesRequeridos = range(1, $mesActual - 1);
-            $mesesFaltantes = array_diff($mesesRequeridos, $mesesPagados);
-            $esSolvente = empty($mesesFaltantes);
-        } else if ($mesActual == 11 || $mesActual == 12) {
-            $mesesCompletos = range(1, 10);
-            $mesesFaltantes = array_diff($mesesCompletos, $mesesPagados);
-            $esSolvente = empty($mesesFaltantes);
-        }
-
-        return [
-            'registroAlumno' => $pagosAlumno->first()->registroAlumno,
-            'mesesPagados' => $mesesPagados,
-            'esSolvente' => $esSolvente,
-        ];
-    });
-
-    if ($estado) {
-        $alumnos = $alumnos->filter(function ($alumno) use ($estado) {
-            return ($estado === 'solvente') ? $alumno['esSolvente'] : !$alumno['esSolvente'];
-        });
-    }
-
-    $grado = \App\Models\Grado::pluck('nombre_grado', 'id');
-    $seccion = \App\Models\Seccion::pluck('seccion', 'id');
-    $aniosEscolares = \App\Models\AnioEscolar::pluck('nombre', 'id');
-
-    return view('pago.index', compact(
-        'pagos',
-        'grado',
-        'seccion',
-        'alumnos',
-        'mesActual',
-        'aniosEscolares'
-    ))->with('i', 0);
-}
-
-
-
-    public function show($registro_alumnos_id)
     {
+        // Guardar filtros en sesión si se proporcionan en la solicitud
+        if ($request->has('grados_id')) {
+            session(['filtro_grados_id' => $request->get('grados_id')]);
+        }
+        if ($request->has('seccions_id')) {
+            session(['filtro_seccions_id' => $request->get('seccions_id')]);
+        }
+        if ($request->has('estado')) {
+            session(['filtro_estado' => $request->get('estado')]);
+        }
+        if ($request->has('anio_escolar_id')) {
+            session(['filtro_anio_escolar_id' => $request->get('anio_escolar_id')]);
+        }
 
-        // Obtener todos los pagos realizados por el alumno con el registro_alumnos_id
+        // Recuperar filtros de la sesión si no se proporcionan en la solicitud
+        $grados_id = $request->get('grados_id', session('filtro_grados_id'));
+        $seccions_id = $request->get('seccions_id', session('filtro_seccions_id'));
+        $estado = $request->get('estado', session('filtro_estado'));
+        $anioEscolarId = $request->get('anio_escolar_id', session('filtro_anio_escolar_id'));
+
+        $mesActual = Carbon::now()->month;
+        $añoActual = Carbon::now()->year;
+        $mesLimite = 10;
+
+        Log::debug("======= INICIO DE PROCESAMIENTO DE SOLVENCIA =======");
+        Log::debug("Mes actual: $mesActual, Año: $añoActual");
+
+        $query = Pago::with([
+            'registroAlumno.inscripcion.grado.nivel',
+            'registroAlumno.inscripcion.seccion',
+            'estado',
+            'mes',
+            'tipopago'
+        ]);
+
+        // Aplicar filtro por año escolar si se ha proporcionado
+        if ($anioEscolarId) {
+            $query->whereHas('registroAlumno.inscripcion', function ($q) use ($anioEscolarId) {
+                $q->where('anio_escolar_id', $anioEscolarId);
+            });
+        }
+
+        // Filtrar por grados_id si se ha proporcionado
+        if ($grados_id) {
+            $query->whereHas('registroAlumno.inscripcion.grado', function ($q) use ($grados_id) {
+                $q->where('id', $grados_id);
+            });
+        }
+
+        // Filtrar por seccions_id si se ha proporcionado
+        if ($seccions_id) {
+            $query->whereHas('registroAlumno.inscripcion.seccion', function ($q) use ($seccions_id) {
+                $q->where('id', $seccions_id);
+            });
+        }
+
+        $query->orderBy('created_at', 'desc');
+
+        // Obtener los pagos filtrados
+        $pagos = $query->get();
+        Log::debug("Total de pagos encontrados: " . $pagos->count());
+
+        // Agrupar los pagos por alumno
+        $alumnos = $pagos->groupBy('registro_alumnos_id')->map(function ($pagosAlumno) use ($mesActual, $mesLimite, $añoActual) {
+            // Obtener el nombre del alumno y el ID
+            $alumnoNombre = $pagosAlumno->first()->registroAlumno->nombres ?? 'Desconocido';
+            $alumnoId = $pagosAlumno->first()->registro_alumnos_id ?? 'Desconocido';
+            Log::debug("======= PROCESANDO ALUMNO: $alumnoNombre (ID: $alumnoId) =======");
+
+            // Obtener el nivel del alumno
+            $nivelId = $pagosAlumno->first()->registroAlumno->inscripcion->grado->nivel->id ?? null;
+            $tiposPagoPorNivel = [];
+
+            switch ($nivelId) {
+                case 1: case 2:
+                $tiposPagoPorNivel = [2]; break;
+                case 3:
+                    $tiposPagoPorNivel = [3]; break;
+                case 4:
+                    $tiposPagoPorNivel = [4]; break;
+                default:
+                    $tiposPagoPorNivel = [2, 3, 4];
+            }
+
+            Log::debug("Nivel: $nivelId, Tipos de pago: " . implode(', ', $tiposPagoPorNivel));
+
+            $pagosFiltrados = $pagosAlumno->whereIn('tipopagos_id', $tiposPagoPorNivel);
+            Log::debug("Total de pagos filtrados por tipo: " . $pagosFiltrados->count());
+
+            $pagosPorMes = [];
+
+            foreach ($pagosFiltrados as $pago) {
+                $mesPago = $pago->mes_id;
+
+                if (!isset($pagosPorMes[$mesPago])) {
+                    $pagosPorMes[$mesPago] = [
+                        'total_abonado' => 0,
+                        'monto_esperado' => $pago->tipopago->monto ?? 0,
+                        'pagos' => []
+                    ];
+                }
+
+                $pagosPorMes[$mesPago]['pagos'][] = $pago;
+
+                $montoActual = 0;
+
+                if (isset($pago->abono) && $pago->abono > 0) {
+                    $montoActual = $pago->abono;
+                    Log::debug("Sumando abono de $montoActual para el mes $mesPago");
+                } else if ($pago->estados_id == 1 || $pago->estados_id == 3) {
+                    $montoActual = $pago->tipopago->monto ?? 0;
+                    Log::debug("Sumando monto completo de $montoActual para el mes $mesPago (estado: {$pago->estados_id})");
+                }
+
+                $pagosPorMes[$mesPago]['total_abonado'] += $montoActual;
+            }
+
+            // Determinar los meses pagados
+            $mesesPagados = [];
+
+            foreach ($pagosPorMes as $mes => $datosPago) {
+                $totalAbonado = $datosPago['total_abonado'];
+                $montoEsperado = $datosPago['monto_esperado'];
+
+                if ($totalAbonado >= $montoEsperado) {
+                    $mesesPagados[] = $mes;
+                }
+            }
+
+            sort($mesesPagados);
+
+            $esSolvente = false;
+
+            if ($mesActual == 1) {
+                $esSolvente = in_array(1, $mesesPagados);
+            } else if ($mesActual >= 2 && $mesActual <= 10) {
+                $mesesRequeridos = range(1, $mesActual - 1);
+                $mesesFaltantes = array_diff($mesesRequeridos, $mesesPagados);
+                $esSolvente = empty($mesesFaltantes);
+            } else if ($mesActual == 11 || $mesActual == 12) {
+                $mesesCompletos = range(1, 10);
+                $mesesFaltantes = array_diff($mesesCompletos, $mesesPagados);
+                $esSolvente = empty($mesesFaltantes);
+            }
+
+            return [
+                'registroAlumno' => $pagosAlumno->first()->registroAlumno,
+                'mesesPagados' => $mesesPagados,
+                'esSolvente' => $esSolvente,
+            ];
+        });
+
+        // Filtrar alumnos por estado si se proporciona
+        if ($estado) {
+            $alumnos = $alumnos->filter(function ($alumno) use ($estado) {
+                return ($estado === 'solvente') ? $alumno['esSolvente'] : !$alumno['esSolvente'];
+            });
+        }
+
+        // Obtener los grados, secciones y años escolares para la vista
+        $grado = \App\Models\Grado::pluck('nombre_grado', 'id');
+        $seccion = \App\Models\Seccion::pluck('seccion', 'id');
+        $aniosEscolares = \App\Models\AnioEscolar::pluck('nombre', 'id');
+
+        return view('pago.index', compact(
+            'pagos',
+            'grado',
+            'seccion',
+            'alumnos',
+            'mesActual',
+            'aniosEscolares',
+            'grados_id',      // Pasar los valores de filtro a la vista
+            'seccions_id',
+            'estado',
+            'anioEscolarId'
+        ))->with('i', 0);
+    }
+
+
+
+    public function show(Request $request, $registro_alumnos_id) {
+        // Obtener el año del request (si fue seleccionado en el filtro)
+        $anio = $request->input('anio');
+
+        // Primero obtener el registro del alumno independientemente de los pagos
+        $registroAlumno = \App\Models\RegistroAlumno::findOrFail($registro_alumnos_id);
+
+        // Obtener todos los pagos realizados por el alumno
         $pagos = Pago::where('registro_alumnos_id', $registro_alumnos_id)
             ->with(['registroAlumno.inscripcion', 'tipopago', 'mes', 'estado'])
+            ->when($anio, function ($query) use ($anio) {
+                // Filtrar por año de la fecha de pago si se seleccionó un año
+                return $query->whereYear('fecha_pago', $anio);
+            })
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Verificar si el alumno tiene pagos registrados
-        if ($pagos->isEmpty()) {
-            return redirect()->route('pagos.index')->with('error', 'No se encontraron pagos para este alumno.');
-        }
+        // Calcular el total de pagos (será 0 si no hay pagos)
         $totalPagos = $pagos->sum(function ($pago) {
-            if (in_array($pago->tipopagos_id, [5, 6])) { // Verificar si tipopagos_id es 3 o 5
-                // Si es Computación, sumar el abono
+            if (in_array($pago->tipopagos_id, [5, 6])) { // Computación
                 return $pago->abono ?? 0;
             }
-            // Para otros pagos, sumar el monto
             return $pago->tipopago->monto ?? 0;
         });
 
-        // Retornar la vista con los pagos del alumno
-        return view('pago.show', compact('pagos','totalPagos'));
-    }
+        // Obtener los valores de filtro de la sesión para construir la URL de regreso
+        $filtro_grados_id = session('filtro_grados_id');
+        $filtro_seccions_id = session('filtro_seccions_id');
+        $filtro_estado = session('filtro_estado');
+        $filtro_anio_escolar_id = session('filtro_anio_escolar_id');
 
+        // Retornar la vista con todas las variables necesarias
+        return view('pago.show', compact(
+            'pagos',
+            'totalPagos',
+            'anio',
+            'registroAlumno',
+            'registro_alumnos_id',
+            'filtro_grados_id',
+            'filtro_seccions_id',
+            'filtro_estado',
+            'filtro_anio_escolar_id'
+        ));
+    }
 
 
     /**
@@ -587,7 +627,7 @@ if ($anioEscolarId) {
             });
         }
 
-        
+
 
         $registroAlumnos = $query->get();
 

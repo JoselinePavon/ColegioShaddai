@@ -19,7 +19,7 @@
                 </div>
 
                 <form action="{{ route('pagos.index') }}" method="GET" class="d-flex align-items-center gap-2 mb-4">
-                    <select name="grados_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
+                    <select name="grados_id" class="form-select btn btn-outline-dark btn-xs w-25" onchange="this.form.submit()">
                         <option value="">Todos los Grados</option>
                         @foreach($grado as $id => $nombre_grado)
                             <option value="{{ $id }}" {{ request()->get('grados_id') == $id ? 'selected' : '' }}>
@@ -27,8 +27,8 @@
                             </option>
                         @endforeach
                     </select>
-                
-                    <select name="seccions_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
+
+                    <select name="seccions_id" class="form-select btn btn-outline-dark btn-xs w-25" onchange="this.form.submit()">
                         <option value="">Todas las secciones</option>
                         @foreach($seccion as $id => $nombre)
                             <option value="{{ $id }}" {{ request()->get('seccions_id') == $id ? 'selected' : '' }}>
@@ -36,14 +36,14 @@
                             </option>
                         @endforeach
                     </select>
-                
-                    <select name="estado" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
+
+                    <select name="estado" class="form-select btn btn-outline-dark btn-xs w-25" onchange="this.form.submit()">
                         <option value="">Todos los estados</option>
                         <option value="solvente" {{ request()->get('estado') == 'solvente' ? 'selected' : '' }}>Solvente</option>
                         <option value="insolvente" {{ request()->get('estado') == 'insolvente' ? 'selected' : '' }}>Insolvente</option>
                     </select>
-                
-                    <select name="anio_escolar_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
+
+                    <select name="anio_escolar_id" class="form-select btn btn-outline-dark btn-xs w-25" onchange="this.form.submit()">
                         <option value="">Todos los Años</option>
                         @foreach ($aniosEscolares as $id => $anio)
                             <option value="{{ $id }}" {{ request('anio_escolar_id') == $id ? 'selected' : '' }}>
@@ -51,12 +51,12 @@
                             </option>
                         @endforeach
                     </select>
-                
-                    <button id="download-excel" class="btn btn-success btn-sm shadow-sm ms-auto" style="font-size: 1rem;">
+
+                    <button id="download-excel" class="btn btn-success btn-sm shadow-xs " style="font-size: 0.99rem;">
                         <i class="bi bi-download"></i> Descargar Excel
                     </button>
                 </form>
-                
+
 
 
                 {{-- SweetAlert para mensajes de éxito --}}
