@@ -10,6 +10,8 @@ use App\Http\Controllers\TipopagoController;
 use App\Http\Controllers\RegistroAlumnoController;
 use App\Http\Controllers\SeccionController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AnioEscolarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/validar-codigo', [RegistroAlumnoController::class, 'validarCodigo'])->name('validar-codigo');
     Route::post('/validar-codigo-correlativo', [RegistroAlumnoController::class, 'validarCodigoCorrelativo'])->name('validar-codigo-correlativo');
     Route::post('/buscar-encargado', [RegistroAlumnoController::class, 'buscarEncargado'])->name('buscar.encargado');
+    Route::get('/obtener-anios-escolares', [AnioEscolarController::class, 'obtenerAniosEscolares']);
 
 
 });

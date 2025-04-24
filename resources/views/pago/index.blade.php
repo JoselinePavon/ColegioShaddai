@@ -27,7 +27,7 @@
                             </option>
                         @endforeach
                     </select>
-
+                
                     <select name="seccions_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
                         <option value="">Todas las secciones</option>
                         @foreach($seccion as $id => $nombre)
@@ -36,17 +36,27 @@
                             </option>
                         @endforeach
                     </select>
-
+                
                     <select name="estado" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
                         <option value="">Todos los estados</option>
                         <option value="solvente" {{ request()->get('estado') == 'solvente' ? 'selected' : '' }}>Solvente</option>
                         <option value="insolvente" {{ request()->get('estado') == 'insolvente' ? 'selected' : '' }}>Insolvente</option>
                     </select>
-
+                
+                    <select name="anio_escolar_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
+                        <option value="">Todos los Años</option>
+                        @foreach ($aniosEscolares as $id => $anio)
+                            <option value="{{ $id }}" {{ request('anio_escolar_id') == $id ? 'selected' : '' }}>
+                                {{ $anio }}
+                            </option>
+                        @endforeach
+                    </select>
+                
                     <button id="download-excel" class="btn btn-success btn-sm shadow-sm ms-auto" style="font-size: 1rem;">
                         <i class="bi bi-download"></i> Descargar Excel
                     </button>
                 </form>
+                
 
 
                 {{-- SweetAlert para mensajes de éxito --}}
