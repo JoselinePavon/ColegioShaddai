@@ -133,6 +133,7 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                
 
                             </div>
 
@@ -144,7 +145,21 @@
                                     <input type="text" id="monto" name="monto" class="form-control">
                                 </div>
                             </div>
+                            
 
+                            <div class="col-md-6 mb-3">
+                                <label for="anio_escolar_id" class="form-label">Año Escolar</label>
+                                <select name="anio_escolar_id" id="anio_escolar_id" class="form-select @error('anio_escolar_id') is-invalid @enderror">
+                                    <option value="" disabled selected>Selecciona un Año Escolar</option>
+                                    <!-- Las opciones se llenarán con AJAX -->
+                                </select>
+                                @error('anio_escolar_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+
+                            
                             <!-- Campo Abono -->
                             <div class="row align-items-end" id="abono-section" style="display: none;">
                                 <div class="col-md-6 mb-3">
@@ -236,6 +251,23 @@
                     abonoInput.setCustomValidity("");
                 }
             });
+        });
+    </script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('/obtener-anios-escolares')
+                .then(response => response.json())
+                .then(data => {
+                    let select = document.getElementById('anio_escolar_id');
+                    data.forEach(anio => {
+                        let option = document.createElement('option');
+                        option.value = anio.id;
+                        option.textContent = anio.nombre;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error al obtener años escolares:', error));
         });
     </script>
 

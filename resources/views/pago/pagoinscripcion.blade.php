@@ -15,36 +15,46 @@
 
                 </div>
 
-                <form action="{{ route('pagos.indexp') }}" method="GET" class="d-flex align-items-center gap-2 mb-4">
-                    <select name="grados_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
-                        <option value="">Todos los Grados</option>
-                        @foreach($grado as $id => $nombre_grado)
-                            <option value="{{ $id }}" {{ request()->get('grados_id') == $id ? 'selected' : '' }}>
-                                {{ $nombre_grado }}
-                            </option>
-                        @endforeach
-                    </select>
+                <form action="{{ route('pagos.indexp') }}" method="GET"
+      class="d-flex align-items-center gap-2 mb-4">
 
-                    <select name="seccions_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
-                        <option value="">Todas las secciones</option>
-                        @foreach($seccion as $id => $nombre)
-                            <option value="{{ $id }}" {{ request()->get('seccions_id') == $id ? 'selected' : '' }}>
-                                {{ $nombre }}
-                            </option>
-                        @endforeach
-                    </select>
+    <select name="grados_id"
+            class="form-select btn btn-outline-dark btn-sm w-25"
+            onchange="this.form.submit()">
+        <option value="">Todos los Grados</option>
+        @foreach ($grado as $id => $nombre_grado)
+            <option value="{{ $id }}" {{ request('grados_id') == $id ? 'selected' : '' }}>
+                {{ $nombre_grado }}
+            </option>
+        @endforeach
+    </select>
 
-                    <select name="anio" class="form-select btn btn-outline-dark btn-sm" style="width: 180px;" onchange="this.form.submit()">
-                        <option value="">Todos los Años</option>
-                        @for($year = 2024; $year <= 2030; $year++)
-                            <option value="{{ $year }}" {{ request()->get('anio') == $year ? 'selected' : '' }}>
-                                {{ $year }}
-                            </option>
-                        @endfor
-                    </select>
+    <select name="seccions_id"
+            class="form-select btn btn-outline-dark btn-sm w-25"
+            onchange="this.form.submit()">
+        <option value="">Todas las secciones</option>
+        @foreach ($seccion as $id => $nombre)
+            <option value="{{ $id }}" {{ request('seccions_id') == $id ? 'selected' : '' }}>
+                {{ $nombre }}
+            </option>
+        @endforeach
+    </select>
 
-                    <a href="{{ route('pagos.indexp') }}" class="btn btn-secondary btn-sm">Limpiar</a>
-                </form>
+    {{-- ← se añade w-25 aquí --}}
+    <select name="anio_escolar_id"
+            class="form-select btn btn-outline-dark btn-sm w-25"
+            onchange="this.form.submit()">
+        <option value="">Todos los Años</option>
+        @foreach ($aniosEscolares as $id => $anio)
+            <option value="{{ $id }}" {{ request('anio_escolar_id') == $id ? 'selected' : '' }}>
+                {{ $anio }}
+            </option>
+        @endforeach
+    </select>
+
+    <a href="{{ route('pagos.indexp') }}" class="btn btn-secondary btn-sm">Limpiar</a>
+</form>
+
 
                 {{-- SweetAlert para mensajes de éxito --}}
                 @if ($message = Session::get('success'))
