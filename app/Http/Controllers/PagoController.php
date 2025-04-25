@@ -116,35 +116,61 @@ class PagoController extends Controller
 
             Log::debug("Nivel: $nivelId, Tipos de pago: " . implode(', ', $tiposPagoPorNivel));
 
-            $pagosFiltrados = $pagosAlumno->whereIn('tipopagos_id', $tiposPagoPorNivel);
-            Log::debug("Total de pagos filtrados por tipo: " . $pagosFiltrados->count());
+            // No filtrar por tipos de pago aquí para incluir todos los pagos relacionados
+            $pagosFiltrados = $pagosAlumno;
+            Log::debug("Total de pagos del alumno: " . $pagosFiltrados->count());
 
             $pagosPorMes = [];
 
+            // Primero, agrupar todos los pagos por mes
             foreach ($pagosFiltrados as $pago) {
                 $mesPago = $pago->mes_id;
 
                 if (!isset($pagosPorMes[$mesPago])) {
                     $pagosPorMes[$mesPago] = [
                         'total_abonado' => 0,
-                        'monto_esperado' => $pago->tipopago->monto ?? 0,
+                        'monto_esperado' => 0,
                         'pagos' => []
                     ];
                 }
 
+                // Agregar el pago a la lista de pagos del mes
                 $pagosPorMes[$mesPago]['pagos'][] = $pago;
 
-                $montoActual = 0;
+                // Actualizar el monto esperado si es un pago de colegiatura
+                if (in_array($pago->tipopagos_id, $tiposPagoPorNivel)) {
+                    $pagosPorMes[$mesPago]['monto_esperado'] = $pago->tipopago->monto ?? 0;
+                }
+            }
 
-                if (isset($pago->abono) && $pago->abono > 0) {
-                    $montoActual = $pago->abono;
-                    Log::debug("Sumando abono de $montoActual para el mes $mesPago");
-                } else if ($pago->estados_id == 1 || $pago->estados_id == 3) {
-                    $montoActual = $pago->tipopago->monto ?? 0;
-                    Log::debug("Sumando monto completo de $montoActual para el mes $mesPago (estado: {$pago->estados_id})");
+            // Calcular el total abonado para cada mes
+            foreach ($pagosPorMes as $mes => &$datosMes) {
+                $totalAbonado = 0;
+
+                foreach ($datosMes['pagos'] as $pago) {
+                    // Si es un pago incompleto (abono)
+                    if (isset($pago->abono) && $pago->abono > 0) {
+                        $totalAbonado += $pago->abono;
+                        Log::debug("Mes $mes: Sumando abono de {$pago->abono}");
+                    }
+                    // Si es un pago completo o completar pago
+                    elseif ($pago->estados_id == 1 || $pago->estados_id == 3) {
+                        // Si es un pago de colegiatura
+                        if (in_array($pago->tipopagos_id, $tiposPagoPorNivel)) {
+                            $totalAbonado = $pago->tipopago->monto ?? 0;
+                            Log::debug("Mes $mes: Pago completo detectado, estableciendo total a {$totalAbonado}");
+                            // Un pago completo siempre cubre el mes completo
+                            break;
+                        } else {
+                            // Otros tipos de pagos (completar pagos)
+                            $totalAbonado += $pago->monto ?? 0;
+                            Log::debug("Mes $mes: Sumando pago adicional de {$pago->monto}");
+                        }
+                    }
                 }
 
-                $pagosPorMes[$mesPago]['total_abonado'] += $montoActual;
+                $datosMes['total_abonado'] = $totalAbonado;
+                Log::debug("Mes $mes: Total abonado final = {$totalAbonado}, Monto esperado = {$datosMes['monto_esperado']}");
             }
 
             // Determinar los meses pagados
@@ -154,26 +180,46 @@ class PagoController extends Controller
                 $totalAbonado = $datosPago['total_abonado'];
                 $montoEsperado = $datosPago['monto_esperado'];
 
-                if ($totalAbonado >= $montoEsperado) {
+                if ($totalAbonado >= $montoEsperado && $montoEsperado > 0) {
                     $mesesPagados[] = $mes;
+                    Log::debug("Mes $mes PAGADO: abonado=$totalAbonado, esperado=$montoEsperado");
+                } else {
+                    Log::debug("Mes $mes NO PAGADO: abonado=$totalAbonado, esperado=$montoEsperado");
                 }
             }
 
             sort($mesesPagados);
+            Log::debug("Meses pagados: " . implode(', ', $mesesPagados));
 
             $esSolvente = false;
 
+            // Regla especial: si pagó el mes anterior, es solvente todo el mes actual
             if ($mesActual == 1) {
+                // Enero: es solvente si ya pagó enero
                 $esSolvente = in_array(1, $mesesPagados);
             } else if ($mesActual >= 2 && $mesActual <= 10) {
-                $mesesRequeridos = range(1, $mesActual - 1);
-                $mesesFaltantes = array_diff($mesesRequeridos, $mesesPagados);
-                $esSolvente = empty($mesesFaltantes);
+                // Caso especial: el alumno ya pagó el mes actual
+                if (in_array($mesActual, $mesesPagados)) {
+                    $esSolvente = true;
+                }
+                // Regla normal: es solvente si pagó todos los meses anteriores
+                else {
+                    $mesRequeridoParaSolvencia = $mesActual - 1;
+                    $esSolvente = in_array($mesRequeridoParaSolvencia, $mesesPagados);
+
+                    // Verificar también que todos los meses anteriores estén pagados
+                    $mesesRequeridos = range(1, $mesRequeridoParaSolvencia - 1);
+                    $mesesFaltantes = array_diff($mesesRequeridos, $mesesPagados);
+                    $esSolvente = $esSolvente && empty($mesesFaltantes);
+                }
             } else if ($mesActual == 11 || $mesActual == 12) {
+                // Noviembre/Diciembre: debe tener todos los meses hasta octubre
                 $mesesCompletos = range(1, 10);
                 $mesesFaltantes = array_diff($mesesCompletos, $mesesPagados);
                 $esSolvente = empty($mesesFaltantes);
             }
+
+            Log::debug("Resultado solvencia para {$alumnoNombre}: " . ($esSolvente ? "SOLVENTE" : "INSOLVENTE"));
 
             return [
                 'registroAlumno' => $pagosAlumno->first()->registroAlumno,
@@ -208,52 +254,53 @@ class PagoController extends Controller
         ))->with('i', 0);
     }
 
-
-
     public function show(Request $request, $registro_alumnos_id) {
-        // Obtener el año del request (si fue seleccionado en el filtro)
-        $anio = $request->input('anio');
+        // Obtener el año escolar seleccionado en el filtro
+        $anio_escolar_id = $request->input('anio');
 
-        // Primero obtener el registro del alumno independientemente de los pagos
+        // Obtener el registro del alumno
         $registroAlumno = \App\Models\RegistroAlumno::findOrFail($registro_alumnos_id);
 
-        // Obtener todos los pagos realizados por el alumno
+        // Obtener los pagos filtrados por ciclo escolar
         $pagos = Pago::where('registro_alumnos_id', $registro_alumnos_id)
             ->with(['registroAlumno.inscripcion', 'tipopago', 'mes', 'estado'])
-            ->when($anio, function ($query) use ($anio) {
-                // Filtrar por año de la fecha de pago si se seleccionó un año
-                return $query->whereYear('fecha_pago', $anio);
+            ->when($anio_escolar_id, function ($query) use ($anio_escolar_id) {
+                return $query->where('anio_escolar_id', $anio_escolar_id); // cambio aquí
             })
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Calcular el total de pagos (será 0 si no hay pagos)
+        // Calcular el total de pagos
         $totalPagos = $pagos->sum(function ($pago) {
-            if (in_array($pago->tipopagos_id, [5, 6])) { // Computación
+            if (in_array($pago->tipopagos_id, [5, 6])) {
                 return $pago->abono ?? 0;
             }
             return $pago->tipopago->monto ?? 0;
         });
 
-        // Obtener los valores de filtro de la sesión para construir la URL de regreso
+        // Valores para el regreso
         $filtro_grados_id = session('filtro_grados_id');
         $filtro_seccions_id = session('filtro_seccions_id');
         $filtro_estado = session('filtro_estado');
         $filtro_anio_escolar_id = session('filtro_anio_escolar_id');
 
-        // Retornar la vista con todas las variables necesarias
+        // Obtener todos los ciclos escolares disponibles (para mostrar en el filtro)
+        $aniosEscolares = \App\Models\AnioEscolar::all();
+
         return view('pago.show', compact(
             'pagos',
             'totalPagos',
-            'anio',
+            'anio_escolar_id',
             'registroAlumno',
             'registro_alumnos_id',
             'filtro_grados_id',
             'filtro_seccions_id',
             'filtro_estado',
-            'filtro_anio_escolar_id'
+            'filtro_anio_escolar_id',
+            'aniosEscolares'
         ));
     }
+
 
 
     /**

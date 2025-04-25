@@ -60,14 +60,15 @@
                     <div class="d-flex gap-2 align-items-center">
                         <form method="GET" action="{{ route('pagos.show', $registro_alumnos_id) }}" class="mb-0">
                             <select name="anio" class="form-select btn btn-outline-dark btn-sm" style="width: 180px;" onchange="this.form.submit()">
-                                <option value="">Todos los Años</option>
-                                @for($year = 2024; $year <= 2030; $year++)
-                                    <option value="{{ $year }}" {{ $anio == $year ? 'selected' : '' }}>
-                                        {{ $year }}
+                                <option value="">Todos los Ciclos</option>
+                                @foreach($aniosEscolares as $anioEscolar)
+                                    <option value="{{ $anioEscolar->id }}" {{ $anio_escolar_id == $anioEscolar->id ? 'selected' : '' }}>
+                                        {{ $anioEscolar->nombre }}
                                     </option>
-                                @endfor
+                                @endforeach
                             </select>
                         </form>
+
 
                         <button id="download-excel" class="btn btn-success btn-sm shadow-sm" style="font-size: 1rem;">
                             <i class="bi bi-download"></i> Descargar Excel
@@ -78,12 +79,16 @@
                 @if($pagos->isEmpty())
                     <div class="alert alert-warning mt-3">
                         <i class="fas fa-info-circle"></i>
-                        @if($anio)
-                            No se encontraron pagos para este alumno en el año {{ $anio }}.
+                        @if($anio_escolar_id)
+                            @php
+                                $anioNombre = $aniosEscolares->firstWhere('id', $anio_escolar_id)->nombre ?? 'Ciclo desconocido';
+                            @endphp
+                            No se encontraron pagos para este alumno en el ciclo escolar {{ $anioNombre }}.
                         @else
                             No se encontraron pagos para este alumno.
                         @endif
-                    </div>
+
+            </div>
                 @else
                     <!-- Tabla de Pagos -->
                     <div class="table-responsive">
