@@ -52,7 +52,10 @@
         @endforeach
     </select>
 
-    <a href="{{ route('pagos.indexp') }}" class="btn btn-secondary btn-sm">Limpiar</a>
+                    <a href="{{ route('pagos.indexp') }}" class="btn btn-outline-secondary btn-sm shadow-sm" style="font-size: 1rem;">
+                        <i class="bi bi-x-circle"></i> Limpiar
+                    </a>
+
 </form>
 
 

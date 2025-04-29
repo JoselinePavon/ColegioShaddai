@@ -35,6 +35,8 @@
                         @endforeach
                     </select>
 
+
+
                     <button id="download-excel" class="btn btn-success btn-sm shadow-sm ms-auto" style="font-size: 1rem;">
                         <i class="bi bi-download"></i> Descargar Excel
                     </button>

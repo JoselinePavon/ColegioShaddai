@@ -63,6 +63,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Rutas para registro de alumnos
     Route::resource('registro-alumnos', App\Http\Controllers\RegistroAlumnoController::class);
+    // Añadir estas rutas en tu archivo web.php o api.php
+    Route::get('/filtro', [RegistroAlumnoController::class, 'index'])->name('filtro.index');
+    Route::get('/filtro/clear', [RegistroAlumnoController::class, 'clearFilters'])->name('filtro.clearFilters');
 
     // Rutas para encargados
     Route::resource('encargados', App\Http\Controllers\EncargadoController::class);

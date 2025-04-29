@@ -30,40 +30,64 @@ class RegistroAlumnoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $seccion = Seccion::pluck('seccion', 'id');
         $grado = Grado::with('nivel')->get()->mapWithKeys(function ($grado) {
             return [$grado->id => "{$grado->nombre_grado} - {$grado->nivel->nivel}"];
         });
 
-        // Obtener los filtros seleccionados por el usuario
-        $seccions_id = request()->get('seccions_id');
-        $grados_id = request()->get('grados_id');
+        $clearFilters = $request->has('clear');
+        if ($clearFilters) {
+            session()->forget('alumno_filters');
+            $seccions_id = null;
+            $grados_id = null;
+        } else {
+            $seccions_id = $request->get('seccions_id');
+            $grados_id = $request->get('grados_id');
 
-        // Construir la consulta base
-        $registroAlumnos = RegistroAlumno::with(['encargado', 'inscripcion.grado', 'inscripcion.seccion'])
-            ->whereHas('inscripcion', function ($query) use ($seccions_id, $grados_id) {
-                if ($seccions_id) {
-                    $query->where('seccions_id', $seccions_id);
-                }
-                if ($grados_id) {
-                    $query->where('grados_id', $grados_id);
-                }
-            })
-            ->orderBy('created_at','desc')
+            if ((!$request->filled('seccions_id') && !$request->filled('grados_id')) &&
+                (session()->has('alumno_filters.seccions_id') || session()->has('alumno_filters.grados_id'))) {
+                return redirect()->route('filtro.index', [
+                    'seccions_id' => session('alumno_filters.seccions_id'),
+                    'grados_id' => session('alumno_filters.grados_id')
+                ]);
+            }
+
+            session(['alumno_filters.seccions_id' => $seccions_id]);
+            session(['alumno_filters.grados_id' => $grados_id]);
+        }
+
+        $registroAlumnos = RegistroAlumno::with(['encargado', 'inscripcion.grado', 'inscripcion.seccion']);
+
+        // Filtros usando filled()
+        if ($request->filled('seccions_id')) {
+            $registroAlumnos->whereHas('inscripcion', fn($q) => $q->where('seccions_id', $request->seccions_id));
+        }
+
+        if ($request->filled('grados_id')) {
+            $registroAlumnos->whereHas('inscripcion', fn($q) => $q->where('grados_id', $request->grados_id));
+        }
+
+        $registroAlumnos = $registroAlumnos->orderBy('apellidos', 'asc')
+            ->orderBy('nombres', 'asc')
             ->get()
             ->map(function ($alumno) {
                 $alumno->fecha_nacimiento = Carbon::parse($alumno->fecha_nacimiento)->format('m-d-Y');
                 return $alumno;
             });
 
-        // Paginación
-
         return view('registro-alumno.index', compact('registroAlumnos', 'grado', 'seccion'));
     }
 
 
+
+
+
+    public function clearFilters() {
+        session()->forget('alumno_filters');
+        return redirect()->route('filtro.index', ['clear' => true]);
+    }
 
     /**
      * Show the form for creating a new resource.

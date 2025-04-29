@@ -644,23 +644,21 @@ class PagoController extends Controller
             'tipos'
         ));
     }
-    public function indexp(Request $request)
-    {
+    public function indexp(Request $request) {
         // Obtener los grados y secciones para los filtros
         $grado = Grado::pluck('nombre_grado', 'id');
         $seccion = Seccion::pluck('seccion', 'id');
-        $aniosEscolares = AnioEscolar::pluck('nombre',    'id');   // ← para la vista
+        $aniosEscolares = AnioEscolar::pluck('nombre', 'id'); // ← para la vista
 
         // Iniciar la consulta base
         $query = RegistroAlumno::with(['pagos', 'inscripcion', 'encargado']);
 
-/*━━━━━━━━━━ 3. Filtro por Año Escolar ━━━━━━━━━━*/
-$anioEscolarId = $request->get('anio_escolar_id');
-if ($anioEscolarId) {
-    $query->whereHas('inscripcion', fn ($q) =>
-        $q->where('anio_escolar_id', $anioEscolarId)
-    );
-}
+        /*━━━━━━━━━━ 3. Filtro por Año Escolar ━━━━━━━━━━*/
+        $anioEscolarId = $request->get('anio_escolar_id');
+        if ($anioEscolarId) {
+            $query->whereHas('inscripcion', fn ($q) => $q->where('anio_escolar_id', $anioEscolarId));
+        }
+
         // Verificar si hay filtros y si la relación inscripcion existe
         if ($request->filled('grados_id')) {
             $query->whereHas('inscripcion', function($q) use ($request) {
@@ -674,11 +672,12 @@ if ($anioEscolarId) {
             });
         }
 
-
+        // Ordenar primero por apellidos y luego por nombres en orden alfabético
+        $query->orderBy('apellidos', 'asc')
+            ->orderBy('nombres', 'asc');
 
         $registroAlumnos = $query->get();
 
-        return view('pago.pagoinscripcion', compact('registroAlumnos', 'grado', 'seccion','aniosEscolares'));
+        return view('pago.pagoinscripcion', compact('registroAlumnos', 'grado', 'seccion', 'aniosEscolares'));
     }
-
 }
