@@ -90,7 +90,7 @@
                             <tr data-meses-pagados="{{ json_encode($alumno['mesesPagados']) }}" data-es-solvente="{{ $alumno['esSolvente'] ? 'true' : 'false' }}">
                                 <td>{{ ++$i }}</td>
                                 <td>{{ $alumno['registroAlumno']->inscripcion->codigo_correlativo ?? 'Sin Correlativo' }}</td>
-                                <td>{{ $alumno['registroAlumno']->nombres }} {{ $alumno['registroAlumno']->apellidos }}</td>
+                                <td>{{ $alumno['registroAlumno']->apellidos }} {{ $alumno['registroAlumno']->nombres }}</td>
                                 <td>{{ $alumno['registroAlumno']->inscripcion->grado->nombre_grado }} -
                                     {{ $alumno['registroAlumno']->inscripcion->grado->nivel->nivel }}
                                 </td>
