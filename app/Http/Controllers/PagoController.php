@@ -276,6 +276,54 @@ class PagoController extends Controller
     }
 
 
+    public function show(Request $request, $registro_alumnos_id) {
+        // Obtener el año escolar seleccionado en el filtro
+        $anio_escolar_id = $request->input('anio');
+
+        // Obtener el registro del alumno
+        $registroAlumno = \App\Models\RegistroAlumno::findOrFail($registro_alumnos_id);
+
+        // Obtener los pagos filtrados por ciclo escolar
+        $pagos = Pago::where('registro_alumnos_id', $registro_alumnos_id)
+            ->with(['registroAlumno.inscripcion', 'tipopago', 'mes', 'estado'])
+            ->when($anio_escolar_id, function ($query) use ($anio_escolar_id) {
+                return $query->where('anio_escolar_id', $anio_escolar_id); // cambio aquí
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Calcular el total de pagos
+        $totalPagos = $pagos->sum(function ($pago) {
+            if (in_array($pago->tipopagos_id, [5, 6])) {
+                return $pago->abono ?? 0;
+            }
+            return $pago->tipopago->monto ?? 0;
+        });
+
+        // Valores para el regreso
+        $filtro_grados_id = session('filtro_grados_id');
+        $filtro_seccions_id = session('filtro_seccions_id');
+        $filtro_estado = session('filtro_estado');
+        $filtro_anio_escolar_id = session('filtro_anio_escolar_id');
+
+        // Obtener todos los ciclos escolares disponibles (para mostrar en el filtro)
+        $aniosEscolares = \App\Models\AnioEscolar::all();
+
+        return view('pago.show', compact(
+            'pagos',
+            'totalPagos',
+            'anio_escolar_id',
+            'registroAlumno',
+            'registro_alumnos_id',
+            'filtro_grados_id',
+            'filtro_seccions_id',
+            'filtro_estado',
+            'filtro_anio_escolar_id',
+            'aniosEscolares'
+        ));
+    }
+
+
 
     /**
      * Show the form for creating a new resource.
