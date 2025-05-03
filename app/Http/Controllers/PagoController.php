@@ -331,6 +331,7 @@ class PagoController extends Controller
     public function create()
     {
         $aniosEscolares = AnioEscolar::orderBy('nombre', 'desc')->get();
+        $anioActual = date('Y');
         $pago = new Pago();
         $tipos = Tipopago::pluck('tipo_pago', 'id');
         $mes = Me::whereBetween('id', [1, 10])->pluck('mes', 'id'); // Filtrar meses entre enero y octubre
@@ -361,7 +362,7 @@ class PagoController extends Controller
                 ->toArray();
         }
 
-        return view('pago.form', compact('aniosEscolares','pago', 'montos', 'tipos', 'registro_alumnos', 'mes', 'pagosPorMes','inscripcionPagada'));
+        return view('pago.form', compact('aniosEscolares','anioActual','pago', 'montos', 'tipos', 'registro_alumnos', 'mes', 'pagosPorMes','inscripcionPagada'));
     }
 
 
@@ -543,13 +544,13 @@ class PagoController extends Controller
      */
     public function edit($id)
     {
-
+        $anioActual = date('Y');
         $pago = Pago::find($id);
         $tipos = Tipopago::pluck('tipo_pago', 'id'); // Obtener todos los tipos de pago
         $registro_alumnos = RegistroAlumno::pluck('nombres', 'id'); // Obtener todos los alumnos
         $montos = Tipopago::pluck('monto', 'id'); // Agregar esto para obtener los montos
 
-        return view('pago.edit', compact( 'pago','montos','tipos', 'registro_alumnos'));
+        return view('pago.edit', compact( 'pago', 'anioActual','montos','tipos', 'registro_alumnos'));
     }
 
 
@@ -566,6 +567,7 @@ class PagoController extends Controller
 
     public function destroy($id)
     {
+
         try {
         Pago::find($id)->delete();
 
@@ -580,19 +582,23 @@ class PagoController extends Controller
 
     public function buscar()
     {
-        return view('pago.form');
+        $anioActual = date('Y');
+        return view('pago.form', 'anioActual');
     }
 
     public function resultadosp(Request $request)
     {
+        $anioActual = date('Y');
         $pago = new Pago();
         $registro_alumno = RegistroAlumno::pluck('nombres', 'id');
         $tipos = Tipopago::pluck('tipo_pago', 'id');
         $montos = Tipopago::pluck('monto', 'id');
         $mes = Me::whereBetween('id', [1, 10])->pluck('mes', 'id'); // Filtrar meses entre enero y octubre
 
-        $inscripcionPagada = false;
+        // Add the missing aniosEscolares variable
+        $aniosEscolares = AnioEscolar::orderBy('nombre', 'desc')->get();
 
+        $inscripcionPagada = false;
 
         $search = $request->input('search');
         $error = null;
@@ -650,7 +656,6 @@ class PagoController extends Controller
             $error = "Alumno no encontrado.";
         }
 
-
         return view('pago.create', compact(
             'alumno',
             'montos',
@@ -663,7 +668,9 @@ class PagoController extends Controller
             'pagosPorMes',
             'mes',
             'inscripcionPagada',
-            'tipos'
+            'tipos',
+            'anioActual',
+            'aniosEscolares'  // Add the variable to the compact array
         ));
     }
     public function indexp(Request $request) {

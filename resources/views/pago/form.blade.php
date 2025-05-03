@@ -147,8 +147,10 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="anio_escolar_id" class="form-label">Año Escolar</label>
                                     <select name="anio_escolar_id" id="anio_escolar_id" class="form-select @error('anio_escolar_id') is-invalid @enderror">
-                                        <option value="" disabled selected>Selecciona un Año Escolar</option>
-                                        <!-- Las opciones se llenarán con AJAX -->
+                                        <option value="" disabled>Selecciona un Año Escolar</option>
+                                        @foreach($aniosEscolares as $anio)
+                                            <option value="{{ $anio->id }}" {{ $anio->nombre == $anioActual ? 'selected' : '' }}>{{ $anio->nombre }}</option>
+                                        @endforeach
                                     </select>
                                     @error('anio_escolar_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
