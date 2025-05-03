@@ -221,6 +221,19 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div  class="col-md-16">
+                                <label for="anio_escolar_id"  class="form-label">
+                                    Año Escolar<span class="text-danger">*</span>
+                                </label>
+                                <select name="anio_escolar_id" id="anio_escolar_id" class="form-control form-control-sm" id="anio_escolar_id_id" required>
+                                    <option value="">Seleccione año escolar</option>
+                                    @foreach ($aniosEscolar as $id => $nombre)
+                                        <option value="{{ $id }}">{{ $nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+
                         </div>
                         {{-- Botón de guardar --}}
                         <div class="text-center mt-4">

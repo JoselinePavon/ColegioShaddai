@@ -98,4 +98,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/obtener-anios-escolares', [AnioEscolarController::class, 'obtenerAniosEscolares']);
 
 
+
+
 });

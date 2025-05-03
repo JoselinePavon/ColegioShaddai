@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AnioEscolar;
 use App\Models\Colonia;
 use App\Models\Encargado;
 use App\Models\Grado;
@@ -14,6 +15,7 @@ use App\Models\Seccion;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use PhpParser\Node\Stmt\DeclareDeclare;
 
 
 /**
@@ -80,10 +82,6 @@ class RegistroAlumnoController extends Controller
         return view('registro-alumno.index', compact('registroAlumnos', 'grado', 'seccion'));
     }
 
-
-
-
-
     public function clearFilters() {
         session()->forget('alumno_filters');
         return redirect()->route('filtro.index', ['clear' => true]);
@@ -105,19 +103,17 @@ class RegistroAlumnoController extends Controller
         });
 
         $nivel = Nivel::pluck('nivel', 'id');
+        $aniosEscolar = AnioEscolar::pluck('nombre', 'id'); // Obtener los años escolares
 
         $ultimosAlumnos = RegistroAlumno::latest()->take(2)->get();
         $ultimasInscripciones = Inscripcion::with('registroAlumno', 'grado', 'seccion')->latest()->take(2)->get();
 
-        return view('registro-alumno.create', compact('nivel','existingCorrelativos','ultimosAlumnos', 'ultimasInscripciones','lugares','colonias','grado','seccion','existingCodes'));
+        return view('registro-alumno.create', compact('nivel','existingCorrelativos','ultimosAlumnos', 'ultimasInscripciones','lugares','colonias','grado','seccion','existingCodes', 'aniosEscolar'));
     }
-
-
 
     /**
      * Store a newly created resource in storage.
      */
-
     public function store(Request $request)
     {
         // Validar los datos
@@ -145,6 +141,7 @@ class RegistroAlumnoController extends Controller
             'grados_id' => 'required|exists:grados,id',
             'jornada' => 'required|string|in:Matutina,Vespertina',
             'seccions_id' => 'required|exists:seccions,id',
+            'anio_escolar_id' => 'required|exists:anios_escolares,id'
         ]);
 
         // Buscar o crear el encargado
@@ -183,6 +180,7 @@ class RegistroAlumnoController extends Controller
             'grados_id' => $request->grados_id,
             'jornada' => $request->jornada,
             'seccions_id' => $request->seccions_id,
+            'anio_escolar_id' => $request->anio_escolar_id, // Asignar el año escolar
         ]);
 
         // Redirigir con mensaje de éxito
@@ -195,7 +193,7 @@ class RegistroAlumnoController extends Controller
      */
     public function show($id)
     {
-        $registroAlumno = RegistroAlumno::with('encargado')->find($id);
+        $registroAlumno = RegistroAlumno::with(['encargado', 'inscripcion.anioEscolar'])->find($id);
 
         if (!$registroAlumno) {
             return redirect()->route('registro-alumnos.index')
@@ -205,12 +203,13 @@ class RegistroAlumnoController extends Controller
         return view('registro-alumno.show', compact('registroAlumno'));
     }
 
+
     /**
      * Show the form for editing the specified resource.
      */
     public function edit($id)
     {
-        $registroAlumno = RegistroAlumno::with(['encargado', 'inscripcion.grado', 'inscripcion.seccion'])->findOrFail($id);
+        $registroAlumno = RegistroAlumno::with(['encargado', 'inscripcion.grado', 'inscripcion.seccion', 'inscripcion.anioEscolar'])->findOrFail($id);
         $grado = Grado::with('nivel')->get()->mapWithKeys(function ($grado) {
             return [$grado->id => "{$grado->nombre_grado} - {$grado->nivel->nivel}"];
         });
@@ -219,17 +218,17 @@ class RegistroAlumnoController extends Controller
         $seccion = Seccion::pluck('seccion', 'id');
         $encargado = $registroAlumno->encargado;
         $inscripcion = $registroAlumno->inscripcion;
+        $anioEscolar = AnioEscolar::pluck('nombre', 'id');
 
-        return view('registro-alumno.edit', compact('registroAlumno', 'lugares', 'colonias', 'grado', 'seccion', 'encargado', 'inscripcion'));
+        return view('registro-alumno.edit', compact('registroAlumno', 'lugares', 'colonias', 'grado', 'seccion', 'encargado', 'inscripcion', 'anioEscolar'));
     }
-
-
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, RegistroAlumno $registroAlumno)
     {
+
         // Validar los datos
         $validated = $request->validate([
             // Alumno
@@ -257,6 +256,7 @@ class RegistroAlumnoController extends Controller
             'grados_id' => 'required|exists:grados,id',
             'seccions_id' => 'required|exists:seccions,id',
             'jornada' => 'required|string',
+            'anio_escolar_id' => 'required|exists:anios_escolares,id'
         ]);
 
         // Actualizar alumno
@@ -294,14 +294,12 @@ class RegistroAlumnoController extends Controller
                 'grados_id' => $validated['grados_id'],
                 'seccions_id' => $validated['seccions_id'],
                 'jornada' => $validated['jornada'],
+                'anio_escolar_id' => $validated['anio_escolar_id'],
             ]);
         }
 
         return redirect()->route('registro-alumnos.index')->with('success', 'Registro actualizado correctamente.');
     }
-
-
-
 
     public function destroy($id)
     {
@@ -336,8 +334,6 @@ class RegistroAlumnoController extends Controller
         }
     }
 
-
-
     public function validarCodigo(Request $request)
     {
         $codigo = $request->input('codigo');
@@ -353,7 +349,6 @@ class RegistroAlumnoController extends Controller
 
         return response()->json(['existe' => $existe]);
     }
-
 
     public function buscarEncargado(Request $request)
     {
@@ -383,6 +378,4 @@ class RegistroAlumnoController extends Controller
 
         return response()->json(['found' => false]);
     }
-
-
 }

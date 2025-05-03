@@ -33,7 +33,7 @@ class Inscripcion extends Model
      *
      * @var array
      */
-    protected $fillable = ['registro_alumnos_id', 'grados_id', 'seccions_id','codigo_correlativo', 'jornada'];
+    protected $fillable = ['registro_alumnos_id', 'grados_id', 'seccions_id','codigo_correlativo', 'jornada', 'anio_escolar_id'];
 
 
     /**
@@ -63,5 +63,11 @@ class Inscripcion extends Model
     {
         return $this->hasOne(Encargado::class, 'registro_alumnos_id');
     }
+
+    public function anioEscolar()
+    {
+        return $this->belongsTo(AnioEscolar::class, 'anio_escolar_id', 'id');
+    }
+
 
 }

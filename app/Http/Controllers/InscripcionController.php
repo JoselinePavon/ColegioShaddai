@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AnioEscolar;
 use App\Models\Encargado;
 use App\Models\RegistroAlumno;
 use App\Models\Seccion;
@@ -62,7 +63,8 @@ class InscripcionController extends Controller
         $registro_alumno = RegistroAlumno::pluck('nombres', 'id');
         $grado = Grado::pluck('nombre_grado', 'id');
         $seccion = Seccion::pluck('seccion', 'id');
-        return view('inscripcion.form', compact('inscripcion', 'registro_alumno','grado','seccion'));
+        $aniosEscolar = AnioEscolar::pluck('nombre', 'id');
+        return view('inscripcion.form', compact('inscripcion', 'registro_alumno','grado','seccion','aniosEscolar'));
     }
 
     /**
@@ -95,8 +97,9 @@ class InscripcionController extends Controller
         $registro_alumno = RegistroAlumno::pluck('nombres', 'id');
         $grado = Grado::pluck('nombre_grado', 'id');
         $seccion = Seccion::pluck('seccion', 'id');
+        $aniosEscolar = AnioEscolar::pluck('nombre', 'id');
 
-        return view('inscripcion.edit', compact('inscripcion', 'registro_alumno','grado','seccion'));
+        return view('inscripcion.edit', compact('inscripcion', 'registro_alumno','grado','seccion', 'aniosEscolar'));
     }
 
     /**
@@ -108,6 +111,8 @@ class InscripcionController extends Controller
             'codigo_correlativo' => 'required|unique:inscripcions,codigo_correlativo,' . $inscripcion->id,
             'grados_id' => 'required|exists:grados,id',
             'seccions_id' => 'required|exists:seccions,id',
+            'anio_escolar_id' => 'required|exists:anio_escolars,id',
+
 
         ]);
 
@@ -115,6 +120,7 @@ class InscripcionController extends Controller
             'codigo_correlativo' => $validated['codigo_correlativo'],
             'grados_id' => $validated['grados_id'],
             'seccions_id' => $validated['seccions_id'],
+            'anio_escolar_id' => $validated['nombre_id'],
 
         ]);
 
@@ -142,6 +148,7 @@ class InscripcionController extends Controller
         $registro_alumno = RegistroAlumno::pluck('nombres', 'id');
         $grado = Grado::pluck('nombre_grado', 'id');
         $seccion = Seccion::pluck('seccion', 'id');
+        $aniosEscolar = AnioEscolar::pluck('nombre', 'id');
 
         // Recuperar el valor de búsqueda desde la solicitud
         $search = $request->input('search');
@@ -161,7 +168,7 @@ class InscripcionController extends Controller
         }
 
         // Pasar los resultados de la búsqueda a la vista resultados.blade.php
-        return view('inscripcion.form', compact('inscripcion', 'alumnos', 'registro_alumno', 'grado', 'seccion', 'alumno', 'yaInscrito'));
+        return view('inscripcion.form', compact('inscripcion', 'alumnos', 'registro_alumno', 'grado', 'seccion', 'aniosEscolar','alumno', 'yaInscrito'));
     }
 
 

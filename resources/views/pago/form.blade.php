@@ -133,8 +133,6 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                
-
                             </div>
 
 
@@ -144,22 +142,22 @@
                                     <label for="monto" class="form-label">{{ __('Monto') }}</label>
                                     <input type="text" id="monto" name="monto" class="form-control">
                                 </div>
-                            </div>
-                            
 
-                            <div class="col-md-6 mb-3">
-                                <label for="anio_escolar_id" class="form-label">Año Escolar</label>
-                                <select name="anio_escolar_id" id="anio_escolar_id" class="form-select @error('anio_escolar_id') is-invalid @enderror">
-                                    <option value="" disabled selected>Selecciona un Año Escolar</option>
-                                    <!-- Las opciones se llenarán con AJAX -->
-                                </select>
-                                @error('anio_escolar_id')
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="anio_escolar_id" class="form-label">Año Escolar</label>
+                                    <select name="anio_escolar_id" id="anio_escolar_id" class="form-select @error('anio_escolar_id') is-invalid @enderror">
+                                        <option value="" disabled selected>Selecciona un Año Escolar</option>
+                                        <!-- Las opciones se llenarán con AJAX -->
+                                    </select>
+                                    @error('anio_escolar_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
+                                    @enderror
+                                </div>
 
-                            
+                            </div>
+
+
                             <!-- Campo Abono -->
                             <div class="row align-items-end" id="abono-section" style="display: none;">
                                 <div class="col-md-6 mb-3">
@@ -170,9 +168,6 @@
                                 </div>
                             </div>
 
-
-
-                            <!-- Pagos Combinados -->
                             <!-- Pagos Combinados -->
                             <div id="pago-combinado-section" style="display: none;">
                                 <h5>Seleccione los pagos que desea combinar:</h5>
@@ -202,7 +197,6 @@
             </div>
 
             <!-- Columna de Resumen del Pedido -->
-            <!-- Columna de Resumen del Pedido -->
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
@@ -219,6 +213,9 @@
 
         </div>
     </div>
+
+
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -253,7 +250,7 @@
             });
         });
     </script>
-    
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             fetch('/obtener-anios-escolares')

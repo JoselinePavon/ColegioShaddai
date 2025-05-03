@@ -61,6 +61,10 @@
                                 <th><i class="fas fa-clock text-primary me-2"></i> {{ __('Jornada') }}</th>
                                 <td>{{ ($registroAlumno->inscripcion->jornada)}}</td>
                             </tr>
+                            <tr>
+                                <th><i class="fas fa-calendar-alt text-primary me-2"></i> {{ __('Ciclo Escolar') }}</th>
+                                <td>{{ ($registroAlumno->inscripcion->anioEscolar->nombre)}}</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>

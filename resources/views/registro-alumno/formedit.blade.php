@@ -6,7 +6,7 @@
                         <!-- Row for student and guardian sections side by side -->
                     <div class="row">
                         <div class="col-md-6">
-                            <center><h4 class="mb-3">Datos del Alumno</h4></center>
+                            <h6 class="text-primary mb-3 text-center"><i class="bi bi-person-fill"></i> Datos del Alumno</h6></center>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="codigo_personal" class="form-label"><i class="bi bi-person-fill"></i> Código Personal</label>
@@ -53,7 +53,7 @@
                         <!-- Datos del Encargado -->
 
                             <div class="col-md-6">
-                                <center><h4 class="mb-3">Datos del Encargado</h4></center>
+                                <h6 class="text-primary mb-3 text-center"><i class="bi bi-person-check-fill"></i> Datos del Encargado</h6>
                                 <div class="row row-cols-3 g-3">
                                     <div class="col">
                                         <label for="nombre_encargado" class="form-label"><i class="bi bi-person-fill"></i> Nombre completo</label>
@@ -142,7 +142,7 @@
 
                                 </div>
                             </div>
-                        <center><h4 class="mb-3">Datos de la Inscripcion</h4></center>
+                        <h6 class="text-primary mb-3 mt-4 text-center"><i class="bi bi-card-list"></i> Datos de Inscripción</h6>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="codigo_correlativo" class="form-label"> {{ __('Codigo Correlativo') }}</label>
@@ -191,13 +191,28 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <div class="col-mb-16">
+                                <label for="anio_escolar_id" class="form-label">{{ __('Año Escolar') }}</label>
+                                <select name="anio_escolar_id" class="form-select @error('anio_escolar_id') is-invalid @enderror" id="anio_escolar_id">
+                                    <option value="">Seleccione el ciclo escolar</option>
+                                    @foreach($anioEscolar as $id => $nombre)
+                                        <option value="{{ $id }}" {{ old('anio_escolar_id', $inscripcion->anio_escolar_id ?? '') == $id ? 'selected' : '' }}>
+                                            {{ $nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('anio_escolar_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
 
                         </div>
 
                         <!-- Botón de Validación -->
                     <div class="text-center mt-3">
-                        <button type="submit" class="btn btn-dark"><i class="fas fa-save"></i> Guardar</button>
+                        <button type="submit" class="btn btn-dark"><i class="fas fa-save"></i> Actualizar </button>
                     </div>
                 </div>
             </div>
