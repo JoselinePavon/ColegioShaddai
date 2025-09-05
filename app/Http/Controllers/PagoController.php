@@ -213,12 +213,15 @@ class PagoController extends Controller
                 // Enero: es solvente si ya pagó enero
                 $esSolvente = in_array(1, $mesesPagados);
             } else if ($mesActual >= 2 && $mesActual <= 10) {
-                // Caso especial: el alumno ya pagó el mes actual
+                // Verificar que TODOS los meses anteriores estén pagados (incluyendo el mes actual si ya se pagó)
                 if (in_array($mesActual, $mesesPagados)) {
-                    $esSolvente = true;
-                }
-                // Regla normal: es solvente si pagó todos los meses anteriores
-                else {
+                    // Si pagó el mes actual, verificar que todos los meses anteriores también estén pagados
+                    $mesesRequeridos = range(1, $mesActual - 1);
+                    $mesesFaltantes = array_diff($mesesRequeridos, $mesesPagados);
+                    $esSolvente = empty($mesesFaltantes);
+                } else {
+                    // Si no pagó el mes actual, verificar que el mes anterior esté pagado
+                    // Y que todos los meses anteriores a ese también estén pagados
                     $mesRequeridoParaSolvencia = $mesActual - 1;
                     $esSolvente = in_array($mesRequeridoParaSolvencia, $mesesPagados);
 
@@ -227,6 +230,7 @@ class PagoController extends Controller
                     $mesesFaltantes = array_diff($mesesRequeridos, $mesesPagados);
                     $esSolvente = $esSolvente && empty($mesesFaltantes);
                 }
+            
             } else if ($mesActual == 11 || $mesActual == 12) {
                 // Noviembre/Diciembre: debe tener todos los meses hasta octubre
                 $mesesCompletos = range(1, 10);
@@ -334,35 +338,40 @@ class PagoController extends Controller
         $anioActual = date('Y');
         $pago = new Pago();
         $tipos = Tipopago::pluck('tipo_pago', 'id');
-        $mes = Me::whereBetween('id', [1, 10])->pluck('mes', 'id'); // Filtrar meses entre enero y octubre
+        $mes = Me::whereBetween('id', [1, 10])->pluck('mes', 'id');
         $registro_alumnos = RegistroAlumno::pluck('nombres', 'id');
         $montos = Tipopago::pluck('monto', 'id');
-        $alumnoId = request()->input('registro_alumnos_id'); // Captura el ID del alumno si es enviado en la solicitud
 
+        // ★ NUEVO: Obtener el monto de la mora
+        $montoMora = Tipopago::where('tipo_pago', 'LIKE', '%mora%')->first();
+        $montoMoraValue = $montoMora ? $montoMora->monto : 0;
+
+        $alumnoId = request()->input('registro_alumnos_id');
         $inscripcionPagada = false;
 
-
         if ($alumnoId) {
-            $inscripcionPagada = Pago::where('registro_alumnos_id', $alumno->id ?? null)
-                ->where('tipopagos_id', 1) // ID 1 es Inscripción
+            $inscripcionPagada = Pago::where('registro_alumnos_id', $alumnoId)
+                ->where('tipopagos_id', 1)
                 ->exists();
 
-            // Si inscripción ya fue pagada, exclúyela de los tipos de pago
             if ($inscripcionPagada) {
-                $tipos = $tipos->except(1); // Excluir inscripción del listado
+                $tipos = $tipos->except(1);
             }
         }
-        // Obtener los pagos realizados para todos los alumnos
-        $pagosPorMes = [];
 
-        if ($alumno = RegistroAlumno::first()) { // Aquí debes ajustar la lógica para obtener el alumno correcto
+        $pagosPorMes = [];
+        if ($alumno = RegistroAlumno::first()) {
             $pagosPorMes = Pago::where('registro_alumnos_id', $alumno->id)
                 ->select('mes_id', 'tipopagos_id')
                 ->get()
                 ->toArray();
         }
 
-        return view('pago.form', compact('aniosEscolares','anioActual','pago', 'montos', 'tipos', 'registro_alumnos', 'mes', 'pagosPorMes','inscripcionPagada'));
+        return view('pago.form', compact(
+            'aniosEscolares', 'anioActual', 'pago', 'montos', 'tipos',
+            'registro_alumnos', 'mes', 'pagosPorMes', 'inscripcionPagada',
+            'montoMoraValue' // ★ NUEVO
+        ));
     }
 
 
@@ -370,18 +379,19 @@ class PagoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PagoRequest $request){
-
+    public function store(PagoRequest $request)
+    {
         // Validación de los campos
         $request->validate([
             'anio_escolar_id' => 'required|exists:anios_escolares,id',
             'num_serie' => 'required',
             'registro_alumnos_id' => 'required',
-            'tipopagos_id' => 'nullable', // Puede ser nulo si es pago combinado
+            'tipopagos_id' => 'nullable',
             'fecha_pago' => 'required|date',
             'mes_id' => $request->input('tipopagos_id') == 6 ? 'nullable|exists:mes,id' : 'required|exists:mes,id',
-            'pagos_combinados' => 'nullable|array', // Aceptar array de pagos combinados
-            'pagos_combinados.*' => 'exists:tipopagos,id', // Validar que los IDs existan en la BD
+            'pagos_combinados' => 'nullable|array',
+            'pagos_combinados.*' => 'exists:tipopagos,id',
+            'incluir_mora' => 'nullable|boolean', // ★ NUEVO: Validación para mora
         ], [
             'num_serie.unique' => 'El número de boleta ya está en uso.',
             'num_serie.required' => 'El número de boleta es obligatorio.',
@@ -390,59 +400,74 @@ class PagoController extends Controller
         ]);
 
         $data = $request->all();
+
+        // ★ NUEVO: Manejar mora para colegiatura
+        if (in_array($data['tipopagos_id'], [2, 3, 4]) && $request->has('incluir_mora') && $request->incluir_mora) {
+            // Obtener el monto de la mora
+            $tipoMora = Tipopago::where('tipo_pago', 'LIKE', '%mora%')->first();
+            $montoMora = $tipoMora ? $tipoMora->monto : 0;
+
+            // Obtener el monto de la colegiatura
+            $montoColegiatura = Tipopago::find($data['tipopagos_id'])->monto ?? 0;
+
+            // Sumar colegiatura + mora
+            $montoTotal = $montoColegiatura + $montoMora;
+
+            // Si el monto del formulario es diferente al total calculado, usar el del formulario
+            if (isset($data['monto']) && (float)$data['monto'] != $montoTotal) {
+                $data['abono'] = $data['monto'];
+                unset($data['monto']);
+                $data['estados_id'] = 4; // Estado para monto diferente
+            } else {
+                // Usar el monto total calculado
+                $data['monto'] = $montoTotal;
+                $data['estados_id'] = 1; // Estado solvente
+            }
+
+            // ★ CREAR REGISTRO ADICIONAL DE MORA
+            $dataMora = $data;
+            $dataMora['tipopagos_id'] = $tipoMora->id; // ID del tipo de pago mora
+            $dataMora['monto'] = $montoMora;
+            $dataMora['estados_id'] = 3; // Estado para mora
+            unset($dataMora['abono']); // Remover abono si existe
+
+            // Crear el pago de mora por separado
+            Pago::create($dataMora);
+        }
+
+        // Resto del código existente para validaciones...
         $montoOriginal = Tipopago::find($data['tipopagos_id'])->monto ?? 0;
 
         // Limitar el monto de computación
         if ($data['tipopagos_id'] == 6) {
-            // Primero verifica que el monto individual no exceda los 500 quetzales
-            if ((float)$data['abono'] > 500) {  // Nota: Uso 'abono' en lugar de 'monto' según tu código anterior
+            if ((float)$data['abono'] > 500) {
                 return redirect()->back()
                     ->withInput()
                     ->with('error', 'El pago de computación no puede exceder los 500 quetzales.');
             }
 
-            // Obtener el total de pagos de computación ya realizados por el alumno
             $totalComputacion = Pago::where('registro_alumnos_id', $data['registro_alumnos_id'])
                 ->where('tipopagos_id', 6)
-                ->sum('abono');  // Suma el campo 'abono' de todos los pagos de computación
+                ->sum('abono');
 
-            // Verificar si el nuevo pago más el total acumulado excede los 500 quetzales
             if ($totalComputacion + (float)$data['abono'] > 500) {
                 $montoDisponible = 500 - $totalComputacion;
-
                 return redirect()->back()
                     ->withInput()
-                    ->with('error', "El total de pagos de computación no puede exceder los 500 quetzales.
-                            Total actual: Q." . number_format($totalComputacion, 2) . ".
-                            Monto disponible: Q." . number_format($montoDisponible, 2) . ".");
-            }
-        }
-
-        // Obtén el monto desde la tabla `tipopagos`
-        $montoOriginal = Tipopago::find($data['tipopagos_id'])->monto ?? 0;
-
-        // Verifica si el pago es de computación (tipopagos_id 6)
-        if ($data['tipopagos_id'] == 6) {
-            // Si el monto es mayor a 500, muestra la alerta
-            if ((float)$data['monto'] > 500) {
-                return redirect()->back()
-                    ->withInput()
-                    ->with('error', 'El pago de computación no puede exceder los 500 quetzales.');
+                    ->with('error', "El total de pagos de computación no puede exceder los 500 quetzales. Total actual: Q." . number_format($totalComputacion, 2) . ". Monto disponible: Q." . number_format($montoDisponible, 2) . ".");
             }
         }
 
         if (in_array($data['tipopagos_id'], [5, 6])) {
-            // Validar que el campo "abono" tenga un valor
             if (empty($data['abono'])) {
                 return redirect()->back()
                     ->withInput()
                     ->with('error', 'Debe ingresar un abono para el pago de Computación.');
             }
-            $data['estados_id'] = 3; // Estado para computación
-
+            $data['estados_id'] = 3;
         }
 
-        // Si se selecciona "combinado" pero no se seleccionan pagos en pagos_combinados
+        // Manejo de pagos combinados
         if ($request->input('tipopagos_id') === 'combinado') {
             if (empty($data['pagos_combinados']) || !is_array($data['pagos_combinados'])) {
                 return redirect()->back()
@@ -451,36 +476,30 @@ class PagoController extends Controller
             }
 
             foreach ($data['pagos_combinados'] as $tipopagos_id) {
-                // Excluir inscripción (ID 2) de pagos combinados
                 $mesId = ($tipopagos_id == 1) ? 13 : $data['mes_id'];
-            if ($tipopagos_id == [5, 6]) {
+                if ($tipopagos_id == [5, 6]) {
                     continue;
                 }
 
-                // Determinar el estado del pago
-                $estado_id = in_array($tipopagos_id, [2, 3, 4]) ? 1 : 3; // 1 = solvente para colegiatura, 3 = cancelado para otros
+                $estado_id = in_array($tipopagos_id, [2, 3, 4]) ? 1 : 3;
 
-                // Crear el pago combinado con el mes seleccionado
                 Pago::create([
                     'anio_escolar_id' => $request->anio_escolar_id,
                     'num_serie' => $data['num_serie'],
                     'registro_alumnos_id' => $data['registro_alumnos_id'],
                     'tipopagos_id' => $tipopagos_id,
                     'fecha_pago' => $data['fecha_pago'],
-                    'mes_id' => $mesId, // Tomar el mes seleccionado en el formulario
+                    'mes_id' => $mesId,
                     'estados_id' => $estado_id,
                 ]);
             }
 
-            // Redirigir con mensaje de éxito
-            return redirect()->route('pagos.index')
+            return redirect()->route('pagos.create')
                 ->with('success', 'Pago combinado registrado exitosamente.');
         }
 
-        // Manejar el caso de pagos individuales
+        // Manejo de inscripción
         if ($data['tipopagos_id'] == 1) {
-
-            // Verificar si ya existe un pago de inscripción
             $pagoInscripcion = Pago::where('registro_alumnos_id', $data['registro_alumnos_id'])
                 ->where('tipopagos_id', 1)
                 ->first();
@@ -490,20 +509,20 @@ class PagoController extends Controller
                     ->withInput()
                     ->with('error', 'El alumno ya ha realizado el pago de inscripción.');
             }
-            $data['mes_id'] = 13; // Asignar el valor 13 para inscripción
-            $data['estados_id'] = 3; // Estado solvente
-
+            $data['mes_id'] = 13;
+            $data['estados_id'] = 3;
         }
-        if (in_array($data['tipopagos_id'], [2, 3, 4])) {
 
+        // Manejo de colegiaturas (solo si no se procesó mora anteriormente)
+        if (in_array($data['tipopagos_id'], [2, 3, 4]) && !($request->has('incluir_mora') && $request->incluir_mora)) {
             if ((float)$data['monto'] != $montoOriginal) {
-                $data['abono'] = $data['monto']; // Guarda el monto modificado en abono
-                unset($data['monto']); // Elimina el campo 'monto' para que no interfiera
-                $data['estados_id'] = 4; // Estado 4 para monto diferente
+                $data['abono'] = $data['monto'];
+                unset($data['monto']);
+                $data['estados_id'] = 4;
             } else {
-                $data['estados_id'] = 1; // Estado 1 para solvente
+                $data['estados_id'] = 1;
             }
-            // Verificar si ya existe un pago de colegiatura para el mes seleccionado
+
             $pagoExistente = Pago::where('registro_alumnos_id', $data['registro_alumnos_id'])
                 ->where('tipopagos_id', $data['tipopagos_id'])
                 ->where('mes_id', $data['mes_id'])
@@ -514,26 +533,19 @@ class PagoController extends Controller
                     ->withInput()
                     ->with('error', 'El alumno ya ha realizado un pago para el mes seleccionado.');
             }
-
-
-
         }
+
         if (!isset($data['estados_id'])) {
             $data['estados_id'] = 3;
         }
 
-        // Crear el pago individual
+        // Crear el pago principal
         Pago::create($data);
 
-        // Redirigir con mensaje de éxito
-        return redirect()->route('pagos.index')
-            ->with('success', 'Pago registrado exitosamente.');
+        return redirect()->route('pagos.create')
+            ->with('success', 'Pago registrado exitosamente.' .
+                ($request->has('incluir_mora') && $request->incluir_mora ? ' (Incluyendo mora)' : ''));
     }
-
-
-
-
-
     /**
      * Display the specified resource.
      */
@@ -593,17 +605,17 @@ class PagoController extends Controller
         $registro_alumno = RegistroAlumno::pluck('nombres', 'id');
         $tipos = Tipopago::pluck('tipo_pago', 'id');
         $montos = Tipopago::pluck('monto', 'id');
-        $mes = Me::whereBetween('id', [1, 10])->pluck('mes', 'id'); // Filtrar meses entre enero y octubre
-
-        // Add the missing aniosEscolares variable
+        $mes = Me::whereBetween('id', [1, 10])->pluck('mes', 'id');
         $aniosEscolares = AnioEscolar::orderBy('nombre', 'desc')->get();
 
-        $inscripcionPagada = false;
+        // ★ NUEVO: Obtener monto de mora
+        $montoMora = Tipopago::where('tipo_pago', 'LIKE', '%mora%')->first();
+        $montoMoraValue = $montoMora ? $montoMora->monto : 0;
 
+        $inscripcionPagada = false;
         $search = $request->input('search');
         $error = null;
 
-        // Buscar el alumno por ID, nombre o código correlativo
         $alumno = RegistroAlumno::where('id', 'LIKE', "%$search%")
             ->orWhere('nombres', 'LIKE', "%$search%")
             ->orWhereHas('inscripciones', function ($query) use ($search) {
@@ -611,30 +623,27 @@ class PagoController extends Controller
             })
             ->first();
 
-        // Variables para grado, sección y estado de colegiatura
         $grado = null;
         $seccion = null;
         $pagosPorMes = [];
-        $tipos = Tipopago::pluck('tipo_pago', 'id'); // Obtener todos los tipos de pago
+        $tipos = Tipopago::pluck('tipo_pago', 'id');
 
         if ($alumno) {
-            // Obtener información de inscripción (grado y sección)
             $inscripcion = Inscripcion::where('registro_alumnos_id', $alumno->id)->first();
             $grado = $inscripcion ? $inscripcion->grado : null;
             $seccion = $inscripcion ? $inscripcion->seccion : null;
 
             if ($grado && $grado->nivels_id) {
-                // Filtrar tipos de pago según el nivel del alumno
                 switch ($grado->nivels_id) {
-                    case 1: // Preprimaria
-                    case 2: // Primaria
-                        $tipos = $tipos->except([3, 4]); // Excluir colegiatura diversificado (ID 4) y colegiatura básico (ID 6)
+                    case 1:
+                    case 2:
+                        $tipos = $tipos->except([3, 4]);
                         break;
-                    case 3: // Básico
-                        $tipos = $tipos->except([2, 4]); // Excluir colegiatura regular (ID 2) y colegiatura diversificado (ID 4)
+                    case 3:
+                        $tipos = $tipos->except([2, 4]);
                         break;
-                    case 4: // Diversificado
-                        $tipos = $tipos->except([2, 3]); // Excluir colegiatura regular (ID 2) y colegiatura básico (ID 6)
+                    case 4:
+                        $tipos = $tipos->except([2, 3]);
                         break;
                 }
             }
@@ -643,34 +652,22 @@ class PagoController extends Controller
                 ->select('mes_id', 'tipopagos_id')
                 ->get()
                 ->toArray();
-            // Verificar si la inscripción ya fue pagada
+
             $inscripcionPagada = Pago::where('registro_alumnos_id', $alumno->id ?? null)
-                ->where('tipopagos_id', 1) // ID 1 es Inscripción
+                ->where('tipopagos_id', 1)
                 ->exists();
 
-            // Si inscripción ya fue pagada, excluirla de los tipos de pago
             if ($inscripcionPagada) {
-                $tipos = $tipos->except(1); // Excluir inscripción del listado
+                $tipos = $tipos->except(1);
             }
         } else {
             $error = "Alumno no encontrado.";
         }
 
         return view('pago.create', compact(
-            'alumno',
-            'montos',
-            'grado',
-            'seccion',
-            'pago',
-            'tipos',
-            'registro_alumno',
-            'error',
-            'pagosPorMes',
-            'mes',
-            'inscripcionPagada',
-            'tipos',
-            'anioActual',
-            'aniosEscolares'  // Add the variable to the compact array
+            'alumno', 'montos', 'grado', 'seccion', 'pago', 'tipos',
+            'registro_alumno', 'error', 'pagosPorMes', 'mes', 'inscripcionPagada',
+            'tipos', 'anioActual', 'aniosEscolares', 'montoMoraValue' // ★ NUEVO
         ));
     }
     public function indexp(Request $request) {
