@@ -172,7 +172,12 @@
             </tr>
             <tr>
                 <td>a) INSCRIPCIÓN POR EDUCANDO: (UN SÓLO PAGO ANUAL)</td>
-                <td>Q. 395.00</td>
+                <td>
+                    <select style="border: none; background: transparent; font-size: 1em; padding: 0; appearance: none; -moz-appearance: none; -webkit-appearance: none; cursor: pointer;">
+                        <option value="310">Q. 395.00</option>
+                        <option value="330">Q. 430.00</option>
+                    </select>
+                </td>
             </tr>
             <tr>
                 <td>b) COLEGIATURA MENSUAL: (10 CUOTAS EN LOS MESES DE ENERO A OCTUBRE)</td>

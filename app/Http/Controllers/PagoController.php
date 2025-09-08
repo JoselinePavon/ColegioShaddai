@@ -230,7 +230,7 @@ class PagoController extends Controller
                     $mesesFaltantes = array_diff($mesesRequeridos, $mesesPagados);
                     $esSolvente = $esSolvente && empty($mesesFaltantes);
                 }
-            
+
             } else if ($mesActual == 11 || $mesActual == 12) {
                 // Noviembre/Diciembre: debe tener todos los meses hasta octubre
                 $mesesCompletos = range(1, 10);
