@@ -41,16 +41,17 @@
     </select>
 
     {{-- ← se añade w-25 aquí --}}
-    <select name="anio_escolar_id"
-            class="form-select btn btn-outline-dark btn-sm w-25"
-            onchange="this.form.submit()">
-        <option value="">Todos los Años</option>
-        @foreach ($aniosEscolares as $id => $anio)
-            <option value="{{ $id }}" {{ request('anio_escolar_id') == $id ? 'selected' : '' }}>
-                {{ $anio }}
-            </option>
-        @endforeach
-    </select>
+                    <select name="anio_escolar_id"
+                            class="form-select btn btn-outline-dark btn-sm w-25"
+                            onchange="this.form.submit()">
+                        <option value="">Todos los Años</option>
+                        @foreach ($aniosEscolares as $id => $anio)
+                            <option value="{{ $id }}"
+                                {{ (request('anio_escolar_id') == $id || (!request()->has('anio_escolar_id') && isset($anioSeleccionado) && $anioSeleccionado == $id)) ? 'selected' : '' }}>
+                                {{ $anio }}
+                            </option>
+                        @endforeach
+                    </select>
 
                     <a href="{{ route('pagos.indexp') }}" class="btn btn-outline-secondary btn-sm shadow-sm" style="font-size: 1rem;">
                         <i class="bi bi-x-circle"></i> Limpiar

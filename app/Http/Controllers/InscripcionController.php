@@ -11,6 +11,7 @@ use App\Models\Grado;
 use App\Models\Inscripcion;
 use App\Http\Requests\InscripcionRequest;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 /**
  * Class InscripcionController
@@ -23,18 +24,53 @@ class InscripcionController extends Controller
      */
     public function index()
     {
-
         // Obtener todas las secciones y grados
         $seccion = Seccion::pluck('seccion', 'id');
         $grado = Grado::pluck('nombre_grado', 'id');
         $encargado = Encargado::paginate();
+        $aniosEscolares = AnioEscolar::pluck('nombre', 'id');
+
+        // Obtener la fecha actual del sistema
+        $fechaActual = Carbon::now();
+
+        // Buscar el año escolar actual basándose en las fechas
+        // Busca un año escolar donde la fecha actual esté entre fecha_inicio y fecha_fin
+        $anioEscolarActual = AnioEscolar::where('fecha_inicio', '<=', $fechaActual)
+            ->where('fecha_fin', '>=', $fechaActual)
+            ->first();
+
+        // Si no se encuentra por fechas, buscar por el año en el nombre
+        if (!$anioEscolarActual) {
+            $anioActual = $fechaActual->year;
+            $anioEscolarActual = AnioEscolar::where('nombre', $anioActual)
+                ->orWhere('nombre', 'LIKE', $anioActual . '%')
+                ->orWhere('nombre', 'LIKE', '%' . $anioActual . '%')
+                ->orderBy('id', 'desc')
+                ->first();
+        }
+
+        // Si aún no encuentra ninguno, toma el más reciente
+        if (!$anioEscolarActual) {
+            $anioEscolarActual = AnioEscolar::orderBy('id', 'desc')->first();
+        }
 
         // Obtener los filtros seleccionados por el usuario
         $seccions_id = request()->get('seccions_id');
         $grados_id = request()->get('grados_id');
+        $anio_escolar_id = request()->get('anio_escolar_id');
 
-        // Filtrar las inscripciones en base a la sección y/o grado seleccionados
+        // Si no se ha seleccionado un año específico, usar el año actual
+        if (!request()->has('anio_escolar_id') && $anioEscolarActual) {
+            $anio_escolar_id = $anioEscolarActual->id;
+        }
+
+        // Filtrar las inscripciones en base a la sección, grado y año escolar
         $inscripcions = Inscripcion::query();
+
+        // Filtro de año escolar (prioritario)
+        if ($anio_escolar_id) {
+            $inscripcions->where('anio_escolar_id', $anio_escolar_id);
+        }
 
         if ($seccions_id) {
             $inscripcions->where('seccions_id', $seccions_id);
@@ -44,12 +80,14 @@ class InscripcionController extends Controller
             $inscripcions->where('grados_id', $grados_id);
         }
 
-        $totalInscritos = Inscripcion::count();
+        $totalInscritos = $inscripcions->count();
         $inscripcions = $inscripcions->paginate();
 
-        return view('inscripcion.index', compact('inscripcions', 'seccion', 'grado', 'totalInscritos','encargado'))
-            ->with('i', (request()->input('page', 1) - 1) * $inscripcions->perPage());
+        // Pasar el año seleccionado a la vista
+        $anioSeleccionado = $anio_escolar_id;
 
+        return view('inscripcion.index', compact('inscripcions', 'seccion', 'grado', 'totalInscritos', 'encargado', 'anioSeleccionado', 'aniosEscolares'))
+            ->with('i', (request()->input('page', 1) - 1) * $inscripcions->perPage());
     }
 
 
@@ -58,7 +96,6 @@ class InscripcionController extends Controller
      */
     public function create()
     {
-
         $inscripcion = new Inscripcion();
         $registro_alumno = RegistroAlumno::pluck('nombres', 'id');
         $grado = Grado::pluck('nombre_grado', 'id');
@@ -112,16 +149,13 @@ class InscripcionController extends Controller
             'grados_id' => 'required|exists:grados,id',
             'seccions_id' => 'required|exists:seccions,id',
             'anio_escolar_id' => 'required|exists:anio_escolars,id',
-
-
         ]);
 
         $inscripcion->update([
             'codigo_correlativo' => $validated['codigo_correlativo'],
             'grados_id' => $validated['grados_id'],
             'seccions_id' => $validated['seccions_id'],
-            'anio_escolar_id' => $validated['nombre_id'],
-
+            'anio_escolar_id' => $validated['anio_escolar_id'],
         ]);
 
         return redirect()->route('inscripcions.index')
@@ -141,6 +175,7 @@ class InscripcionController extends Controller
     {
         return view('inscripcion.form');
     }
+
     public function resultados(Request $request)
     {
         $inscripcion = new Inscripcion();
@@ -170,7 +205,4 @@ class InscripcionController extends Controller
         // Pasar los resultados de la búsqueda a la vista resultados.blade.php
         return view('inscripcion.form', compact('inscripcion', 'alumnos', 'registro_alumno', 'grado', 'seccion', 'aniosEscolar','alumno', 'yaInscrito'));
     }
-
-
 }
-
