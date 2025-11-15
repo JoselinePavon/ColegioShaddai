@@ -245,10 +245,13 @@ class PagoController extends Controller
                     " Resultado: " . ($esSolvente ? "SOLVENTE" : "INSOLVENTE"));
             }
 
+            $numerosSerie = $pagosAlumno->pluck('num_serie')->filter()->unique()->toArray();
+
             $alumnoInfo = [
                 'registroAlumno' => $pago->registroAlumno,
                 'mesesPagados' => $mesesPagados,
                 'esSolvente' => $esSolvente,
+                'numerosSerie' => $numerosSerie,
             ];
 
             if (!$estado || ($estado === 'solvente' && $esSolvente) || ($estado === 'insolvente' && !$esSolvente)) {
