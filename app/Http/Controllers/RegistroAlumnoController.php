@@ -39,28 +39,47 @@ class RegistroAlumnoController extends Controller
             return [$grado->id => "{$grado->nombre_grado} - {$grado->nivel->nivel}"];
         });
 
+        // Obtener todos los años escolares para el filtro
+        $aniosEscolares = AnioEscolar::pluck('nombre', 'id');
+
+        // Obtener el año actual del sistema
+        $anioActual = date('Y');
+
+        // Buscar el año escolar que coincida con el año actual
+        $anioEscolarActual = AnioEscolar::where('nombre', 'LIKE', '%' . $anioActual . '%')
+            ->first();
+
         $clearFilters = $request->has('clear');
         if ($clearFilters) {
             session()->forget('alumno_filters');
             $seccions_id = null;
             $grados_id = null;
+            $anio_escolar_id = $anioEscolarActual ? $anioEscolarActual->id : null;
         } else {
             $seccions_id = $request->get('seccions_id');
             $grados_id = $request->get('grados_id');
+            $anio_escolar_id = $request->get('anio_escolar_id');
 
-            if ((!$request->filled('seccions_id') && !$request->filled('grados_id')) &&
-                (session()->has('alumno_filters.seccions_id') || session()->has('alumno_filters.grados_id'))) {
+            // Si no se ha seleccionado un año escolar y es la primera carga, usar el año actual
+            if (!$request->filled('anio_escolar_id') && !session()->has('alumno_filters.anio_escolar_id')) {
+                $anio_escolar_id = $anioEscolarActual ? $anioEscolarActual->id : null;
+            }
+
+            if ((!$request->filled('seccions_id') && !$request->filled('grados_id') && !$request->filled('anio_escolar_id')) &&
+                (session()->has('alumno_filters.seccions_id') || session()->has('alumno_filters.grados_id') || session()->has('alumno_filters.anio_escolar_id'))) {
                 return redirect()->route('filtro.index', [
                     'seccions_id' => session('alumno_filters.seccions_id'),
-                    'grados_id' => session('alumno_filters.grados_id')
+                    'grados_id' => session('alumno_filters.grados_id'),
+                    'anio_escolar_id' => session('alumno_filters.anio_escolar_id')
                 ]);
             }
 
             session(['alumno_filters.seccions_id' => $seccions_id]);
             session(['alumno_filters.grados_id' => $grados_id]);
+            session(['alumno_filters.anio_escolar_id' => $anio_escolar_id]);
         }
 
-        $registroAlumnos = RegistroAlumno::with(['encargado', 'inscripcion.grado', 'inscripcion.seccion']);
+        $registroAlumnos = RegistroAlumno::with(['encargado', 'inscripcion.grado', 'inscripcion.seccion', 'inscripcion.anioEscolar']);
 
         // Filtros usando filled()
         if ($request->filled('seccions_id')) {
@@ -71,6 +90,11 @@ class RegistroAlumnoController extends Controller
             $registroAlumnos->whereHas('inscripcion', fn($q) => $q->where('grados_id', $request->grados_id));
         }
 
+        // Filtro de año escolar (automático o manual)
+        if ($anio_escolar_id) {
+            $registroAlumnos->whereHas('inscripcion', fn($q) => $q->where('anio_escolar_id', $anio_escolar_id));
+        }
+
         $registroAlumnos = $registroAlumnos->orderBy('apellidos', 'asc')
             ->orderBy('nombres', 'asc')
             ->get()
@@ -79,7 +103,7 @@ class RegistroAlumnoController extends Controller
                 return $alumno;
             });
 
-        return view('registro-alumno.index', compact('registroAlumnos', 'grado', 'seccion'));
+        return view('registro-alumno.index', compact('registroAlumnos', 'grado', 'seccion', 'aniosEscolares'));
     }
 
     public function clearFilters() {

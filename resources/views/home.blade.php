@@ -103,7 +103,7 @@
             <body>
 
 
-
+            <center>
             <div class="dashboard">
                 <div class="card blue">
                     <i class="fas fa-users" style="font-size: 50px; color: #333; margin-bottom: 15px;"></i>
@@ -117,23 +117,37 @@
                     <i class="fas fa-exclamation-circle" style="font-size: 50px; color: #333; margin-bottom: 15px;"></i>
                     <h2>Alumnos Insolventes</h2>
                     <p id="insolventes-count">Cargando...</p>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', () => {
-                            // Recuperar el valor de localStorage
-                            const insolventesCount = localStorage.getItem('insolventesCount') || 0;
-
-                            // Mostrar el valor en la tarjeta
-                            document.getElementById('insolventes-count').textContent = insolventesCount;
-                        });
-                    </script>
                 </div>
 
                 <div class="card green">
-                    <i class="fas fa-dollar-sign" style="font-size: 50px; color: #333; margin-bottom: 15px;"></i>
-                    <h2>Total Ingresos</h2>
-                    <p>Q. {{ number_format($totalIngresos, 2) }}</p> <!-- Mostrar el total de ingresos -->
-
+                    <i class="fa fa-check-square" style="font-size: 50px; color: #333; margin-bottom: 15px;"></i>
+                    <h2>Alumnos Solventes</h2>
+                    <p id="solventes-count">Cargando...</p>
                 </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        // Total de alumnos desde el controlador
+                        const totalAlumnos = {{ $totalAlumnos }};
+
+                        // Insolventes desde localStorage
+                        const insolventesCount = parseInt(localStorage.getItem('insolventesCount')) || 0;
+
+                        // Calcular solventes
+                        const solventesCount = totalAlumnos - insolventesCount;
+
+                        // Mostrar insolventes
+                        document.getElementById('insolventes-count').textContent = insolventesCount;
+
+                        // Mostrar solventes (evitar negativos)
+                        document.getElementById('solventes-count').textContent = solventesCount >= 0 ? solventesCount : 0;
+
+                        // Debug en consola (puedes quitarlo después)
+                        console.log('Total alumnos:', totalAlumnos);
+                        console.log('Insolventes:', insolventesCount);
+                        console.log('Solventes:', solventesCount);
+                    });
+                </script>
             </div>
 
 

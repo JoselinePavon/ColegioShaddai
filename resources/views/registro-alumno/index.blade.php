@@ -35,6 +35,15 @@
                         @endforeach
                     </select>
 
+                    <select name="anio_escolar_id" class="form-select btn btn-outline-dark btn-sm w-25" onchange="this.form.submit()">
+                        <option value="">Todos los Años</option>
+                        @foreach ($aniosEscolares as $id => $anio)
+                            <option value="{{ $id }}" {{ request('anio_escolar_id') == $id ? 'selected' : '' }}>
+                                {{ $anio }}
+                            </option>
+                        @endforeach
+                    </select>
+
 
 
                     <button id="download-excel" class="btn btn-success btn-sm shadow-sm ms-auto" style="font-size: 1rem;">
