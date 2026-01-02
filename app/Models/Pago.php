@@ -68,4 +68,9 @@ class Pago extends Model
         return $this->hasOne(\App\Models\Inscripcion::class, 'registro_alumnos_id', 'id');
     }
 
+    public function computacion()
+    {
+        return $this->hasOne(\App\Models\Inscripcion::class, 'registro_alumnos_id', 'id');
+    }
+
 }

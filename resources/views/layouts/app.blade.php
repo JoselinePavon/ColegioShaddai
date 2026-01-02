@@ -213,6 +213,12 @@
                 <span>Pagos de inscripción</span>
             </a>
         </li>
+        <li class="nav-item {{ request()->is('pagos/computacion*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('pagos.indexcompu') }}">
+                <i class="fas fa-user-check"></i>
+                <span>Pagos de computación</span>
+            </a>
+        </li>
 
         <li class="nav-item {{ request()->is('pagos') ? 'active' : '' }}">
             <a class="nav-link" href="/pagos">

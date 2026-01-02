@@ -726,4 +726,55 @@ class PagoController extends Controller
 
         return view('pago.pagoinscripcion', compact('registroAlumnos', 'grado', 'seccion', 'aniosEscolares', 'anioSeleccionado'));
     }
+
+    public function indexcompu(Request $request) {
+        // Obtener los grados y secciones para los filtros
+        $grado = Grado::pluck('nombre_grado', 'id');
+        $seccion = Seccion::pluck('seccion', 'id');
+        $aniosEscolares = AnioEscolar::pluck('nombre', 'id');
+
+        // Iniciar la consulta base
+        $query = RegistroAlumno::with(['pagos' => function($q) {
+            // Solo cargar pagos de computación (tipopagos_id = 6)
+            $q->where('tipopagos_id', 6);
+        }, 'inscripcion', 'encargado']);
+
+        $anioEscolarId = $request->get('anio_escolar_id');
+        if (!$anioEscolarId) {
+            $currentYear = Carbon::now()->year;
+            $anioEscolarActual = AnioEscolar::where('nombre', (string)$currentYear)->first();
+            if ($anioEscolarActual) {
+                $anioEscolarId = $anioEscolarActual->id;
+            }
+        }
+
+        // Filtro por Año Escolar
+        if ($anioEscolarId) {
+            $query->whereHas('inscripcion', fn ($q) => $q->where('anio_escolar_id', $anioEscolarId));
+        }
+
+        // Filtro por grado
+        if ($request->filled('grados_id')) {
+            $query->whereHas('inscripcion', function($q) use ($request) {
+                $q->where('grados_id', $request->grados_id);
+            });
+        }
+
+        // Filtro por sección
+        if ($request->filled('seccions_id')) {
+            $query->whereHas('inscripcion', function($q) use ($request) {
+                $q->where('seccions_id', $request->seccions_id);
+            });
+        }
+
+        // Ordenar por apellidos y nombres
+        $query->orderBy('apellidos', 'asc')
+            ->orderBy('nombres', 'asc');
+
+        $registroAlumnos = $query->get();
+
+        $anioSeleccionado = $anioEscolarId;
+
+        return view('pago.pagocomputacion', compact('registroAlumnos', 'grado', 'seccion', 'aniosEscolares', 'anioSeleccionado'));
+    }
 }
