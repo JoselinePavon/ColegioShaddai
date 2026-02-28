@@ -211,53 +211,31 @@ class PagoController extends Controller
             sort($mesesPagados);
             Log::debug("Meses pagados: " . implode(', ', $mesesPagados));
 
-            // LÓGICA DE SOLVENCIA CORREGIDA
-            // - Enero: Solvente si pagó enero
-            // - Febrero a Septiembre: Solvente si pagó el mes anterior
-            // - Octubre: Requiere pagos de TODOS los meses 1-10
-            // - Noviembre y Diciembre: Se mantiene solvente si tiene meses 1-10 pagados
+            // ━━━━━━━━━━ LÓGICA DE SOLVENCIA ━━━━━━━━━━
             $esSolvente = false;
 
             if ($mesActual == 1) {
-                // ENERO: Solo necesita haber pagado enero
+                // ENERO: solvente si pagó enero (primer mes, no hay mes anterior)
                 $esSolvente = in_array(1, $mesesPagados);
-                Log::debug("ENERO - Requiere mes 1. Resultado: " . ($esSolvente ? "SOLVENTE" : "INSOLVENTE"));
+
             } elseif ($mesActual >= 2 && $mesActual <= 9) {
-                // FEBRERO A SEPTIEMBRE: Necesita el mes anterior pagado
-                $mesRequerido = $mesActual - 1;
-                $esSolvente = in_array($mesRequerido, $mesesPagados);
-                Log::debug("MES $mesActual - Requiere mes $mesRequerido pagado. Resultado: " . ($esSolvente ? "SOLVENTE" : "INSOLVENTE"));
+                // FEBRERO A SEPTIEMBRE: solvente si pagó el mes anterior
+                // Ej: en marzo, basta con haber pagado febrero
+                $esSolvente = in_array($mesActual - 1, $mesesPagados);
+
             } elseif ($mesActual == 10) {
-                // OCTUBRE: Requiere TODOS los meses de 1 a 10 pagados
-                $mesesRequeridos = range(1, 10);
-                $mesesFaltantes = array_diff($mesesRequeridos, $mesesPagados);
-                $esSolvente = empty($mesesFaltantes);
-                Log::debug("OCTUBRE - Requiere meses 1-10 pagados. " .
-                    "Faltantes: " . (empty($mesesFaltantes) ? "ninguno" : implode(', ', $mesesFaltantes)) .
-                    " Resultado: " . ($esSolvente ? "SOLVENTE" : "INSOLVENTE"));
+                // OCTUBRE: debe tener septiembre Y octubre pagados (sin gracia)
+                $esSolvente = in_array(9, $mesesPagados) && in_array(10, $mesesPagados);
+
             } elseif ($mesActual == 11 || $mesActual == 12) {
-                // NOVIEMBRE Y DICIEMBRE: Se mantiene solvente si tiene meses 1-10 completos
-                $mesesRequeridos = range(1, 10);
-                $mesesFaltantes = array_diff($mesesRequeridos, $mesesPagados);
-                $esSolvente = empty($mesesFaltantes);
-                Log::debug("MES $mesActual - Requiere meses 1-10 pagados (ciclo completado). " .
-                    "Faltantes: " . (empty($mesesFaltantes) ? "ninguno" : implode(', ', $mesesFaltantes)) .
-                    " Resultado: " . ($esSolvente ? "SOLVENTE" : "INSOLVENTE"));
+                // NOVIEMBRE Y DICIEMBRE: solvente si tiene octubre pagado
+                $esSolvente = in_array(10, $mesesPagados);
             }
 
-
-            // Un alumno SOLO es solvente si tiene los 10 meses pagados (1 al 10)
-            $mesesRequeridos = range(1, 10);
-            $mesesFaltantes = array_diff($mesesRequeridos, $mesesPagados);
-            $esSolvente = empty($mesesFaltantes);
-
-            if ($esSolvente) {
-                Log::debug("✓ SOLVENTE: Tiene los 10 meses completos pagados");
-            } else {
-                Log::debug("✗ INSOLVENTE: Faltan los meses: " . implode(', ', $mesesFaltantes));
-            }
-            // ★★★ FIN NUEVA LÓGICA ★★★
-
+            Log::debug("MES ACTUAL: $mesActual → " . ($esSolvente ? "✓ SOLVENTE" : "✗ INSOLVENTE") .
+                " | Meses pagados: " . implode(', ', $mesesPagados));
+// ━━━━━━━━━━ FIN LÓGICA DE SOLVENCIA ━━━━━━━━━━
+            
             $numerosSerie = $pagosAlumno->pluck('num_serie')->filter()->unique()->toArray();
 
             $alumnoInfo = [
