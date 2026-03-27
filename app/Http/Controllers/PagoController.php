@@ -215,27 +215,26 @@ class PagoController extends Controller
             $esSolvente = false;
 
             if ($mesActual == 1) {
-                // ENERO: solvente si pagó enero (primer mes, no hay mes anterior)
                 $esSolvente = in_array(1, $mesesPagados);
 
             } elseif ($mesActual >= 2 && $mesActual <= 9) {
-                // FEBRERO A SEPTIEMBRE: solvente si pagó el mes anterior
-                // Ej: en marzo, basta con haber pagado febrero
-                $esSolvente = in_array($mesActual - 1, $mesesPagados);
+                // Solvente si pagó TODOS los meses desde enero hasta el anterior
+                $mesesRequeridos = range(1, $mesActual - 1);
+                $esSolvente = empty(array_diff($mesesRequeridos, $mesesPagados));
 
             } elseif ($mesActual == 10) {
-                // OCTUBRE: debe tener septiembre Y octubre pagados (sin gracia)
+                // Octubre: debe tener septiembre Y octubre pagados
                 $esSolvente = in_array(9, $mesesPagados) && in_array(10, $mesesPagados);
 
             } elseif ($mesActual == 11 || $mesActual == 12) {
-                // NOVIEMBRE Y DICIEMBRE: solvente si tiene octubre pagado
+                // Noviembre y diciembre: solvente si tiene octubre pagado
                 $esSolvente = in_array(10, $mesesPagados);
             }
 
             Log::debug("MES ACTUAL: $mesActual → " . ($esSolvente ? "✓ SOLVENTE" : "✗ INSOLVENTE") .
                 " | Meses pagados: " . implode(', ', $mesesPagados));
 // ━━━━━━━━━━ FIN LÓGICA DE SOLVENCIA ━━━━━━━━━━
-            
+
             $numerosSerie = $pagosAlumno->pluck('num_serie')->filter()->unique()->toArray();
 
             $alumnoInfo = [
